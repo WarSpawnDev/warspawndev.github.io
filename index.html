@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Site oficial do WarSpawn: bestiário, dimensões, arsenal, galeria e informações do remake comunitário de OreSpawn."
+    />
+    <meta name="theme-color" content="#07080b" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WarSpawn — Bestiário Oficial" />
+    <meta
+      property="og:description"
+      content="Uma nova era de criaturas impossíveis. Explore o bestiário oficial do WarSpawn."
+    />
+    <meta property="og:image" content="https://warspawndev.github.io/assets/emblem-cosmic.png" />
+    <meta property="og:url" content="https://warspawndev.github.io/" />
+    <link rel="canonical" href="https://warspawndev.github.io/" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="assets/emblem-cosmic.png" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>WarSpawn — Bestiário Oficial</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="WarSpawn">
+        <img src="assets/emblem-white.png" alt="" width="42" height="42" />
+        <span>WARSPAWN</span>
+      </a>
+      <nav aria-label="Navegação principal">
+        <a href="#inicio" data-i18n="navHome">Início</a>
+        <a href="#bestiario" data-i18n="navBestiary">Bestiário</a>
+        <a href="#dimensoes" data-i18n="navDimensions">Dimensões</a>
+        <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
+        <a href="#galeria" data-i18n="navGallery">Galeria</a>
+      </nav>
+      <button class="lang" id="language-toggle" type="button" aria-label="Mudar idioma para inglês">
+        EN
+      </button>
+    </header>
+
+    <main>
+      <section id="inicio" class="hero">
+        <div class="hero-orb hero-orb-red" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-blue" aria-hidden="true"></div>
+        <div class="hero-copy">
+          <span class="eyebrow" data-i18n="eyebrow">O LEGADO RENASCE</span>
+          <h1 data-i18n="title">Uma nova era de criaturas impossíveis.</h1>
+          <p data-i18n="intro">
+            WarSpawn recria a aventura caótica de OreSpawn para o Minecraft moderno,
+            preservando a nostalgia e reconstruindo o mundo com mais conteúdo,
+            estabilidade e identidade.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#bestiario" data-i18n="explore">
+              Explorar o bestiário
+            </a>
+            <span class="status"><i aria-hidden="true"></i><span data-i18n="progress">Em desenvolvimento para NeoForge 26.1.2</span></span>
+          </div>
+        </div>
+        <div class="hero-mark">
+          <img
+            src="assets/emblem-cosmic.png"
+            alt="Símbolo WarSpawn com três dragões"
+            fetchpriority="high"
+          />
+        </div>
+        <a class="scroll-cue" href="#bestiario" aria-label="Rolar para o bestiário">
+          SCROLL <span aria-hidden="true">↓</span>
+        </a>
+      </section>
+
+      <section id="bestiario" class="section bestiary-section">
+        <div class="section-head">
+          <div>
+            <span class="kicker" data-i18n="bestiaryKicker">01 — ARQUIVO DE CRIATURAS</span>
+            <h2 data-i18n="featured">Bestiário em destaque</h2>
+          </div>
+          <div class="filters" aria-label="Filtros do bestiário">
+            <input
+              id="mob-search"
+              type="search"
+              autocomplete="off"
+              placeholder="Buscar criatura..."
+              aria-label="Buscar criatura"
+            />
+            <button class="active" type="button" data-filter="all" data-i18n="all">Todos</button>
+            <button type="button" data-filter="boss" data-i18n="boss">Chefes</button>
+            <button type="button" data-filter="hostile" data-i18n="hostile">Hostis</button>
+            <button type="button" data-filter="peaceful" data-i18n="peaceful">Pacíficos</button>
+          </div>
+        </div>
+        <div class="bestiary-grid" id="bestiary-grid" aria-live="polite"></div>
+        <p class="no-results" id="no-results" hidden data-i18n="noResults">
+          Nenhuma criatura encontrada.
+        </p>
+      </section>
+
+      <section id="dimensoes" class="section dimension-section">
+        <div class="section-head narrow">
+          <div>
+            <span class="kicker" data-i18n="dimensionsKicker">02 — GUIA DE EXPEDIÇÃO</span>
+            <h2 data-i18n="dimensions">Mundos além do portal</h2>
+          </div>
+          <p data-i18n="dimensionsLead">
+            Encontre o formigueiro certo, interaja com a formiga e atravesse para
+            ecossistemas inteiros.
+          </p>
+        </div>
+        <div class="dimension-grid">
+          <article class="dimension-card mining">
+            <img
+              class="dimension-bg"
+              src="assets/dimension-mining.png"
+              alt="Dimensão da Mineração"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="dimension-content">
+              <img
+                class="ant"
+                src="assets/ant-red.png"
+                alt="Formiga vermelha"
+                loading="lazy"
+                decoding="async"
+              />
+              <span data-i18n="redAnt">Portal: Formiga vermelha</span>
+              <h3 data-i18n="mining">Dimensão da Mineração</h3>
+              <p data-i18n="miningText">
+                Uma inundação de minérios, dezenas de masmorras e chefes escondidos
+                por todos os lados.
+              </p>
+              <img
+                class="detail-sheet"
+                src="assets/dimension-mining-details.png"
+                alt="Detalhes da Dimensão da Mineração"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </article>
+          <article class="dimension-card utopia">
+            <img
+              class="dimension-bg"
+              src="assets/dimension-utopia.png"
+              alt="Utopia"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="dimension-content">
+              <img
+                class="ant"
+                src="assets/ant-brown.png"
+                alt="Formiga marrom"
+                loading="lazy"
+                decoding="async"
+              />
+              <span data-i18n="brownAnt">Portal: Formiga marrom</span>
+              <h3 data-i18n="utopia">Utopia</h3>
+              <p data-i18n="utopiaText">
+                Florestas exuberantes, árvores gigantes e criaturas fantásticas em
+                um mundo de escala colossal.
+              </p>
+              <img
+                class="detail-sheet"
+                src="assets/dimension-utopia-details.png"
+                alt="Árvores de Utopia"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="arsenal" class="section arsenal-section">
+        <div class="arsenal-copy">
+          <span class="kicker" data-i18n="arsenalKicker">03 — EQUIPAMENTOS</span>
+          <h2 data-i18n="arsenal">Relíquias capazes de mudar uma guerra</h2>
+          <p data-i18n="arsenalText">
+            Espadas lendárias, cajados, projéteis em 3D e armaduras reconstruídas
+            para o combate moderno.
+          </p>
+          <div class="arsenal-tags" aria-label="Armas em destaque">
+            <span>Big Bertha</span>
+            <span>Slice</span>
+            <span>Royal Guardian</span>
+          </div>
+        </div>
+        <img
+          class="swords"
+          src="assets/swords.png"
+          alt="Big Bertha, Slice e Royal Guardian Sword"
+          loading="lazy"
+          decoding="async"
+        />
+      </section>
+
+      <section id="galeria" class="section gallery-section">
+        <div class="section-head">
+          <div>
+            <span class="kicker" data-i18n="galleryKicker">04 — GALERIA</span>
+            <h2 data-i18n="gallery">Arquivos do WarSpawn</h2>
+          </div>
+        </div>
+        <div class="gallery">
+          <figure class="gallery-1">
+            <img src="assets/battle-dinosaurs.png" alt="T-Rex vs Allosaurus" loading="lazy" decoding="async" />
+            <figcaption>T-Rex vs Allosaurus</figcaption>
+          </figure>
+          <figure class="gallery-2">
+            <img src="assets/projectiles.png" alt="Projéteis 3D" loading="lazy" decoding="async" />
+            <figcaption data-i18n="galleryProjectiles">Projéteis 3D</figcaption>
+          </figure>
+          <figure class="gallery-3">
+            <img src="assets/destructive-weapons.png" alt="Armas destruidoras" loading="lazy" decoding="async" />
+            <figcaption data-i18n="galleryWeapons">Armas destruidoras</figcaption>
+          </figure>
+          <figure class="gallery-4">
+            <img src="assets/thunder-staff.png" alt="Cajado de Raios" loading="lazy" decoding="async" />
+            <figcaption data-i18n="galleryStaff">Cajado de Raios</figcaption>
+          </figure>
+          <figure class="gallery-5">
+            <img src="assets/legacy-new.png" alt="Antigo e novo" loading="lazy" decoding="async" />
+            <figcaption data-i18n="galleryLegacy">Antigo e novo</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <img src="assets/emblem-white.png" alt="" width="74" height="74" loading="lazy" />
+      <p data-i18n="footer">
+        Projeto comunitário inspirado no OreSpawn original. OreSpawn pertence aos
+        seus respectivos autores, incluindo TheyCallMeDanger.
+      </p>
+      <a href="https://github.com/WarSpawnDev/WarSpawn/blob/main/LICENSE.md" rel="license">
+        <span data-i18n="license">Licença</span> ↗
+      </a>
+    </footer>
+
+    <div class="modal-backdrop" id="modal" hidden>
+      <article class="dossier" role="dialog" aria-modal="true" aria-labelledby="dossier-name">
+        <button class="modal-close" id="modal-close" type="button" aria-label="Fechar dossiê">×</button>
+        <img class="dossier-art" id="dossier-art" src="" alt="" />
+        <div class="dossier-copy">
+          <span class="kicker">WARSPAWN FIELD FILE</span>
+          <h2 id="dossier-name"></h2>
+          <div class="stats" id="dossier-stats"></div>
+          <p id="dossier-description"></p>
+          <h3 data-i18n="drops">Drops e itens associados</h3>
+          <ul id="dossier-drops"></ul>
+          <button class="button primary" id="modal-close-button" type="button" data-i18n="close">
+            Fechar dossiê
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <noscript>
+      <div class="noscript">
+        Este site precisa de JavaScript para abrir os dossiês e trocar o idioma.
+      </div>
+    </noscript>
+    <script src="script.js" defer></script>
+  </body>
+</html>
