@@ -84,6 +84,7 @@ const translations = {
     navBestiary: "Bestiário",
     navDimensions: "Dimensões",
     navArsenal: "Arsenal",
+    navFood: "Comidas",
     navGallery: "Galeria",
     eyebrow: "O LEGADO RENASCE",
     title: "Uma nova era de criaturas impossíveis.",
@@ -116,7 +117,21 @@ const translations = {
     arsenal: "Relíquias capazes de mudar uma guerra",
     arsenalText:
       "Espadas lendárias, cajados, projéteis em 3D e armaduras reconstruídas para o combate moderno.",
-    galleryKicker: "04 — GALERIA",
+    foodKicker: "04 — COMIDAS & EFEITOS",
+    foods: "Um banquete para cada expedição",
+    foodsLead:
+      "A nova área de comidas do WarSpawn reunirá ingredientes, receitas, restauração de fome e efeitos especiais em fichas fáceis de consultar.",
+    foodStatus: "CATÁLOGO EM PREPARAÇÃO",
+    foodIngredients: "Ingredientes",
+    foodIngredientsText:
+      "Descubra onde encontrar cada ingrediente e quais criaturas ou dimensões fazem parte da receita.",
+    foodRecipes: "Receitas",
+    foodRecipesText:
+      "Consulte combinações, estações de criação e o caminho completo até cada prato.",
+    foodEffects: "Efeitos",
+    foodEffectsText:
+      "Compare fome, saturação e bônus temporários antes de partir para a próxima batalha.",
+    galleryKicker: "05 — GALERIA",
     gallery: "Arquivos do WarSpawn",
     galleryProjectiles: "Projéteis 3D",
     galleryWeapons: "Armas destruidoras",
@@ -139,6 +154,7 @@ const translations = {
     navBestiary: "Bestiary",
     navDimensions: "Dimensions",
     navArsenal: "Arsenal",
+    navFood: "Food",
     navGallery: "Gallery",
     eyebrow: "THE LEGACY RISES AGAIN",
     title: "A new age of impossible creatures.",
@@ -171,7 +187,21 @@ const translations = {
     arsenal: "Relics powerful enough to change a war",
     arsenalText:
       "Legendary swords, staves, 3D projectiles and rebuilt armor for modern combat.",
-    galleryKicker: "04 — GALLERY",
+    foodKicker: "04 — FOOD & EFFECTS",
+    foods: "A feast for every expedition",
+    foodsLead:
+      "WarSpawn's new food area will bring ingredients, recipes, hunger restoration and special effects together in easy-to-read files.",
+    foodStatus: "CATALOG IN PREPARATION",
+    foodIngredients: "Ingredients",
+    foodIngredientsText:
+      "Discover where to find each ingredient and which creatures or dimensions are part of the recipe.",
+    foodRecipes: "Recipes",
+    foodRecipesText:
+      "Check combinations, crafting stations and the complete path to every dish.",
+    foodEffects: "Effects",
+    foodEffectsText:
+      "Compare hunger, saturation and temporary bonuses before heading into the next battle.",
+    galleryKicker: "05 — GALLERY",
     gallery: "WarSpawn archives",
     galleryProjectiles: "3D projectiles",
     galleryWeapons: "Destructive weapons",

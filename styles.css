@@ -47,7 +47,7 @@ a {
 }
 
 .site-header {
-  height: 82px;
+  height: 88px;
   position: fixed;
   z-index: 40;
   inset: 0 0 auto;
@@ -69,14 +69,16 @@ a {
 }
 
 .brand img {
-  width: 42px;
-  height: 42px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
+  transform: scale(1.24);
+  transform-origin: center;
 }
 
 nav {
   display: flex;
-  gap: 32px;
+  gap: 24px;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -85,7 +87,7 @@ nav {
 
 nav a {
   position: relative;
-  padding: 30px 0;
+  padding: 33px 0;
 }
 
 nav a::after {
@@ -94,7 +96,7 @@ nav a::after {
   height: 1px;
   left: 0;
   right: 100%;
-  bottom: 22px;
+  bottom: 24px;
   background: var(--red);
   transition: 0.25s;
 }
@@ -272,11 +274,11 @@ h1 {
 .hero-mark::before {
   content: "";
   position: absolute;
-  width: 74%;
+  width: 84%;
   aspect-ratio: 1;
-  border: 1px solid #d5ad6228;
   border-radius: 50%;
-  box-shadow: 0 0 90px #d41b2c28, inset 0 0 90px #2460ca18;
+  background: radial-gradient(circle, #7a123633 0, #173c7524 42%, transparent 70%);
+  filter: blur(22px);
 }
 
 .hero-mark img {
@@ -601,6 +603,116 @@ h1 {
   filter: drop-shadow(0 30px 60px #000);
 }
 
+.food-section {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 10% 18%, #6a2a1050 0, transparent 34%),
+    radial-gradient(circle at 88% 72%, #71101b3d 0, transparent 32%),
+    #0d0a08;
+}
+
+.food-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(#ffffff09 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff09 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+}
+
+.food-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.food-card {
+  position: relative;
+  min-height: 310px;
+  padding: 30px;
+  overflow: hidden;
+  border: 1px solid #d5ad6230;
+  background: linear-gradient(145deg, #1b120d, #0d0b0a 72%);
+}
+
+.food-card::before {
+  content: "";
+  position: absolute;
+  width: 220px;
+  aspect-ratio: 1;
+  right: -90px;
+  top: -105px;
+  border-radius: 50%;
+  background: #d22026;
+  filter: blur(60px);
+  opacity: 0.18;
+}
+
+.food-card:nth-child(2)::before {
+  background: #d5ad62;
+}
+
+.food-card:nth-child(3)::before {
+  background: #2559d0;
+}
+
+.food-card::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid #ffffff0a;
+  pointer-events: none;
+}
+
+.food-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.food-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.food-index {
+  color: var(--gold);
+  font: 11px monospace;
+  letter-spacing: 0.18em;
+}
+
+.food-state {
+  color: #8f867a;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.17em;
+  text-align: right;
+}
+
+.food-card h3 {
+  margin: 105px 0 14px;
+  font-size: clamp(34px, 3vw, 52px);
+  font-weight: 500;
+}
+
+.food-card p {
+  max-width: 390px;
+  margin: 0;
+  color: #aaa39a;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 .gallery-section {
   background: #08090c;
 }
@@ -671,9 +783,11 @@ footer {
 }
 
 footer img {
-  width: 74px;
-  height: 74px;
+  width: 112px;
+  height: 112px;
   object-fit: contain;
+  transform: scale(1.18);
+  transform-origin: center;
 }
 
 footer p {
@@ -907,6 +1021,18 @@ footer a {
     flex-direction: column;
   }
 
+  .food-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .food-card {
+    min-height: 250px;
+  }
+
+  .food-card h3 {
+    margin-top: 70px;
+  }
+
   .gallery {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -925,6 +1051,11 @@ footer a {
 
   footer {
     grid-template-columns: auto 1fr;
+  }
+
+  footer img {
+    width: 92px;
+    height: 92px;
   }
 
   footer a {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Site oficial do WarSpawn: bestiário, dimensões, arsenal, galeria e informações do remake comunitário de OreSpawn."
+      content="Site oficial do WarSpawn: bestiário, dimensões, arsenal, comidas, galeria e informações do remake comunitário de OreSpawn."
     />
     <meta name="theme-color" content="#07080b" />
     <meta property="og:type" content="website" />
@@ -17,7 +17,8 @@
     <meta property="og:image" content="https://warspawndev.github.io/assets/emblem-cosmic.png" />
     <meta property="og:url" content="https://warspawndev.github.io/" />
     <link rel="canonical" href="https://warspawndev.github.io/" />
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
     <link rel="preload" href="assets/emblem-cosmic.png" as="image" />
     <link rel="stylesheet" href="styles.css" />
     <title>WarSpawn — Bestiário Oficial</title>
@@ -25,7 +26,7 @@
   <body>
     <header class="site-header">
       <a class="brand" href="#inicio" aria-label="WarSpawn">
-        <img src="assets/emblem-white.png" alt="" width="42" height="42" />
+        <img src="assets/emblem-white.png" alt="" width="56" height="56" />
         <span>WARSPAWN</span>
       </a>
       <nav aria-label="Navegação principal">
@@ -33,6 +34,7 @@
         <a href="#bestiario" data-i18n="navBestiary">Bestiário</a>
         <a href="#dimensoes" data-i18n="navDimensions">Dimensões</a>
         <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
+        <a href="#comidas" data-i18n="navFood">Comidas</a>
         <a href="#galeria" data-i18n="navGallery">Galeria</a>
       </nav>
       <button class="lang" id="language-toggle" type="button" aria-label="Mudar idioma para inglês">
@@ -197,10 +199,56 @@
         />
       </section>
 
+      <section id="comidas" class="section food-section">
+        <div class="section-head narrow">
+          <div>
+            <span class="kicker" data-i18n="foodKicker">04 — COMIDAS &amp; EFEITOS</span>
+            <h2 data-i18n="foods">Um banquete para cada expedição</h2>
+          </div>
+          <p data-i18n="foodsLead">
+            A nova área de comidas do WarSpawn reunirá ingredientes, receitas,
+            restauração de fome e efeitos especiais em fichas fáceis de consultar.
+          </p>
+        </div>
+        <div class="food-grid">
+          <article class="food-card">
+            <div class="food-card-top">
+              <span class="food-index">01</span>
+              <span class="food-state" data-i18n="foodStatus">CATÁLOGO EM PREPARAÇÃO</span>
+            </div>
+            <h3 data-i18n="foodIngredients">Ingredientes</h3>
+            <p data-i18n="foodIngredientsText">
+              Descubra onde encontrar cada ingrediente e quais criaturas ou dimensões
+              fazem parte da receita.
+            </p>
+          </article>
+          <article class="food-card">
+            <div class="food-card-top">
+              <span class="food-index">02</span>
+              <span class="food-state" data-i18n="foodStatus">CATÁLOGO EM PREPARAÇÃO</span>
+            </div>
+            <h3 data-i18n="foodRecipes">Receitas</h3>
+            <p data-i18n="foodRecipesText">
+              Consulte combinações, estações de criação e o caminho completo até cada prato.
+            </p>
+          </article>
+          <article class="food-card">
+            <div class="food-card-top">
+              <span class="food-index">03</span>
+              <span class="food-state" data-i18n="foodStatus">CATÁLOGO EM PREPARAÇÃO</span>
+            </div>
+            <h3 data-i18n="foodEffects">Efeitos</h3>
+            <p data-i18n="foodEffectsText">
+              Compare fome, saturação e bônus temporários antes de partir para a próxima batalha.
+            </p>
+          </article>
+        </div>
+      </section>
+
       <section id="galeria" class="section gallery-section">
         <div class="section-head">
           <div>
-            <span class="kicker" data-i18n="galleryKicker">04 — GALERIA</span>
+            <span class="kicker" data-i18n="galleryKicker">05 — GALERIA</span>
             <h2 data-i18n="gallery">Arquivos do WarSpawn</h2>
           </div>
         </div>
@@ -230,7 +278,7 @@
     </main>
 
     <footer>
-      <img src="assets/emblem-white.png" alt="" width="74" height="74" loading="lazy" />
+      <img src="assets/emblem-white.png" alt="" width="112" height="112" loading="lazy" />
       <p data-i18n="footer">
         Projeto comunitário inspirado no OreSpawn original. OreSpawn pertence aos
         seus respectivos autores, incluindo TheyCallMeDanger.
