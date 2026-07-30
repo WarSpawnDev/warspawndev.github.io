@@ -223,35 +223,93 @@
         </div>
 
         <div class="food-toolbar" role="search">
-          <label class="food-search">
-            <span class="visually-hidden">Buscar no catálogo de comidas</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="11" cy="11" r="7"></circle>
-              <path d="m20 20-4-4"></path>
-            </svg>
-            <input
-              id="food-search"
-              type="search"
-              autocomplete="off"
-              placeholder="Buscar comida ou ingrediente..."
-              aria-label="Buscar no catálogo de comidas"
-            />
-          </label>
-          <div class="food-filters" aria-label="Filtros do catálogo de comidas">
-            <button class="active" type="button" data-food-filter="all" aria-pressed="true">
-              Todos
-            </button>
-            <button type="button" data-food-filter="meals" aria-pressed="false">
-              Pratos
-            </button>
-            <button type="button" data-food-filter="ingredients" aria-pressed="false">
-              Ingredientes
-            </button>
-            <button type="button" data-food-filter="fish" aria-pressed="false">
-              Peixes
-            </button>
-            <button type="button" data-food-filter="special" aria-pressed="false">
-              Especiais
+          <div class="food-toolbar-primary">
+            <label class="food-search">
+              <span class="visually-hidden" data-food-label="searchLabel">
+                Buscar no catálogo de comidas
+              </span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m20 20-4-4"></path>
+              </svg>
+              <input
+                id="food-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Buscar comida ou ingrediente..."
+                aria-label="Buscar no catálogo de comidas"
+              />
+            </label>
+            <div class="food-filters" aria-label="Categorias do catálogo de comidas">
+              <button class="active" type="button" data-food-filter="all" aria-pressed="true">
+                Todos
+              </button>
+              <button type="button" data-food-filter="meals" aria-pressed="false">
+                Pratos
+              </button>
+              <button type="button" data-food-filter="ingredients" aria-pressed="false">
+                Ingredientes
+              </button>
+              <button type="button" data-food-filter="fish" aria-pressed="false">
+                Peixes
+              </button>
+              <button type="button" data-food-filter="special" aria-pressed="false">
+                Especiais
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="food-filter-controls"
+            id="food-filter-controls"
+            aria-label="Filtros avançados do catálogo"
+          >
+            <label class="food-filter-field">
+              <span data-food-label="sortLabel">Ordenar por</span>
+              <select id="food-sort">
+                <option value="creative" data-food-label="sortCreative">Ordem do mod</option>
+                <option value="nutrition-desc" data-food-label="sortNutritionDesc">
+                  Nutrição: maior → menor
+                </option>
+                <option value="nutrition-asc" data-food-label="sortNutritionAsc">
+                  Nutrição: menor → maior
+                </option>
+                <option value="saturation-desc" data-food-label="sortSaturationDesc">
+                  Saturação: maior → menor
+                </option>
+                <option value="saturation-asc" data-food-label="sortSaturationAsc">
+                  Saturação: menor → maior
+                </option>
+              </select>
+            </label>
+
+            <label class="food-filter-field">
+              <span data-food-label="effectFilterLabel">Efeitos</span>
+              <select id="food-effect-filter">
+                <option value="all" data-food-label="effectAll">Todos</option>
+                <option value="with" data-food-label="effectWith">Com efeitos</option>
+                <option value="without" data-food-label="effectWithout">Sem efeitos</option>
+              </select>
+            </label>
+
+            <label class="food-filter-field">
+              <span data-food-label="craftFilterLabel">Fabricação</span>
+              <select id="food-craft-filter">
+                <option value="all" data-food-label="craftAll">Todos</option>
+                <option value="craftable" data-food-label="craftable">Fabricáveis</option>
+                <option value="not-craftable" data-food-label="notCraftable">
+                  Não fabricáveis
+                </option>
+              </select>
+            </label>
+
+            <button
+              class="food-filter-reset"
+              id="food-filter-reset"
+              type="button"
+              data-food-label="clearFilters"
+            >
+              Limpar filtros
             </button>
           </div>
         </div>
