@@ -52,6 +52,7 @@
     nutrition,
     saturationModifier,
     eatTicks: 32,
+    eatSpeed: "common",
     effects,
     ...options,
   });
@@ -77,7 +78,14 @@
   });
 
   const items = [
-    item("rice", "Arroz", "Rice", "assets/items/rice.png", "ingredients"),
+    item(
+      "rice",
+      "Arroz",
+      "Rice",
+      "assets/items/rice.png",
+      "ingredients",
+      food(5, 5),
+    ),
     item(
       "blt-sandwich",
       "Sanduíche BLT",
@@ -204,7 +212,14 @@
       "ingredients",
       food(6, 0.3),
     ),
-    item("peach", "Pêssego", "Peach", "assets/items/peach.png", "ingredients"),
+    item(
+      "peach",
+      "Pêssego",
+      "Peach",
+      "assets/items/peach.png",
+      "ingredients",
+      food(4, 0.3),
+    ),
     item(
       "spark-fish",
       "Peixe Spark",
@@ -381,7 +396,14 @@
         },
       },
     ),
-    item("quinoa", "Quinoa", "Quinoa", "assets/items/quinoa.png", "ingredients"),
+    item(
+      "quinoa",
+      "Quinoa",
+      "Quinoa",
+      "assets/items/quinoa.png",
+      "ingredients",
+      food(7, 0.3),
+    ),
     item(
       "lava-eel",
       "Enguia de Lava",
