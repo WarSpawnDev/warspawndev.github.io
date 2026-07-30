@@ -31,6 +31,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="preload" href="assets/emblem-cosmic.png" as="image" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="food-system.css" />
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
   <body>
@@ -216,42 +217,67 @@
             <h2 data-i18n="foods">Um banquete para cada expedição</h2>
           </div>
           <p data-i18n="foodsLead">
-            A nova área de comidas do WarSpawn reunirá ingredientes, receitas,
-            restauração de fome e efeitos especiais em fichas fáceis de consultar.
+            Explore alimentos, ingredientes, receitas interativas, restauração de
+            fome, saturação e efeitos especiais em um único catálogo.
           </p>
         </div>
-        <div class="food-grid">
-          <article class="food-card">
-            <div class="food-card-top">
-              <span class="food-index">01</span>
-              <span class="food-state" data-i18n="foodStatus">CATÁLOGO EM PREPARAÇÃO</span>
+
+        <div class="food-toolbar" role="search">
+          <label class="food-search">
+            <span class="visually-hidden">Buscar no catálogo de comidas</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-4-4"></path>
+            </svg>
+            <input
+              id="food-search"
+              type="search"
+              autocomplete="off"
+              placeholder="Buscar comida ou ingrediente..."
+              aria-label="Buscar no catálogo de comidas"
+            />
+          </label>
+          <div class="food-filters" aria-label="Filtros do catálogo de comidas">
+            <button class="active" type="button" data-food-filter="all" aria-pressed="true">
+              Todos
+            </button>
+            <button type="button" data-food-filter="meals" aria-pressed="false">
+              Pratos
+            </button>
+            <button type="button" data-food-filter="ingredients" aria-pressed="false">
+              Ingredientes
+            </button>
+            <button type="button" data-food-filter="fish" aria-pressed="false">
+              Peixes
+            </button>
+            <button type="button" data-food-filter="special" aria-pressed="false">
+              Especiais
+            </button>
+          </div>
+        </div>
+
+        <div class="food-workspace">
+          <aside class="food-browser" aria-label="Catálogo de itens">
+            <div class="food-browser-head">
+              <span id="food-count">0 itens encontrados</span>
+              <span class="pixel-quality-note">
+                <i aria-hidden="true"></i>
+                PIXEL PERFECT
+              </span>
             </div>
-            <h3 data-i18n="foodIngredients">Ingredientes</h3>
-            <p data-i18n="foodIngredientsText">
-              Descubra onde encontrar cada ingrediente e quais criaturas ou dimensões
-              fazem parte da receita.
+            <div class="food-catalog" id="food-catalog" aria-live="polite"></div>
+            <p class="food-no-results" id="food-no-results" hidden>
+              Nenhum item corresponde à busca.
             </p>
-          </article>
-          <article class="food-card">
-            <div class="food-card-top">
-              <span class="food-index">02</span>
-              <span class="food-state" data-i18n="foodStatus">CATÁLOGO EM PREPARAÇÃO</span>
-            </div>
-            <h3 data-i18n="foodRecipes">Receitas</h3>
-            <p data-i18n="foodRecipesText">
-              Consulte combinações, estações de criação e o caminho completo até cada prato.
-            </p>
-          </article>
-          <article class="food-card">
-            <div class="food-card-top">
-              <span class="food-index">03</span>
-              <span class="food-state" data-i18n="foodStatus">CATÁLOGO EM PREPARAÇÃO</span>
-            </div>
-            <h3 data-i18n="foodEffects">Efeitos</h3>
-            <p data-i18n="foodEffectsText">
-              Compare fome, saturação e bônus temporários antes de partir para a próxima batalha.
-            </p>
-          </article>
+          </aside>
+
+          <article
+            class="food-dossier"
+            id="food-detail"
+            tabindex="-1"
+            aria-live="polite"
+            aria-label="Ficha do item selecionado"
+          ></article>
         </div>
       </section>
 
@@ -322,5 +348,8 @@
       </div>
     </noscript>
     <script src="script.js" defer></script>
+    <script src="food-assets.js" defer></script>
+    <script src="food-data.js" defer></script>
+    <script src="food-system.js" defer></script>
   </body>
 </html>
