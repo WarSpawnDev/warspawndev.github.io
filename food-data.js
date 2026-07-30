@@ -137,7 +137,14 @@
       "ingredients",
       food(4, 3),
     ),
-    item("cherries", "Cerejas", "Cherries", "assets/items/cherries.png", "ingredients"),
+    item(
+      "cherries",
+      "Cerejas",
+      "Cherries",
+      "assets/items/cherries.png",
+      "ingredients",
+      food(3, 2),
+    ),
     item(
       "butter-candy",
       "Doce de Manteiga",
