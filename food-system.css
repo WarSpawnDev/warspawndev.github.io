@@ -569,6 +569,7 @@
   grid-template-columns: repeat(10, minmax(13px, 1fr));
   gap: 2px;
   max-width: 360px;
+  direction: rtl;
 }
 
 .food-meter img {
