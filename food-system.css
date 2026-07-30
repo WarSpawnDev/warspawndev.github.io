@@ -522,13 +522,11 @@
 }
 
 .food-facts {
-  display: grid;
-  grid-template-columns: minmax(170px, 0.55fr) minmax(0, 1.45fr);
-  gap: 8px;
   margin-top: 10px;
 }
 
 .food-facts span {
+  display: block;
   padding: 10px 12px;
   border: 1px solid #ffffff0d;
   color: #888179;
@@ -583,10 +581,10 @@
 .effect-chip {
   min-width: 0;
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-columns: 64px minmax(0, 1fr);
   gap: 12px;
   align-items: center;
-  min-height: 67px;
+  min-height: 78px;
   padding: 6px;
   border: 1px solid #0ba6a55c;
   background:
@@ -595,9 +593,9 @@
 }
 
 .effect-chip img {
-  width: 56px;
-  height: 48px;
-  object-fit: cover;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
   object-position: center;
   image-rendering: pixelated;
 }
@@ -1053,7 +1051,6 @@ button.craft-slot:focus-visible {
   }
 
   .nutrition-grid,
-  .food-facts,
   .effect-list {
     grid-template-columns: 1fr;
   }
