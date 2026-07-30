@@ -387,25 +387,46 @@
     );
   }
 
-  function renderMeter(points, type) {
-    const bounded = Math.max(0, Math.min(20, points));
-    const images = {
-      hunger: {
-        full: "assets/ui/hunger/hunger-full.png",
-        half: "assets/ui/hunger/hunger-half.png",
-        empty: "assets/ui/hunger/hunger-empty.png",
+  function meterFill(points, index) {
+    const remaining = points - index * 2;
+    if (remaining >= 2) return "full";
+    if (remaining > 0) return "half";
+    return "empty";
+  }
+
+  function renderMeter(nutritionPoints, saturationPoints = null) {
+    const nutrition = Math.max(0, Math.min(20, nutritionPoints));
+    const saturation =
+      saturationPoints === null
+        ? null
+        : Math.max(0, Math.min(20, saturationPoints));
+    const hungerImages = {
+      full: "assets/ui/hunger/hunger-full.png",
+      half: "assets/ui/hunger/hunger-half.png",
+      empty: "assets/ui/hunger/hunger-empty.png",
+    };
+    const saturationImages = {
+      half: {
+        full: "assets/ui/hunger/saturation-full-half.png",
+        half: "assets/ui/hunger/saturation-half-half.png",
+        empty: "assets/ui/hunger/saturation-empty-half.png",
       },
-      saturation: {
+      full: {
         full: "assets/ui/hunger/saturation-full.png",
         half: "assets/ui/hunger/saturation-half.png",
-        empty: "assets/ui/hunger/hunger-empty.png",
+        empty: "assets/ui/hunger/saturation-empty.png",
       },
     };
 
     return Array.from({ length: 10 }, (_, index) => {
-      const remaining = bounded - index * 2;
-      const fill = remaining >= 2 ? "full" : remaining > 0 ? "half" : "empty";
-      return `<img src="${assetUrl(images[type][fill])}" alt="" aria-hidden="true" loading="lazy" decoding="async">`;
+      const hungerFill = meterFill(nutrition, index);
+      const saturationFill =
+        saturation === null ? "empty" : meterFill(saturation, index);
+      const image =
+        saturationFill === "empty"
+          ? hungerImages[hungerFill]
+          : saturationImages[saturationFill][hungerFill];
+      return `<img src="${assetUrl(image)}" alt="" aria-hidden="true" loading="lazy" decoding="async">`;
     }).join("");
   }
 
@@ -608,7 +629,7 @@
             role="img"
             aria-label="${escapeHtml(`${formatNumber(hungerDrumsticks)} ${t().hungerIcons}`)}"
           >
-            ${renderMeter(data.nutrition, "hunger")}
+            ${renderMeter(data.nutrition)}
           </div>
           <small>${formatNumber(hungerDrumsticks)} ${t().hungerIcons}</small>
         </article>
@@ -622,7 +643,7 @@
             role="img"
             aria-label="${escapeHtml(`${formatNumber(saturationIcons)} ${t().saturationIcons}`)}"
           >
-            ${renderMeter(saturation, "saturation")}
+            ${renderMeter(data.nutrition, saturation)}
           </div>
           <small>
             ${formatNumber(saturationIcons)} ${t().saturationIcons}
