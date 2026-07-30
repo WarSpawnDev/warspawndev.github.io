@@ -120,7 +120,7 @@ const translations = {
     foodKicker: "04 — COMIDAS & EFEITOS",
     foods: "Um banquete para cada expedição",
     foodsLead:
-      "A nova área de comidas do WarSpawn reunirá ingredientes, receitas, restauração de fome e efeitos especiais em fichas fáceis de consultar.",
+      "Explore alimentos, ingredientes, receitas interativas, restauração de fome, saturação e efeitos especiais em um único catálogo.",
     foodStatus: "CATÁLOGO EM PREPARAÇÃO",
     foodIngredients: "Ingredientes",
     foodIngredientsText:
@@ -190,7 +190,7 @@ const translations = {
     foodKicker: "04 — FOOD & EFFECTS",
     foods: "A feast for every expedition",
     foodsLead:
-      "WarSpawn's new food area will bring ingredients, recipes, hunger restoration and special effects together in easy-to-read files.",
+      "Explore food, ingredients, interactive recipes, hunger restoration, saturation and special effects in one catalog.",
     foodStatus: "CATALOG IN PREPARATION",
     foodIngredients: "Ingredients",
     foodIngredientsText:
@@ -295,6 +295,11 @@ function updateLanguage() {
   elements.languageButton.setAttribute("aria-label", t.switchLanguage);
   elements.modalClose.setAttribute("aria-label", t.closeLabel);
   localStorage.setItem("warspawn-language", state.language);
+  document.dispatchEvent(
+    new CustomEvent("warspawn:languagechange", {
+      detail: { language: state.language },
+    }),
+  );
   renderBestiary();
   if (state.selected) populateDossier(state.selected);
 }
