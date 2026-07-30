@@ -35,11 +35,17 @@
       effectiveSaturation: "pontos (máx.)",
       saturationIcons: "ícones (máx.)",
       configuredModifier: "Multiplicador configurado",
-      calculation:
-        "Valor efetivo: mín. (2 × nutrição × multiplicador, nível de fome atual do jogador). Como esse nível varia, o medidor mostra o máximo possível.",
       consumeTime: "Tempo de consumo",
+      eatSpeedCommon: "Comum",
       ticks: "ticks",
+      second: "segundo",
       seconds: "segundos",
+      minute: "minuto",
+      minutes: "minutos",
+      hour: "hora",
+      hours: "horas",
+      day: "dia",
+      days: "dias",
       perSlice: "Valores por fatia",
       effects: "Efeitos",
       noEffects: "Este alimento não aplica efeitos temporários.",
@@ -106,11 +112,17 @@
       effectiveSaturation: "maximum points",
       saturationIcons: "maximum icons",
       configuredModifier: "Configured multiplier",
-      calculation:
-        "Effective value: min (2 × nutrition × multiplier, the player's current hunger level). Because that level varies, the meter shows the maximum possible.",
       consumeTime: "Consumption time",
+      eatSpeedCommon: "Common",
       ticks: "ticks",
+      second: "second",
       seconds: "seconds",
+      minute: "minute",
+      minutes: "minutes",
+      hour: "hour",
+      hours: "hours",
+      day: "day",
+      days: "days",
       perSlice: "Values per slice",
       effects: "Effects",
       noEffects: "This food does not apply temporary effects.",
@@ -191,6 +203,33 @@
 
   function secondsFromTicks(ticks) {
     return ticks / 20;
+  }
+
+  function formatDurationFromTicks(ticks) {
+    const seconds = secondsFromTicks(ticks);
+
+    if (seconds <= 60) {
+      const label = seconds === 1 ? t().second : t().seconds;
+      return `${formatNumber(seconds)} ${label}`;
+    }
+
+    let remainingSeconds = Math.round(seconds);
+    const units = [
+      { size: 86400, singular: t().day, plural: t().days },
+      { size: 3600, singular: t().hour, plural: t().hours },
+      { size: 60, singular: t().minute, plural: t().minutes },
+      { size: 1, singular: t().second, plural: t().seconds },
+    ];
+    const parts = [];
+
+    units.forEach((unit) => {
+      if (remainingSeconds < unit.size || parts.length >= 2) return;
+      const value = Math.floor(remainingSeconds / unit.size);
+      remainingSeconds -= value * unit.size;
+      parts.push(`${formatNumber(value, 0)} ${value === 1 ? unit.singular : unit.plural}`);
+    });
+
+    return parts.join(" ");
   }
 
   function romanNumeral(value) {
@@ -329,7 +368,7 @@
           </div>
           <p class="recipe-note">
             ${t().smeltingTime}: ${formatNumber(recipe.timeTicks)} ${t().ticks}
-            · ${formatNumber(secondsFromTicks(recipe.timeTicks))} ${t().seconds}
+            · ${formatDurationFromTicks(recipe.timeTicks)}
             · ${formatNumber(recipe.experience)} ${t().experience}
           </p>
         </article>
@@ -417,7 +456,7 @@
                   <strong>${escapeHtml(definition.name[state.language])} ${romanNumeral(effect.level)}</strong>
                   <span>
                     ${formatNumber(effect.durationTicks)} ${t().ticks}
-                    · ${formatNumber(secondsFromTicks(effect.durationTicks))} ${t().seconds}
+                    · ${formatDurationFromTicks(effect.durationTicks)}
                   </span>
                 </div>
               </article>
@@ -442,6 +481,8 @@
     const saturation = effectiveSaturation(data);
     const hungerDrumsticks = data.nutrition / 2;
     const saturationIcons = saturation / 2;
+    const eatSpeed =
+      data.eatSpeed === "common" ? ` · ${t().eatSpeedCommon}` : "";
 
     return `
       ${data.perSlice ? `<span class="per-slice-badge">${t().perSlice}</span>` : ""}
@@ -482,10 +523,7 @@
         <span>
           <b>${t().consumeTime}</b>
           ${formatNumber(data.eatTicks)} ${t().ticks}
-          · ${formatNumber(secondsFromTicks(data.eatTicks))} ${t().seconds}
-        </span>
-        <span title="${escapeHtml(t().calculation)}">
-          <b>ƒ</b> ${t().calculation}
+          · ${formatDurationFromTicks(data.eatTicks)}${eatSpeed}
         </span>
       </div>
     `;
