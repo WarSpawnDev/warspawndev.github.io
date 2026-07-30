@@ -507,6 +507,55 @@
     ),
   ];
 
+  /*
+   * Ordem da aba "Consumíveis" do mod, reconstruída da esquerda para a direita
+   * e de cima para baixo. O sal não aparece na captura da aba criativa, então
+   * permanece ao final para continuar acessível no catálogo e nas receitas.
+   */
+  const creativeOrder = [
+    "crystal-apple",
+    "love",
+    "butter-candy",
+    "lava-eel",
+    "sun-fish",
+    "fire-fish",
+    "wood-fish",
+    "rock-fish",
+    "gray-fish",
+    "pink-fish",
+    "blue-fish",
+    "green-fish",
+    "spark-fish",
+    "lettuce",
+    "tomato",
+    "radish",
+    "cherries",
+    "strawberry",
+    "peach",
+    "rice",
+    "quinoa",
+    "raw-peacock",
+    "cooked-peacock",
+    "raw-bacon",
+    "cooked-bacon",
+    "raw-crab-meat",
+    "cooked-crab-meat",
+    "raw-corn-dog",
+    "cooked-corn-dog",
+    "garden-salad",
+    "blt-sandwich",
+    "crabby-patty",
+    "corn",
+    "popcorn",
+    "buttered-popcorn",
+    "buttered-salted-popcorn",
+    "bag-of-popcorn",
+    "butter",
+    "cheese",
+    "pizza",
+    "salt",
+  ];
+
   const recipes = [
     {
       id: "blt-sandwich",
@@ -702,5 +751,6 @@
     effects: effectDefinitions,
     items,
     recipes,
+    creativeOrder,
   });
 })();
