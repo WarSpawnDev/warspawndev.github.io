@@ -9,8 +9,29 @@
   const count = document.querySelector("#food-count");
   const noResults = document.querySelector("#food-no-results");
   const filterButtons = [...document.querySelectorAll("[data-food-filter]")];
+  const categoryFilters = document.querySelector(".food-filters");
+  const sortSelect = document.querySelector("#food-sort");
+  const effectFilter = document.querySelector("#food-effect-filter");
+  const craftFilter = document.querySelector("#food-craft-filter");
+  const resetFilters = document.querySelector("#food-filter-reset");
+  const filterControls = document.querySelector("#food-filter-controls");
+  const localizedFilterLabels = [
+    ...document.querySelectorAll("[data-food-label]"),
+  ];
 
-  if (!catalog || !root || !catalogGrid || !detail || !search) return;
+  if (
+    !catalog ||
+    !root ||
+    !catalogGrid ||
+    !detail ||
+    !search ||
+    !sortSelect ||
+    !effectFilter ||
+    !craftFilter ||
+    !resetFilters
+  ) {
+    return;
+  }
 
   const text = {
     pt: {
@@ -21,6 +42,23 @@
       ingredients: "Ingredientes",
       fish: "Peixes",
       special: "Especiais",
+      categoriesLabel: "Categorias do catálogo de comidas",
+      advancedFilters: "Filtros avançados do catálogo",
+      sortLabel: "Ordenar por",
+      sortCreative: "Ordem do mod",
+      sortNutritionDesc: "Nutrição: maior → menor",
+      sortNutritionAsc: "Nutrição: menor → maior",
+      sortSaturationDesc: "Saturação: maior → menor",
+      sortSaturationAsc: "Saturação: menor → maior",
+      effectFilterLabel: "Efeitos",
+      effectAll: "Todos",
+      effectWith: "Com efeitos",
+      effectWithout: "Sem efeitos",
+      craftFilterLabel: "Fabricação",
+      craftAll: "Todos",
+      craftable: "Fabricáveis",
+      notCraftable: "Não fabricáveis",
+      clearFilters: "Limpar filtros",
       results: (value) => `${value} ${value === 1 ? "item encontrado" : "itens encontrados"}`,
       noResults: "Nenhum item corresponde à busca.",
       open: "Abrir ficha de",
@@ -98,6 +136,23 @@
       ingredients: "Ingredients",
       fish: "Fish",
       special: "Special",
+      categoriesLabel: "Food catalog categories",
+      advancedFilters: "Advanced catalog filters",
+      sortLabel: "Sort by",
+      sortCreative: "Mod order",
+      sortNutritionDesc: "Nutrition: highest to lowest",
+      sortNutritionAsc: "Nutrition: lowest to highest",
+      sortSaturationDesc: "Saturation: highest to lowest",
+      sortSaturationAsc: "Saturation: lowest to highest",
+      effectFilterLabel: "Effects",
+      effectAll: "All",
+      effectWith: "With effects",
+      effectWithout: "Without effects",
+      craftFilterLabel: "Crafting",
+      craftAll: "All",
+      craftable: "Craftable",
+      notCraftable: "Not craftable",
+      clearFilters: "Clear filters",
       results: (value) => `${value} ${value === 1 ? "item found" : "items found"}`,
       noResults: "No items match this search.",
       open: "Open file for",
@@ -169,12 +224,21 @@
   };
 
   const itemById = new Map(catalog.items.map((entry) => [entry.id, entry]));
+  const creativeRank = new Map(
+    (catalog.creativeOrder || []).map((itemId, index) => [itemId, index]),
+  );
   const publicItems = catalog.items.filter((entry) => entry.catalog);
+  const craftableItemIds = new Set(
+    catalog.recipes.map((recipe) => recipe.result.item),
+  );
   const savedItem = localStorage.getItem("warspawn-selected-food");
   const state = {
     language: document.documentElement.lang.startsWith("en") ? "en" : "pt",
     query: "",
     filter: "all",
+    sort: "creative",
+    effectFilter: "all",
+    craftFilter: "all",
     selected: itemById.has(savedItem) ? savedItem : "pizza",
   };
 
@@ -276,6 +340,53 @@
     return Math.min(calculated, 20);
   }
 
+  function creativePosition(entry) {
+    return creativeRank.get(entry.id) ?? Number.MAX_SAFE_INTEGER;
+  }
+
+  function compareCreativeOrder(left, right) {
+    const rankDifference =
+      creativePosition(left) - creativePosition(right);
+    if (rankDifference !== 0) return rankDifference;
+    return localName(left).localeCompare(localName(right), state.language);
+  }
+
+  function sortableStat(entry, stat) {
+    if (!entry.food) return null;
+    return stat === "saturation"
+      ? effectiveSaturation(entry.food)
+      : entry.food.nutrition;
+  }
+
+  function compareFoodStat(left, right, stat, direction) {
+    const leftValue = sortableStat(left, stat);
+    const rightValue = sortableStat(right, stat);
+
+    if (leftValue === null && rightValue === null) {
+      return compareCreativeOrder(left, right);
+    }
+    if (leftValue === null) return 1;
+    if (rightValue === null) return -1;
+
+    const difference =
+      direction === "desc"
+        ? rightValue - leftValue
+        : leftValue - rightValue;
+    return difference || compareCreativeOrder(left, right);
+  }
+
+  function sortCatalogItems(entries) {
+    const items = [...entries];
+    if (state.sort === "creative") {
+      return items.sort(compareCreativeOrder);
+    }
+
+    const [stat, direction] = state.sort.split("-");
+    return items.sort((left, right) =>
+      compareFoodStat(left, right, stat, direction),
+    );
+  }
+
   function renderMeter(points, type) {
     const bounded = Math.max(0, Math.min(20, points));
     const images = {
@@ -287,13 +398,13 @@
       saturation: {
         full: "assets/ui/hunger/saturation-full.png",
         half: "assets/ui/hunger/saturation-half.png",
-        empty: "assets/ui/hunger/saturation-empty.png",
+        empty: "assets/ui/hunger/hunger-empty.png",
       },
     };
 
     return Array.from({ length: 10 }, (_, index) => {
       const remaining = bounded - index * 2;
-      const fill = remaining >= 1.5 ? "full" : remaining >= 0.5 ? "half" : "empty";
+      const fill = remaining >= 2 ? "full" : remaining > 0 ? "half" : "empty";
       return `<img src="${assetUrl(images[type][fill])}" alt="" aria-hidden="true" loading="lazy" decoding="async">`;
     }).join("");
   }
@@ -567,14 +678,32 @@
 
   function renderCatalog() {
     const query = normalize(state.query.trim());
-    const visible = publicItems.filter((entry) => {
-      const matchesFilter =
-        state.filter === "all" || entry.category === state.filter;
-      const searchable = normalize(
-        `${entry.name.pt} ${entry.name.en} ${entry.id}`,
-      );
-      return matchesFilter && searchable.includes(query);
-    });
+    const visible = sortCatalogItems(
+      publicItems.filter((entry) => {
+        const matchesCategory =
+          state.filter === "all" || entry.category === state.filter;
+        const hasEffects = Boolean(entry.food?.effects?.length);
+        const matchesEffects =
+          state.effectFilter === "all" ||
+          (state.effectFilter === "with" && hasEffects) ||
+          (state.effectFilter === "without" && !hasEffects);
+        const isCraftable = craftableItemIds.has(entry.id);
+        const matchesCraft =
+          state.craftFilter === "all" ||
+          (state.craftFilter === "craftable" && isCraftable) ||
+          (state.craftFilter === "not-craftable" && !isCraftable);
+        const searchable = normalize(
+          `${entry.name.pt} ${entry.name.en} ${entry.id}`,
+        );
+
+        return (
+          matchesCategory &&
+          matchesEffects &&
+          matchesCraft &&
+          searchable.includes(query)
+        );
+      }),
+    );
 
     catalogGrid.innerHTML = visible
       .map((entry) => {
@@ -701,6 +830,16 @@
   function updateControls() {
     search.placeholder = t().search;
     search.setAttribute("aria-label", t().searchLabel);
+    if (categoryFilters) {
+      categoryFilters.setAttribute("aria-label", t().categoriesLabel);
+    }
+    if (filterControls) {
+      filterControls.setAttribute("aria-label", t().advancedFilters);
+    }
+    localizedFilterLabels.forEach((element) => {
+      const key = element.dataset.foodLabel;
+      if (t()[key]) element.textContent = t()[key];
+    });
     filterButtons.forEach((button) => {
       const key = button.dataset.foodFilter;
       button.textContent = t()[key];
@@ -708,6 +847,9 @@
       button.classList.toggle("active", isActive);
       button.setAttribute("aria-pressed", String(isActive));
     });
+    sortSelect.value = state.sort;
+    effectFilter.value = state.effectFilter;
+    craftFilter.value = state.craftFilter;
   }
 
   function selectItem(itemId, trigger) {
@@ -748,6 +890,32 @@
       updateControls();
       renderCatalog();
     });
+  });
+
+  sortSelect.addEventListener("change", (event) => {
+    state.sort = event.currentTarget.value;
+    renderCatalog();
+  });
+
+  effectFilter.addEventListener("change", (event) => {
+    state.effectFilter = event.currentTarget.value;
+    renderCatalog();
+  });
+
+  craftFilter.addEventListener("change", (event) => {
+    state.craftFilter = event.currentTarget.value;
+    renderCatalog();
+  });
+
+  resetFilters.addEventListener("click", () => {
+    state.query = "";
+    state.filter = "all";
+    state.sort = "creative";
+    state.effectFilter = "all";
+    state.craftFilter = "all";
+    search.value = "";
+    updateControls();
+    renderCatalog();
   });
 
   document.addEventListener("warspawn:languagechange", (event) => {
