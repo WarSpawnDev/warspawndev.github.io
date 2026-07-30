@@ -11,16 +11,21 @@
 }
 
 .food-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
+  display: grid;
+  gap: 12px;
   margin-bottom: 20px;
   padding: 14px;
   border: 1px solid #d5ad6230;
   background: #090909b8;
   box-shadow: 0 22px 70px #0004;
   backdrop-filter: blur(12px);
+}
+
+.food-toolbar-primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
 }
 
 .food-search {
@@ -87,6 +92,66 @@
   border-color: #d5ad626b;
   color: #fff7e9;
   background: #d5ad6213;
+}
+
+.food-filter-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr)) auto;
+  gap: 8px;
+  align-items: end;
+  padding-top: 12px;
+  border-top: 1px solid #ffffff0d;
+}
+
+.food-filter-field {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.food-filter-field > span {
+  color: #77716a;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.food-filter-field select,
+.food-filter-reset {
+  min-height: 40px;
+  border: 1px solid #ffffff18;
+  color: #c9c1b7;
+  background: #0d0d0d;
+  font-size: 10px;
+}
+
+.food-filter-field select {
+  width: 100%;
+  padding: 0 34px 0 11px;
+  cursor: pointer;
+}
+
+.food-filter-field select:hover,
+.food-filter-field select:focus {
+  border-color: #d5ad626b;
+  outline: none;
+}
+
+.food-filter-reset {
+  padding: 0 14px;
+  color: #bfae91;
+  background: #d5ad620b;
+  cursor: pointer;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.food-filter-reset:hover {
+  border-color: #d5ad626b;
+  color: #fff7e9;
+  background: #d5ad6216;
 }
 
 .food-workspace {
@@ -971,6 +1036,8 @@ button.craft-slot:focus-visible {
 
 .catalog-item:focus-visible,
 .food-filters button:focus-visible,
+.food-filter-field select:focus-visible,
+.food-filter-reset:focus-visible,
 .recipe-order-badge:focus-visible,
 .craft-item:focus-visible {
   outline: 2px solid #d5ad62;
@@ -992,9 +1059,8 @@ button.craft-slot:focus-visible {
 }
 
 @media (max-width: 980px) {
-  .food-toolbar {
-    align-items: stretch;
-    flex-direction: column;
+  .food-toolbar-primary {
+    display: grid;
   }
 
   .food-search {
@@ -1003,6 +1069,10 @@ button.craft-slot:focus-visible {
 
   .food-filters {
     justify-content: flex-start;
+  }
+
+  .food-filter-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .food-workspace {
@@ -1080,6 +1150,14 @@ button.craft-slot:focus-visible {
 
   .food-filters button:first-child {
     grid-column: span 2;
+  }
+
+  .food-filter-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .food-filter-reset {
+    width: 100%;
   }
 
   .food-browser {
