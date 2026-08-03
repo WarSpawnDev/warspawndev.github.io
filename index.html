@@ -31,6 +31,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="preload" href="assets/emblem-cosmic.png" as="image" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="dimension-system.css" />
     <link rel="stylesheet" href="food-system.css" />
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
@@ -117,74 +118,34 @@
             <h2 data-i18n="dimensions">Mundos além do portal</h2>
           </div>
           <p data-i18n="dimensionsLead">
-            Encontre o formigueiro certo, interaja com a formiga e atravesse para
-            ecossistemas inteiros.
+            WarSpawn adiciona seis novas dimensões ao jogo. Cada uma possui identidade
+            própria e uma progressão conectada aos itens, criaturas e chefes do mod.
           </p>
         </div>
-        <div class="dimension-grid">
-          <article class="dimension-card mining">
+        <button
+          class="dimension-showcase"
+          id="dimension-explorer-open"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="dimension-explorer"
+        >
+          <span class="dimension-showcase-media">
             <img
-              class="dimension-bg"
-              src="assets/dimension-mining.png"
-              alt="Dimensão da Mineração"
+              src="assets/dimensions/dimensions-overview.webp"
+              alt="As seis dimensões do WarSpawn ao redor do Overworld, Nether e The End"
               loading="lazy"
               decoding="async"
             />
-            <div class="dimension-content">
-              <img
-                class="ant"
-                src="assets/ant-red.png"
-                alt="Formiga vermelha"
-                loading="lazy"
-                decoding="async"
-              />
-              <span data-i18n="redAnt">Portal: Formiga vermelha</span>
-              <h3 data-i18n="mining">Dimensão da Mineração</h3>
-              <p data-i18n="miningText">
-                Uma inundação de minérios, dezenas de masmorras e chefes escondidos
-                por todos os lados.
-              </p>
-              <img
-                class="detail-sheet"
-                src="assets/dimension-mining-details.png"
-                alt="Detalhes da Dimensão da Mineração"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          </article>
-          <article class="dimension-card utopia">
-            <img
-              class="dimension-bg"
-              src="assets/dimension-utopia.png"
-              alt="Utopia"
-              loading="lazy"
-              decoding="async"
-            />
-            <div class="dimension-content">
-              <img
-                class="ant"
-                src="assets/ant-brown.png"
-                alt="Formiga marrom"
-                loading="lazy"
-                decoding="async"
-              />
-              <span data-i18n="brownAnt">Portal: Formiga marrom</span>
-              <h3 data-i18n="utopia">Utopia</h3>
-              <p data-i18n="utopiaText">
-                Florestas exuberantes, árvores gigantes e criaturas fantásticas em
-                um mundo de escala colossal.
-              </p>
-              <img
-                class="detail-sheet"
-                src="assets/dimension-utopia-details.png"
-                alt="Árvores de Utopia"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          </article>
-        </div>
+            <span class="dimension-showcase-sheen" aria-hidden="true"></span>
+          </span>
+          <span class="dimension-showcase-footer">
+            <span>
+              <small data-dimension-i18n="showcaseEyebrow">6 DIMENSÕES DO WARSPAWN</small>
+              <strong data-dimension-i18n="showcaseAction">Abrir mapa dimensional</strong>
+            </span>
+            <i aria-hidden="true">↗</i>
+          </span>
+        </button>
       </section>
 
       <section id="arsenal" class="section arsenal-section">
@@ -400,12 +361,88 @@
       </article>
     </div>
 
+    <div
+      class="dimension-explorer"
+      id="dimension-explorer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dimension-explorer-title"
+      hidden
+    >
+      <div class="dimension-explorer-shell">
+        <button
+          class="dimension-explorer-close"
+          id="dimension-explorer-close"
+          type="button"
+          aria-label="Fechar mapa dimensional"
+        >
+          ×
+        </button>
+
+        <section class="dimension-wheel-view" id="dimension-wheel-view">
+          <header class="dimension-explorer-head">
+            <span class="kicker" data-dimension-i18n="explorerKicker">
+              REDE DIMENSIONAL WARSPAWN
+            </span>
+            <h2 id="dimension-explorer-title" data-dimension-i18n="explorerTitle">
+              Escolha um destino
+            </h2>
+            <p data-dimension-i18n="explorerHelp">
+              Mova o cursor pelo mapa e selecione a dimensão que deseja explorar.
+            </p>
+          </header>
+
+          <div class="dimension-wheel-frame" id="dimension-wheel-frame">
+            <div class="dimension-wheel-camera" id="dimension-wheel-camera">
+              <img
+                class="dimension-wheel-base"
+                id="dimension-wheel-base"
+                src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                alt="Mapa octogonal das dimensões do WarSpawn"
+                decoding="async"
+              />
+              <div class="dimension-sector-layer" id="dimension-sector-layer"></div>
+            </div>
+          </div>
+
+          <p class="dimension-wheel-status" id="dimension-wheel-status" aria-live="polite">
+            Passe o cursor sobre um destino
+          </p>
+        </section>
+
+        <section class="dimension-detail-view" id="dimension-detail-view" hidden>
+          <header class="dimension-detail-head">
+            <button class="dimension-back" id="dimension-detail-back" type="button">
+              <span aria-hidden="true">←</span>
+              <span data-dimension-i18n="backToMap">Voltar ao mapa</span>
+            </button>
+            <div>
+              <span class="kicker" id="dimension-detail-kind">DIMENSÃO WARSPAWN</span>
+              <h2 id="dimension-detail-name"></h2>
+            </div>
+          </header>
+          <figure class="dimension-detail-art" id="dimension-detail-art">
+            <img
+              id="dimension-detail-image"
+              src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+              alt=""
+              decoding="async"
+            />
+            <span class="dimension-image-loader" aria-hidden="true"></span>
+          </figure>
+          <div id="dimension-linked-content" hidden></div>
+        </section>
+      </div>
+    </div>
+
     <noscript>
       <div class="noscript">
         Este site precisa de JavaScript para abrir os dossiês e trocar o idioma.
       </div>
     </noscript>
     <script src="script.js" defer></script>
+    <script src="dimension-data.js" defer></script>
+    <script src="dimension-system.js" defer></script>
     <script src="food-assets.js" defer></script>
     <script src="food-data.js" defer></script>
     <script src="food-system.js" defer></script>

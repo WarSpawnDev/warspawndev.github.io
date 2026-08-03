@@ -477,91 +477,6 @@ h1 {
   color: var(--muted);
 }
 
-.dimension-section {
-  background: #08090b;
-}
-
-.dimension-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-.dimension-card {
-  min-height: 680px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid #ffffff14;
-}
-
-.dimension-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: 1s;
-}
-
-.dimension-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, #09090a 0%, #09090ade 30%, transparent 72%);
-}
-
-.dimension-card:hover .dimension-bg {
-  transform: scale(1.035);
-}
-
-.dimension-content {
-  position: absolute;
-  z-index: 2;
-  inset: auto 34px 30px;
-}
-
-.dimension-content .ant {
-  width: 86px;
-  height: 58px;
-  object-fit: contain;
-  object-position: left center;
-  filter: drop-shadow(0 6px 8px #000);
-  float: left;
-  margin: -5px 10px 0 0;
-}
-
-.dimension-content > span {
-  color: var(--gold);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-}
-
-.dimension-content h3 {
-  font-size: 48px;
-  margin: 8px 0 10px;
-}
-
-.dimension-content p {
-  color: #c6c1b9;
-  line-height: 1.6;
-  max-width: 520px;
-  margin: 0;
-  padding-right: 125px;
-}
-
-.detail-sheet {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 118px;
-  height: 156px;
-  object-fit: cover;
-  border: 1px solid #d1ab6855;
-  transform: rotate(2deg);
-  box-shadow: 0 10px 30px #000;
-}
-
 .arsenal-section {
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
@@ -990,30 +905,6 @@ footer a {
   .mob-meta small {
     display: block;
     margin-top: 5px;
-  }
-
-  .dimension-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .dimension-card {
-    min-height: 590px;
-  }
-
-  .dimension-content {
-    inset: auto 22px 22px;
-  }
-
-  .dimension-content h3 {
-    font-size: 38px;
-  }
-
-  .dimension-content p {
-    padding-right: 0;
-  }
-
-  .detail-sheet {
-    display: none;
   }
 
   .arsenal-section {

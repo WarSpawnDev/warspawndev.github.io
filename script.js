@@ -104,7 +104,7 @@ const translations = {
     dimensionsKicker: "02 — GUIA DE EXPEDIÇÃO",
     dimensions: "Mundos além do portal",
     dimensionsLead:
-      "Encontre o formigueiro certo, interaja com a formiga e atravesse para ecossistemas inteiros.",
+      "WarSpawn adiciona seis novas dimensões ao jogo. Cada uma possui identidade própria e uma progressão conectada aos itens, criaturas e chefes do mod.",
     redAnt: "Portal: Formiga vermelha",
     brownAnt: "Portal: Formiga marrom",
     mining: "Dimensão da Mineração",
@@ -174,7 +174,7 @@ const translations = {
     dimensionsKicker: "02 — EXPEDITION GUIDE",
     dimensions: "Worlds beyond the portal",
     dimensionsLead:
-      "Find the right nest, interact with its ant and cross into complete ecosystems.",
+      "WarSpawn adds six new dimensions to the game. Each has its own identity and progression connected to the mod's items, creatures and bosses.",
     redAnt: "Portal: Red Ant",
     brownAnt: "Portal: Brown Ant",
     mining: "Mining Dimension",
