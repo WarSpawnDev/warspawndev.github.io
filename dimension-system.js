@@ -347,6 +347,19 @@
     updateLanguage();
   });
 
+  document.addEventListener("warspawn:uihighlightchange", (event) => {
+    const highlightedSector = event.detail?.element?.closest?.(".dimension-sector");
+    if (highlightedSector) {
+      setStatus(registry.bySlug[highlightedSector.dataset.dimension]);
+      return;
+    }
+
+    const previousSector = event.detail?.previous?.closest?.(".dimension-sector");
+    if (!previousSector) return;
+    const focused = document.activeElement?.closest?.(".dimension-sector");
+    setStatus(focused ? registry.bySlug[focused.dataset.dimension] : null);
+  });
+
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) => {

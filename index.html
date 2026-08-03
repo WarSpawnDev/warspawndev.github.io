@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="dimension-system.css" />
     <link rel="stylesheet" href="food-system.css" />
+    <link rel="stylesheet" href="ui-sound-system.css" />
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
   <body>
@@ -49,9 +50,25 @@
         <a href="#comidas" data-i18n="navFood">Comidas</a>
         <a href="#galeria" data-i18n="navGallery">Galeria</a>
       </nav>
-      <button class="lang" id="language-toggle" type="button" aria-label="Mudar idioma para inglês">
-        EN
-      </button>
+      <div class="header-controls">
+        <button
+          class="sound-toggle"
+          id="sound-toggle"
+          type="button"
+          aria-label="Desativar sons da interface"
+          aria-pressed="true"
+          data-sound-state="on"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="sound-speaker" d="M4 10h4l5-4v12l-5-4H4z"></path>
+            <path class="sound-waves" d="M16 9c1.2 1.7 1.2 4.3 0 6M19 6.5c2.8 3 2.8 8 0 11"></path>
+            <path class="sound-slash" d="M5 5l14 14"></path>
+          </svg>
+        </button>
+        <button class="lang" id="language-toggle" type="button" aria-label="Mudar idioma para inglês">
+          EN
+        </button>
+      </div>
     </header>
 
     <main>
@@ -446,5 +463,6 @@
     <script src="food-assets.js" defer></script>
     <script src="food-data.js" defer></script>
     <script src="food-system.js" defer></script>
+    <script src="ui-sound-system.js" defer></script>
   </body>
 </html>
