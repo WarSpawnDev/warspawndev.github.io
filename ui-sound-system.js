@@ -276,7 +276,10 @@
   }
 
   function touchByIdentifier(touchList, identifier) {
-    return [...touchList].find((touch) => touch.identifier === identifier) || null;
+    for (let index = 0; index < touchList.length; index += 1) {
+      if (touchList[index].identifier === identifier) return touchList[index];
+    }
+    return null;
   }
 
   function endTouchDrag(event) {
@@ -313,7 +316,10 @@
   });
 
   document.addEventListener("pointerout", (event) => {
-    if (!state.hovered || state.hovered.contains(event.relatedTarget)) return;
+    if (
+      !state.hovered ||
+      (event.relatedTarget instanceof Node && state.hovered.contains(event.relatedTarget))
+    ) return;
     state.hovered = null;
   });
 
