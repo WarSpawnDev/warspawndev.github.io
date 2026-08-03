@@ -1,11 +1,143 @@
 "use strict";
 
 (function initializeUiSoundSystem() {
-  const soundToggle = document.querySelector("#sound-toggle");
-  if (!soundToggle) return;
+  const elements = {
+    audioControl: document.querySelector("#audio-control"),
+    soundToggle: document.querySelector("#sound-toggle"),
+    menuToggle: document.querySelector("#sound-menu-toggle"),
+    menu: document.querySelector("#sound-profile-menu"),
+    menuKicker: document.querySelector("#sound-profile-kicker"),
+    menuTitle: document.querySelector("#sound-profile-title"),
+    masterToggle: document.querySelector("#audio-master-toggle"),
+    masterLabel: document.querySelector("#audio-master-label"),
+    profileList: document.querySelector("#sound-profile-list"),
+    profileHint: document.querySelector("#sound-profile-hint"),
+  };
+
+  if (Object.values(elements).some((element) => !element)) return;
+
+  const profileOrder = ["velvet", "orbit", "crystal", "neon", "pulse"];
+  const soundProfiles = {
+    velvet: {
+      accent: "#dac8ff",
+      name: { pt: "Veludo", en: "Velvet" },
+      description: {
+        pt: "Suave, quente e discreto",
+        en: "Soft, warm and discreet",
+      },
+      synth: {
+        base: 310,
+        primaryType: "sine",
+        overtoneType: "sine",
+        harmonic: 1.5,
+        harmonicMix: 0.055,
+        detune: 3,
+        glide: 1.018,
+        duration: 0.18,
+        attack: 0.024,
+        volume: 0.12,
+        send: 0.055,
+        interval: 1.22,
+        spacing: 0.058,
+      },
+    },
+    orbit: {
+      accent: "#72deff",
+      name: { pt: "Órbita", en: "Orbit" },
+      description: {
+        pt: "Luminoso, estilo console clássico",
+        en: "Luminous, classic console style",
+      },
+      synth: {
+        base: 425,
+        primaryType: "sine",
+        overtoneType: "triangle",
+        harmonic: 2,
+        harmonicMix: 0.11,
+        detune: 4,
+        glide: 1.045,
+        duration: 0.145,
+        attack: 0.015,
+        volume: 0.125,
+        send: 0.14,
+        interval: 1.5,
+        spacing: 0.046,
+      },
+    },
+    crystal: {
+      accent: "#b4f4ff",
+      name: { pt: "Cristal", en: "Crystal" },
+      description: {
+        pt: "Aéreo, estilo console moderno",
+        en: "Airy, modern console style",
+      },
+      synth: {
+        base: 545,
+        primaryType: "sine",
+        overtoneType: "sine",
+        harmonic: 2.01,
+        harmonicMix: 0.13,
+        detune: 6,
+        glide: 1.025,
+        duration: 0.19,
+        attack: 0.011,
+        volume: 0.105,
+        send: 0.22,
+        interval: 1.335,
+        spacing: 0.064,
+      },
+    },
+    neon: {
+      accent: "#ff66cf",
+      name: { pt: "Neon", en: "Neon" },
+      description: {
+        pt: "Futurista, amplo e envolvente",
+        en: "Futuristic, wide and immersive",
+      },
+      synth: {
+        base: 365,
+        primaryType: "sine",
+        overtoneType: "triangle",
+        harmonic: 2,
+        harmonicMix: 0.065,
+        detune: 8,
+        glide: 1.095,
+        duration: 0.155,
+        attack: 0.014,
+        volume: 0.115,
+        send: 0.17,
+        interval: 1.414,
+        spacing: 0.048,
+      },
+    },
+    pulse: {
+      accent: "#ffd16a",
+      name: { pt: "Pulso", en: "Pulse" },
+      description: {
+        pt: "Retrô, curto e bem definido",
+        en: "Retro, short and well defined",
+      },
+      synth: {
+        base: 255,
+        primaryType: "triangle",
+        overtoneType: "sine",
+        harmonic: 2,
+        harmonicMix: 0.075,
+        detune: 2,
+        glide: 1.01,
+        duration: 0.09,
+        attack: 0.008,
+        volume: 0.12,
+        send: 0.035,
+        interval: 1.25,
+        spacing: 0.034,
+      },
+    },
+  };
 
   const selectableSelector = [
     "[data-ui-sound]",
+    "[data-audio-profile]",
     ".dimension-sector",
     ".dimension-showcase",
     ".mob-card",
@@ -42,10 +174,12 @@
   const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
   const state = {
     enabled: readSoundPreference(),
+    profile: readProfilePreference(),
     context: null,
     audio: null,
     hovered: null,
     lastPlayedAt: 0,
+    menuOpen: false,
     touch: null,
     suppressClickUntil: 0,
     suppressedElements: [],
@@ -54,14 +188,28 @@
 
   const labels = {
     pt: {
-      on: "Desativar sons da interface",
-      off: "Ativar sons da interface",
+      on: (profile) => `Desativar sons da interface — perfil ${profile}`,
+      off: (profile) => `Ativar sons da interface — perfil ${profile}`,
       unsupported: "Sons da interface não são suportados neste navegador",
+      chooseProfile: (profile) => `Escolher perfil de áudio. Atual: ${profile}`,
+      kicker: "ÁUDIO DA INTERFACE",
+      title: "Perfil sonoro",
+      profilesLabel: "Perfis de áudio",
+      masterOn: "Ligado",
+      masterOff: "Desligado",
+      hint: "Passe o cursor ou selecione um perfil para ouvi-lo.",
     },
     en: {
-      on: "Turn interface sounds off",
-      off: "Turn interface sounds on",
+      on: (profile) => `Turn interface sounds off — ${profile} profile`,
+      off: (profile) => `Turn interface sounds on — ${profile} profile`,
       unsupported: "Interface sounds are not supported by this browser",
+      chooseProfile: (profile) => `Choose audio profile. Current: ${profile}`,
+      kicker: "INTERFACE AUDIO",
+      title: "Sound profile",
+      profilesLabel: "Audio profiles",
+      masterOn: "On",
+      masterOff: "Off",
+      hint: "Hover over or select a profile to hear it.",
     },
   };
 
@@ -73,45 +221,142 @@
     }
   }
 
-  function saveSoundPreference() {
+  function readProfilePreference() {
+    try {
+      const saved = localStorage.getItem("warspawn-ui-sound-profile");
+      return profileOrder.includes(saved) ? saved : "velvet";
+    } catch {
+      return "velvet";
+    }
+  }
+
+  function savePreferences() {
     try {
       localStorage.setItem("warspawn-ui-sound", state.enabled ? "on" : "off");
+      localStorage.setItem("warspawn-ui-sound-profile", state.profile);
     } catch {
       // The interface keeps working when storage is unavailable.
     }
   }
 
-  function updateToggle() {
+  function profileName(profileId = state.profile) {
+    return soundProfiles[profileId].name[state.language];
+  }
+
+  function renderProfiles() {
+    const fragment = document.createDocumentFragment();
+    profileOrder.forEach((profileId) => {
+      const profile = soundProfiles[profileId];
+      const button = document.createElement("button");
+      const orb = document.createElement("span");
+      const copy = document.createElement("span");
+      const name = document.createElement("strong");
+      const description = document.createElement("small");
+      const check = document.createElement("span");
+
+      button.type = "button";
+      button.className = "sound-profile-option";
+      button.dataset.audioProfile = profileId;
+      button.setAttribute("role", "radio");
+      button.style.setProperty("--profile-accent", profile.accent);
+      button.setAttribute(
+        "aria-label",
+        `${profile.name[state.language]} — ${profile.description[state.language]}`,
+      );
+
+      orb.className = "sound-profile-orb";
+      orb.setAttribute("aria-hidden", "true");
+      copy.className = "sound-profile-copy";
+      name.textContent = profile.name[state.language];
+      description.textContent = profile.description[state.language];
+      check.className = "sound-profile-check";
+      check.textContent = "✓";
+      check.setAttribute("aria-hidden", "true");
+
+      copy.append(name, description);
+      button.append(orb, copy, check);
+      button.addEventListener("click", () => void selectProfile(profileId, button));
+      fragment.append(button);
+    });
+    elements.profileList.replaceChildren(fragment);
+    updateProfileSelection();
+  }
+
+  function updateProfileSelection() {
+    elements.profileList.querySelectorAll("[data-audio-profile]").forEach((button) => {
+      const selected = button.dataset.audioProfile === state.profile;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-checked", String(selected));
+    });
+  }
+
+  function updateUi() {
     const copy = labels[state.language];
     const supported = Boolean(AudioContextConstructor);
-    soundToggle.disabled = !supported;
-    soundToggle.dataset.soundState = state.enabled && supported ? "on" : "off";
-    soundToggle.setAttribute("aria-pressed", String(state.enabled && supported));
-    soundToggle.setAttribute(
+    const activeProfile = soundProfiles[state.profile];
+    const activeName = profileName();
+
+    elements.audioControl.style.setProperty("--sound-profile-accent", activeProfile.accent);
+    elements.soundToggle.disabled = !supported;
+    elements.menuToggle.disabled = !supported;
+    elements.masterToggle.disabled = !supported;
+    elements.soundToggle.dataset.soundState = state.enabled && supported ? "on" : "off";
+    elements.soundToggle.dataset.soundProfile = state.profile;
+    elements.soundToggle.setAttribute("aria-pressed", String(state.enabled && supported));
+    elements.soundToggle.setAttribute(
       "aria-label",
-      supported ? (state.enabled ? copy.on : copy.off) : copy.unsupported,
+      supported ? (state.enabled ? copy.on(activeName) : copy.off(activeName)) : copy.unsupported,
     );
-    soundToggle.title = soundToggle.getAttribute("aria-label");
+    elements.soundToggle.title = elements.soundToggle.getAttribute("aria-label");
+
+    elements.menuToggle.setAttribute("aria-expanded", String(state.menuOpen));
+    elements.menuToggle.setAttribute(
+      "aria-label",
+      supported ? copy.chooseProfile(activeName) : copy.unsupported,
+    );
+    elements.menuToggle.title = elements.menuToggle.getAttribute("aria-label");
+    elements.masterToggle.setAttribute("aria-pressed", String(state.enabled && supported));
+    elements.masterLabel.textContent = state.enabled && supported ? copy.masterOn : copy.masterOff;
+    elements.menuKicker.textContent = copy.kicker;
+    elements.menuTitle.textContent = copy.title;
+    elements.profileList.setAttribute("aria-label", copy.profilesLabel);
+    elements.profileHint.textContent = supported ? copy.hint : copy.unsupported;
+    elements.profileList.querySelectorAll("button").forEach((button) => {
+      button.disabled = !supported;
+    });
+    updateProfileSelection();
+  }
+
+  function setMenuOpen(open, restoreFocus = false) {
+    state.menuOpen = Boolean(open);
+    elements.menu.hidden = !state.menuOpen;
+    elements.menuToggle.setAttribute("aria-expanded", String(state.menuOpen));
+    if (!state.menuOpen && restoreFocus) elements.menuToggle.focus();
   }
 
   function buildAudioGraph(context) {
     const output = context.createGain();
     const compressor = context.createDynamicsCompressor();
-    const delay = context.createDelay(0.3);
+    const delay = context.createDelay(0.35);
     const feedback = context.createGain();
     const wet = context.createGain();
+    const filter = context.createBiquadFilter();
 
     output.gain.value = 0.16;
-    compressor.threshold.value = -22;
-    compressor.knee.value = 18;
-    compressor.ratio.value = 5;
-    compressor.attack.value = 0.003;
-    compressor.release.value = 0.16;
-    delay.delayTime.value = 0.082;
-    feedback.gain.value = 0.13;
-    wet.gain.value = 0.2;
+    filter.type = "lowpass";
+    filter.frequency.value = 4300;
+    filter.Q.value = 0.35;
+    compressor.threshold.value = -24;
+    compressor.knee.value = 22;
+    compressor.ratio.value = 4;
+    compressor.attack.value = 0.006;
+    compressor.release.value = 0.2;
+    delay.delayTime.value = 0.092;
+    feedback.gain.value = 0.075;
+    wet.gain.value = 0.14;
 
-    output.connect(compressor);
+    output.connect(filter);
+    filter.connect(compressor);
     compressor.connect(context.destination);
     delay.connect(wet);
     wet.connect(output);
@@ -143,51 +388,57 @@
     return state.context.state === "running";
   }
 
-  function voice({
-    frequency,
-    harmonic = 1.5,
-    glide = 1.04,
-    duration = 0.09,
-    volume = 0.17,
-    offset = 0,
-  }) {
+  function voice(specification, profile) {
     const context = state.context;
     if (!state.enabled || !context || context.state !== "running" || !state.audio) return;
 
-    const start = context.currentTime + 0.004 + offset;
+    const frequency = specification.frequency;
+    const glide = specification.glide ?? profile.glide;
+    const duration = specification.duration ?? profile.duration;
+    const volume = specification.volume ?? profile.volume;
+    const attack = Math.min(specification.attack ?? profile.attack, duration * 0.42);
+    const offset = specification.offset || 0;
+    const harmonic = specification.harmonic ?? profile.harmonic;
+    const harmonicMix = specification.harmonicMix ?? profile.harmonicMix;
+    const sendAmount = specification.send ?? profile.send;
+    const start = context.currentTime + 0.005 + offset;
     const end = start + duration;
     const envelope = context.createGain();
     const primary = context.createOscillator();
     const overtone = context.createOscillator();
     const overtoneGain = context.createGain();
+    const send = context.createGain();
 
-    primary.type = "triangle";
-    overtone.type = "sine";
+    primary.type = specification.primaryType || profile.primaryType;
+    overtone.type = specification.overtoneType || profile.overtoneType;
     primary.frequency.setValueAtTime(frequency, start);
     primary.frequency.exponentialRampToValueAtTime(frequency * glide, end);
     overtone.frequency.setValueAtTime(frequency * harmonic, start);
     overtone.frequency.exponentialRampToValueAtTime(frequency * harmonic * glide, end);
-    overtone.detune.value = 5;
-    overtoneGain.gain.value = 0.34;
+    overtone.detune.value = specification.detune ?? profile.detune;
+    overtoneGain.gain.value = harmonicMix;
+    send.gain.value = sendAmount;
 
     envelope.gain.setValueAtTime(0.0001, start);
-    envelope.gain.exponentialRampToValueAtTime(volume, start + Math.min(0.012, duration * 0.24));
+    envelope.gain.exponentialRampToValueAtTime(volume, start + attack);
     envelope.gain.exponentialRampToValueAtTime(0.0001, end);
 
     primary.connect(envelope);
     overtone.connect(overtoneGain);
     overtoneGain.connect(envelope);
     envelope.connect(state.audio.output);
-    envelope.connect(state.audio.delay);
+    envelope.connect(send);
+    send.connect(state.audio.delay);
 
     primary.start(start);
     overtone.start(start);
-    primary.stop(end + 0.01);
-    overtone.stop(end + 0.01);
+    primary.stop(end + 0.012);
+    overtone.stop(end + 0.012);
     primary.addEventListener("ended", () => {
       primary.disconnect();
       overtone.disconnect();
       overtoneGain.disconnect();
+      send.disconnect();
       envelope.disconnect();
     }, { once: true });
   }
@@ -201,7 +452,78 @@
       "warspawn";
     let total = 0;
     for (const character of identity.trim()) total = (total + character.codePointAt(0)) % 7;
-    return total * 13;
+    return total * 7;
+  }
+
+  function buildPattern(profileId, kind, variation) {
+    const profile = soundProfiles[profileId].synth;
+    const base = profile.base + variation;
+    const compact = (overrides) => ({ ...overrides });
+
+    if (kind === "dimension") {
+      return [
+        compact({ frequency: base + 18, duration: profile.duration * 0.92, volume: profile.volume * 0.78 }),
+        compact({
+          frequency: (base + 18) * profile.interval,
+          duration: profile.duration * 0.72,
+          volume: profile.volume * 0.34,
+          offset: profile.spacing,
+          send: profile.send * 1.12,
+        }),
+      ];
+    }
+    if (kind === "item") {
+      return [compact({
+        frequency: base,
+        duration: profile.duration * 0.66,
+        volume: profile.volume * 0.7,
+        send: profile.send * 0.7,
+      })];
+    }
+    if (kind === "media") {
+      return [compact({
+        frequency: base * 0.84,
+        duration: profile.duration * 0.78,
+        volume: profile.volume * 0.72,
+      })];
+    }
+    if (kind === "confirm") {
+      return [
+        compact({ frequency: base + 48, duration: profile.duration * 0.78, volume: profile.volume * 0.82 }),
+        compact({
+          frequency: (base + 48) * profile.interval,
+          duration: profile.duration * 0.9,
+          volume: profile.volume * 0.48,
+          offset: profile.spacing,
+        }),
+      ];
+    }
+    if (kind === "back") {
+      return [compact({
+        frequency: base + 72,
+        duration: profile.duration * 0.82,
+        volume: profile.volume * 0.74,
+        glide: 0.76,
+      })];
+    }
+    if (kind === "preview") {
+      return [
+        compact({ frequency: base, duration: profile.duration, volume: profile.volume * 0.92 }),
+        compact({
+          frequency: base * profile.interval,
+          duration: profile.duration * 0.92,
+          volume: profile.volume * 0.5,
+          offset: profile.spacing,
+          send: profile.send * 1.16,
+        }),
+      ];
+    }
+    return [compact({
+      frequency: base + 64,
+      duration: profile.duration * 0.52,
+      volume: profile.volume * 0.58,
+      send: profile.send * 0.6,
+    })];
   }
 
   function soundKind(element) {
@@ -215,40 +537,44 @@
     return "navigation";
   }
 
-  function playSound(kind, element = null, force = false) {
+  function playSound(kind, element = null, force = false, profileId = state.profile) {
     if (!state.enabled || !state.context || state.context.state !== "running") return;
     const now = performance.now();
-    if (!force && now - state.lastPlayedAt < 48) return;
+    if (!force && now - state.lastPlayedAt < 55) return;
     state.lastPlayedAt = now;
 
+    const resolvedProfile = soundProfiles[profileId] ? profileId : "velvet";
     const variation = pitchVariation(element);
-    if (kind === "dimension") {
-      voice({ frequency: 430 + variation, harmonic: 2.01, duration: 0.13, volume: 0.17, glide: 1.06 });
-      voice({ frequency: 650 + variation, harmonic: 1.5, duration: 0.11, volume: 0.08, offset: 0.018 });
-      return;
-    }
-    if (kind === "item") {
-      voice({ frequency: 350 + variation, harmonic: 1.52, duration: 0.085, volume: 0.16, glide: 1.08 });
-      return;
-    }
-    if (kind === "media") {
-      voice({ frequency: 285 + variation, harmonic: 2, duration: 0.1, volume: 0.13, glide: 1.04 });
-      return;
-    }
-    if (kind === "confirm") {
-      voice({ frequency: 510, harmonic: 1.5, duration: 0.105, volume: 0.17, glide: 1.08 });
-      voice({ frequency: 735, harmonic: 2, duration: 0.13, volume: 0.12, offset: 0.052, glide: 1.04 });
-      return;
-    }
-    if (kind === "back") {
-      voice({ frequency: 610, harmonic: 1.5, duration: 0.14, volume: 0.15, glide: 0.64 });
-      return;
-    }
-    voice({ frequency: 540 + variation, harmonic: 1.5, duration: 0.07, volume: 0.13, glide: 1.06 });
+    buildPattern(resolvedProfile, kind, variation).forEach((specification) => {
+      voice(specification, soundProfiles[resolvedProfile].synth);
+    });
   }
 
   function closestSelectable(node) {
     return node instanceof Element ? node.closest(selectableSelector) : null;
+  }
+
+  async function selectProfile(profileId, trigger) {
+    if (!soundProfiles[profileId] || !AudioContextConstructor) return;
+    state.profile = profileId;
+    state.enabled = true;
+    savePreferences();
+    updateUi();
+    updateProfileSelection();
+    if (await unlockAudio()) playSound("confirm", trigger, true, profileId);
+  }
+
+  async function toggleSound() {
+    if (!AudioContextConstructor) return;
+    if (state.enabled) {
+      playSound("back", elements.soundToggle, true);
+      state.enabled = false;
+    } else {
+      state.enabled = true;
+      if (await unlockAudio()) playSound("confirm", elements.soundToggle, true);
+    }
+    savePreferences();
+    updateUi();
   }
 
   function applyTouchHighlight(element) {
@@ -265,7 +591,10 @@
       if (state.touch) state.touch.lastHighlighted = element;
       if (element.matches(".dimension-sector")) element.classList.add("is-active");
       else element.classList.add("is-touch-highlighted");
-      playSound(soundKind(element), element);
+
+      const previewProfile = element.dataset.audioProfile;
+      if (previewProfile) playSound("preview", element, true, previewProfile);
+      else playSound(soundKind(element), element);
     }
 
     document.dispatchEvent(
@@ -299,12 +628,23 @@
     }
   }
 
-  document.addEventListener("pointerdown", () => {
+  document.addEventListener("pointerdown", (event) => {
     if (state.enabled) void unlockAudio();
+    if (
+      state.menuOpen &&
+      event.target instanceof Node &&
+      !elements.audioControl.contains(event.target)
+    ) {
+      setMenuOpen(false);
+    }
   }, { capture: true, passive: true });
 
-  document.addEventListener("keydown", () => {
+  document.addEventListener("keydown", (event) => {
     if (state.enabled) void unlockAudio();
+    if (event.key === "Escape" && state.menuOpen) {
+      event.preventDefault();
+      setMenuOpen(false, true);
+    }
   }, { capture: true });
 
   document.addEventListener("pointerover", (event) => {
@@ -312,7 +652,10 @@
     const element = closestSelectable(event.target);
     if (!element || element === state.hovered) return;
     state.hovered = element;
-    playSound(soundKind(element), element);
+
+    const previewProfile = element.dataset.audioProfile;
+    if (previewProfile) playSound("preview", element, true, previewProfile);
+    else playSound(soundKind(element), element);
   });
 
   document.addEventListener("pointerout", (event) => {
@@ -326,7 +669,10 @@
   document.addEventListener("focusin", (event) => {
     const element = closestSelectable(event.target);
     if (!element || element === state.hovered) return;
-    playSound(soundKind(element), element);
+
+    const previewProfile = element.dataset.audioProfile;
+    if (previewProfile) playSound("preview", element, true, previewProfile);
+    else playSound(soundKind(element), element);
   });
 
   document.addEventListener("touchstart", (event) => {
@@ -390,7 +736,13 @@
       state.suppressClickUntil = 0;
       state.suppressedElements = [];
     }
-    if (!element || element === soundToggle) return;
+    if (
+      !element ||
+      element === elements.soundToggle ||
+      element === elements.menuToggle ||
+      element === elements.masterToggle ||
+      element.matches("[data-audio-profile]")
+    ) return;
 
     const isBackAction = element.matches(
       ".dimension-back, .dimension-explorer-close, .modal-close, #modal-close-button",
@@ -402,23 +754,29 @@
     if (event.target instanceof HTMLSelectElement) playSound("confirm", event.target, true);
   });
 
-  soundToggle.addEventListener("click", async () => {
-    if (!AudioContextConstructor) return;
-    if (state.enabled) {
-      playSound("back", soundToggle, true);
-      state.enabled = false;
-    } else {
-      state.enabled = true;
-      if (await unlockAudio()) playSound("confirm", soundToggle, true);
-    }
-    saveSoundPreference();
-    updateToggle();
+  elements.profileList.addEventListener("keydown", (event) => {
+    if (!["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft"].includes(event.key)) return;
+    const buttons = [...elements.profileList.querySelectorAll("button:not([disabled])")];
+    if (!buttons.length) return;
+    event.preventDefault();
+    const currentIndex = Math.max(0, buttons.indexOf(document.activeElement));
+    const direction = ["ArrowDown", "ArrowRight"].includes(event.key) ? 1 : -1;
+    buttons[(currentIndex + direction + buttons.length) % buttons.length].focus();
+  });
+
+  elements.soundToggle.addEventListener("click", () => void toggleSound());
+  elements.masterToggle.addEventListener("click", () => void toggleSound());
+  elements.menuToggle.addEventListener("click", () => {
+    setMenuOpen(!state.menuOpen);
+    playSound("navigation", elements.menuToggle, true);
   });
 
   document.addEventListener("warspawn:languagechange", (event) => {
     state.language = event.detail?.language === "en" ? "en" : "pt";
-    updateToggle();
+    renderProfiles();
+    updateUi();
   });
 
-  updateToggle();
+  renderProfiles();
+  updateUi();
 })();
