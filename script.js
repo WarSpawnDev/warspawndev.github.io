@@ -86,6 +86,7 @@ const translations = {
     navArsenal: "Arsenal",
     navFood: "Comidas",
     navGallery: "Galeria",
+    navSocial: "Redes sociais",
     eyebrow: "O LEGADO RENASCE",
     title: "Uma nova era de criaturas impossíveis.",
     intro:
@@ -137,6 +138,26 @@ const translations = {
     galleryWeapons: "Armas destruidoras",
     galleryStaff: "Cajado de Raios",
     galleryLegacy: "Antigo e novo",
+    socialKicker: "06 — COMUNIDADE",
+    socialTitle: "Acompanhe o despertar do WarSpawn.",
+    socialLead:
+      "Novidades, bastidores, vídeos e conversas da comunidade em todos os canais oficiais. Escolha sua rede e entre no universo WarSpawn.",
+    socialOpen: "Visitar perfil",
+    socialJoin: "Entrar no servidor",
+    socialDiscordCommunity: "Comunidade WarSpawn",
+    socialQrKicker: "ACESSO RÁPIDO",
+    socialQrTitle: "Leve o Instagram para o celular.",
+    socialQrText:
+      "Escaneie o código ou toque nele para abrir o perfil oficial do WarSpawn.",
+    openInstagram: "Abrir o perfil do WarSpawn no Instagram",
+    openYouTube: "Abrir o canal do WarSpawn no YouTube",
+    openTikTok: "Abrir o perfil do WarSpawn no TikTok",
+    openReddit: "Abrir a comunidade do WarSpawn no Reddit",
+    openDiscord: "Entrar no servidor do WarSpawn no Discord",
+    openFacebook: "Abrir a página do WarSpawn no Facebook",
+    openX: "Abrir o perfil do WarSpawn no X",
+    openInstagramQr: "Abrir o Instagram do WarSpawn pelo QR code",
+    footerSocialsLabel: "Principais redes sociais do WarSpawn",
     close: "Fechar dossiê",
     drops: "Drops e itens associados",
     footer:
@@ -156,6 +177,7 @@ const translations = {
     navArsenal: "Arsenal",
     navFood: "Food",
     navGallery: "Gallery",
+    navSocial: "Social",
     eyebrow: "THE LEGACY RISES AGAIN",
     title: "A new age of impossible creatures.",
     intro:
@@ -207,6 +229,26 @@ const translations = {
     galleryWeapons: "Destructive weapons",
     galleryStaff: "Thunder Staff",
     galleryLegacy: "Legacy and remake",
+    socialKicker: "06 — COMMUNITY",
+    socialTitle: "Follow the awakening of WarSpawn.",
+    socialLead:
+      "News, behind-the-scenes updates, videos and community conversations across every official channel. Choose your network and enter the WarSpawn universe.",
+    socialOpen: "Visit profile",
+    socialJoin: "Join the server",
+    socialDiscordCommunity: "WarSpawn Community",
+    socialQrKicker: "QUICK ACCESS",
+    socialQrTitle: "Take Instagram to your phone.",
+    socialQrText:
+      "Scan the code or tap it to open WarSpawn's official profile.",
+    openInstagram: "Open WarSpawn's Instagram profile",
+    openYouTube: "Open WarSpawn's YouTube channel",
+    openTikTok: "Open WarSpawn's TikTok profile",
+    openReddit: "Open the WarSpawn Reddit community",
+    openDiscord: "Join the WarSpawn Discord server",
+    openFacebook: "Open WarSpawn's Facebook page",
+    openX: "Open WarSpawn's X profile",
+    openInstagramQr: "Open WarSpawn's Instagram through the QR code",
+    footerSocialsLabel: "WarSpawn's main social networks",
     close: "Close dossier",
     drops: "Drops and related items",
     footer:
@@ -288,6 +330,10 @@ function updateLanguage() {
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.dataset.i18n;
     if (t[key]) element.textContent = t[key];
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+    const key = element.dataset.i18nAriaLabel;
+    if (t[key]) element.setAttribute("aria-label", t[key]);
   });
   elements.search.placeholder = t.search;
   elements.search.setAttribute("aria-label", t.search);
