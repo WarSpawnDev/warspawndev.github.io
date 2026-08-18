@@ -4,8 +4,8 @@ Este repositório publica o site oficial do WarSpawn em:
 
 **https://warspawndev.github.io/**
 
-O site reúne o bestiário, dimensões, arsenal, comidas, galeria e informações do projeto
-em português e inglês.
+O site reúne o bestiário, dimensões, arsenal, comidas, galeria, redes sociais oficiais
+e informações do projeto em português e inglês.
 
 ## Conteúdo integrado
 
