@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="styles.css?v=20260819-arsenal-polish" />
     <link rel="stylesheet" href="dimension-system.css?v=20260802-ui" />
     <link rel="stylesheet" href="food-system.css" />
-    <link rel="stylesheet" href="armor-system.css?v=20260820-fluid-carousel" />
+    <link rel="stylesheet" href="armor-system.css?v=20260820-mobile-search" />
     <link rel="stylesheet" href="ui-sound-system.css?v=20260819-arsenal-polish" />
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
@@ -871,6 +871,45 @@
             </p>
           </header>
 
+          <div class="armor-selector-tools" role="search">
+            <div class="armor-search-field">
+              <label class="armor-visually-hidden" for="armor-search-input" data-armor-i18n="searchLabel">
+                Pesquisar armadura
+              </label>
+              <span class="armor-search-icon" aria-hidden="true">⌕</span>
+              <input
+                id="armor-search-input"
+                type="text"
+                inputmode="search"
+                autocomplete="off"
+                autocapitalize="none"
+                spellcheck="false"
+                placeholder="Pesquisar armadura"
+                aria-describedby="armor-search-status"
+              />
+              <button
+                class="armor-search-clear"
+                id="armor-search-clear"
+                type="button"
+                aria-label="Limpar pesquisa"
+                hidden
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <button
+              class="armor-sort-control"
+              id="armor-sort-control"
+              type="button"
+              data-sort-mode="neutral"
+              aria-label="Nível de proteção: ordem original"
+            >
+              <span data-armor-i18n="protectionLevel">Nível de proteção</span>
+              <i id="armor-sort-icon" aria-hidden="true">↕</i>
+            </button>
+          </div>
+          <p class="armor-visually-hidden" id="armor-search-status" aria-live="polite"></p>
+
           <div
             class="armor-carousel"
             id="armor-carousel"
@@ -929,7 +968,7 @@
     <script src="food-data.js" defer></script>
     <script src="food-system.js" defer></script>
     <script src="armor-data.js?v=20260820-normalized" defer></script>
-    <script src="armor-system.js?v=20260820-fluid-carousel" defer></script>
+    <script src="armor-system.js?v=20260820-mobile-search" defer></script>
     <script src="ui-sound-system.js?v=20260820-armor-sync" defer></script>
   </body>
 </html>
