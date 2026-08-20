@@ -39,7 +39,7 @@
 
   const setsById = new Map(catalog.sets.map((armorSet) => [armorSet.id, armorSet]));
   const sets = catalog.order.map((id) => setsById.get(id)).filter(Boolean);
-  const visibleOffsets = [-3, -2, -1, 0, 1, 2, 3];
+  const visibleRadius = 3;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   const text = {
@@ -195,8 +195,18 @@
     return sets[state.selectedIndex];
   }
 
+  function signedOffset(index) {
+    let offset = index - state.selectedIndex;
+    const half = sets.length / 2;
+    if (offset > half) offset -= sets.length;
+    if (offset < -half) offset += sets.length;
+    return offset;
+  }
+
   function slotClass(offset) {
     if (offset === 0) return "armor-slot-0";
+    if (offset < -visibleRadius) return "armor-slot-n4";
+    if (offset > visibleRadius) return "armor-slot-p4";
     return `armor-slot-${offset < 0 ? "n" : "p"}${Math.abs(offset)}`;
   }
 
@@ -216,18 +226,24 @@
     carousel.setAttribute("aria-label", t().carousel);
   }
 
-  function optionMarkup(armorSet, offset) {
+  function optionMarkup(armorSet, index) {
+    const offset = signedOffset(index);
     const name = local(armorSet.name);
     const isCurrent = offset === 0;
     const fallbackClass = armorSet.conceptFallback ? " is-pixel-fallback" : "";
+    const isVisible = Math.abs(offset) <= visibleRadius;
     return `
       <button
         class="armor-option ${slotClass(offset)}${fallbackClass}"
         type="button"
         data-armor-offset="${offset}"
+        data-armor-index="${index}"
         data-armor-id="${escapeHtml(armorSet.id)}"
         style="--option-accent: ${escapeHtml(armorSet.accent)}"
         aria-label="${escapeHtml(isCurrent ? t().open(name) : t().select(name))}"
+        aria-posinset="${armorSet.order}"
+        aria-setsize="${sets.length}"
+        ${isVisible ? "" : 'aria-hidden="true" tabindex="-1"'}
         ${isCurrent ? 'aria-current="true"' : ""}
       >
         <img
@@ -246,33 +262,70 @@
     `;
   }
 
+  function ensureOptions() {
+    if (stage.childElementCount === sets.length) return;
+    stage.innerHTML = sets.map(optionMarkup).join("");
+  }
+
   function renderSelector({ focusCurrent = false } = {}) {
     const current = selectedSet();
     setAccent(current);
-    stage.innerHTML = visibleOffsets.map((offset) => {
-      const armorSet = sets[wrappedIndex(state.selectedIndex + offset)];
-      return optionMarkup(armorSet, offset);
-    }).join("");
+    ensureOptions();
+
+    stage.querySelectorAll(".armor-option").forEach((option) => {
+      const index = Number(option.dataset.armorIndex);
+      const armorSet = sets[index];
+      const offset = signedOffset(index);
+      const isCurrent = offset === 0;
+      const isVisible = Math.abs(offset) <= visibleRadius;
+      const name = local(armorSet.name);
+      option.className = `armor-option ${slotClass(offset)}${armorSet.conceptFallback ? " is-pixel-fallback" : ""}`;
+      option.dataset.armorOffset = String(offset);
+      option.setAttribute("aria-label", isCurrent ? t().open(name) : t().select(name));
+      if (isCurrent) option.setAttribute("aria-current", "true");
+      else option.removeAttribute("aria-current");
+      if (isVisible) option.removeAttribute("aria-hidden");
+      else option.setAttribute("aria-hidden", "true");
+      option.tabIndex = isVisible ? 0 : -1;
+      option.querySelector(".armor-option-label small").textContent = String(armorSet.order).padStart(2, "0");
+      option.querySelector(".armor-option-label strong").textContent = name;
+    });
+
     status.textContent = t().position(current.order, sets.length, local(current.name));
 
     if (focusCurrent) {
-      requestAnimationFrame(() => {
-        stage.querySelector('[data-armor-offset="0"]')?.focus({ preventScroll: true });
-      });
+      stage.querySelector('[data-armor-offset="0"]')?.focus({ preventScroll: true });
     }
   }
 
   function navigate(delta, { focusCurrent = false } = {}) {
     if (!delta || state.animating || state.view !== "selector") return;
+    const direction = delta > 0 ? 1 : -1;
+    let remaining = Math.min(visibleRadius, Math.abs(Math.trunc(delta)));
+    if (!remaining) return;
     state.animating = true;
-    stage.classList.add(delta > 0 ? "is-shifting-next" : "is-shifting-prev");
-    const delay = reduceMotion.matches ? 0 : 115;
-    window.setTimeout(() => {
-      state.selectedIndex = wrappedIndex(state.selectedIndex + delta);
+
+    if (reduceMotion.matches) {
+      state.selectedIndex = wrappedIndex(state.selectedIndex + direction * remaining);
       renderSelector({ focusCurrent });
-      stage.classList.remove("is-shifting-next", "is-shifting-prev");
       state.animating = false;
-    }, delay);
+      return;
+    }
+
+    const advance = () => {
+      state.selectedIndex = wrappedIndex(state.selectedIndex + direction);
+      renderSelector({ focusCurrent: focusCurrent && remaining === 1 });
+      remaining -= 1;
+      if (remaining > 0) {
+        window.setTimeout(advance, 210);
+        return;
+      }
+      window.setTimeout(() => {
+        state.animating = false;
+      }, 330);
+    };
+
+    advance();
   }
 
   function itemStat(itemEntry) {
@@ -456,6 +509,7 @@
 
   function showSelector({ focus = true } = {}) {
     state.view = "selector";
+    explorer.dataset.armorView = "selector";
     detailView.hidden = true;
     selectorView.hidden = false;
     renderSelector();
@@ -467,6 +521,7 @@
 
   function showDetail() {
     state.view = "detail";
+    explorer.dataset.armorView = "detail";
     renderDetail();
     selectorView.hidden = true;
     detailView.hidden = false;
@@ -521,7 +576,7 @@
   detailBackButton.addEventListener("click", () => showSelector());
 
   stage.addEventListener("click", (event) => {
-    if (state.suppressClick) return;
+    if (state.suppressClick || state.animating) return;
     const option = event.target.closest("[data-armor-offset]");
     if (!option) return;
     const offset = Number(option.dataset.armorOffset);
@@ -532,7 +587,7 @@
     }
   });
 
-  carousel.addEventListener("wheel", (event) => {
+  selectorView.addEventListener("wheel", (event) => {
     if (state.view !== "selector") return;
     const movement = Math.abs(event.deltaX) > Math.abs(event.deltaY)
       ? event.deltaX
@@ -544,7 +599,7 @@
     navigate(movement > 0 ? 1 : -1);
     window.setTimeout(() => {
       state.wheelLocked = false;
-    }, 185);
+    }, 360);
   }, { passive: false });
 
   carousel.addEventListener("pointerdown", (event) => {
@@ -623,5 +678,4 @@
   });
 
   updateStaticText();
-  renderSelector();
 })();

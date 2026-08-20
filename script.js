@@ -84,7 +84,6 @@ const translations = {
     navBestiary: "Bestiário",
     navDimensions: "Dimensões",
     navArsenal: "Arsenal",
-    navArmor: "Armaduras",
     navFood: "Comidas",
     navGallery: "Galeria",
     navSocial: "Redes sociais",
@@ -115,18 +114,14 @@ const translations = {
     utopia: "Utopia",
     utopiaText:
       "Florestas exuberantes, árvores gigantes e criaturas fantásticas em um mundo de escala colossal.",
-    arsenalKicker: "03 — EQUIPAMENTOS",
-    arsenal: "Relíquias capazes de mudar uma guerra",
+    arsenalKicker: "03 — ARSENAL",
+    arsenal: "Quatorze caminhos para sobreviver ao impossível",
     arsenalText:
-      "Espadas lendárias, cajados, projéteis em 3D e armaduras reconstruídas para o combate moderno.",
-    armorKicker: "04 — ARQUIVO DE ARMADURAS",
-    armorTitle: "Quatorze caminhos para sobreviver ao impossível",
-    armorLead:
       "Entre no arsenal completo, percorra a roda de conjuntos e abra a ficha de cada armadura, peça e equipamento relacionado.",
     armorShowcaseAlt: "As quatorze armaduras do WarSpawn reunidas",
     armorShowcaseEyebrow: "14 CONJUNTOS • SELETOR CIRCULAR",
     armorShowcaseAction: "Abrir arquivo de armaduras",
-    foodKicker: "05 — COMIDAS & EFEITOS",
+    foodKicker: "04 — COMIDAS & EFEITOS",
     foods: "Um banquete para cada expedição",
     foodsLead:
       "Explore alimentos, ingredientes, receitas interativas, restauração de fome, saturação e efeitos especiais em um único catálogo.",
@@ -140,13 +135,14 @@ const translations = {
     foodEffects: "Efeitos",
     foodEffectsText:
       "Compare fome, saturação e bônus temporários antes de partir para a próxima batalha.",
-    galleryKicker: "06 — GALERIA",
+    galleryKicker: "05 — GALERIA",
     gallery: "Arquivos do WarSpawn",
     galleryProjectiles: "Projéteis 3D",
     galleryWeapons: "Armas destruidoras",
     galleryStaff: "Cajado de Raios",
     galleryLegacy: "Antigo e novo",
-    socialKicker: "07 — COMUNIDADE",
+    gallerySwords: "Big Bertha, Slice e Royal Guardian",
+    socialKicker: "06 — COMUNIDADE",
     socialTitle: "Acompanhe o despertar do WarSpawn.",
     socialLead:
       "Novidades, bastidores, vídeos e conversas da comunidade em todos os canais oficiais. Escolha sua rede e entre no universo WarSpawn.",
@@ -183,7 +179,6 @@ const translations = {
     navBestiary: "Bestiary",
     navDimensions: "Dimensions",
     navArsenal: "Arsenal",
-    navArmor: "Armor",
     navFood: "Food",
     navGallery: "Gallery",
     navSocial: "Social",
@@ -214,18 +209,14 @@ const translations = {
     utopia: "Utopia",
     utopiaText:
       "Lush forests, giant trees and fantastic creatures in a world built at colossal scale.",
-    arsenalKicker: "03 — EQUIPMENT",
-    arsenal: "Relics powerful enough to change a war",
+    arsenalKicker: "03 — ARSENAL",
+    arsenal: "Fourteen ways to survive the impossible",
     arsenalText:
-      "Legendary swords, staves, 3D projectiles and rebuilt armor for modern combat.",
-    armorKicker: "04 — ARMOR ARCHIVE",
-    armorTitle: "Fourteen ways to survive the impossible",
-    armorLead:
       "Enter the complete arsenal, move through the set wheel and open the dossier for every armor, piece and related item.",
     armorShowcaseAlt: "All fourteen WarSpawn armor sets gathered together",
     armorShowcaseEyebrow: "14 SETS • CIRCULAR SELECTOR",
     armorShowcaseAction: "Open armor archive",
-    foodKicker: "05 — FOOD & EFFECTS",
+    foodKicker: "04 — FOOD & EFFECTS",
     foods: "A feast for every expedition",
     foodsLead:
       "Explore food, ingredients, interactive recipes, hunger restoration, saturation and special effects in one catalog.",
@@ -239,13 +230,14 @@ const translations = {
     foodEffects: "Effects",
     foodEffectsText:
       "Compare hunger, saturation and temporary bonuses before heading into the next battle.",
-    galleryKicker: "06 — GALLERY",
+    galleryKicker: "05 — GALLERY",
     gallery: "WarSpawn archives",
     galleryProjectiles: "3D projectiles",
     galleryWeapons: "Destructive weapons",
     galleryStaff: "Thunder Staff",
     galleryLegacy: "Legacy and remake",
-    socialKicker: "07 — COMMUNITY",
+    gallerySwords: "Big Bertha, Slice and Royal Guardian",
+    socialKicker: "06 — COMMUNITY",
     socialTitle: "Follow the awakening of WarSpawn.",
     socialLead:
       "News, behind-the-scenes updates, videos and community conversations across every official channel. Choose your network and enter the WarSpawn universe.",

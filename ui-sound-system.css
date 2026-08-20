@@ -481,8 +481,7 @@ button.craft-slot.is-touch-highlighted {
 .modal-close.is-touch-highlighted,
 .lang.is-touch-highlighted,
 .button.is-touch-highlighted,
-footer a.is-touch-highlighted,
-.arsenal-tags span.is-touch-highlighted {
+footer a.is-touch-highlighted {
   border-color: #ff505788;
   color: #fff;
   background-color: #d220261c;
