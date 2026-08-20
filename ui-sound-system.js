@@ -156,7 +156,6 @@
     ".lang",
     ".sound-toggle",
     ".gallery figure",
-    ".arsenal-tags span",
     "footer a",
     "button:not([disabled])",
     "a[href]",
@@ -533,7 +532,7 @@
     }
     if (element.matches(".dimension-sector, .dimension-showcase")) return "dimension";
     if (element.matches(".catalog-item, button.craft-item, .mob-card")) return "item";
-    if (element.matches(".gallery figure, .arsenal-tags span")) return "media";
+    if (element.matches(".gallery figure")) return "media";
     return "navigation";
   }
 

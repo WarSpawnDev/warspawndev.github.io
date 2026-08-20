@@ -213,6 +213,15 @@ body.armor-explorer-open {
   transition: background 260ms ease;
 }
 
+.armor-explorer[data-armor-view="selector"] {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.armor-explorer[data-armor-view="detail"] {
+  overflow: auto;
+}
+
 .armor-explorer::before {
   content: "";
   position: fixed;
@@ -236,6 +245,7 @@ body.armor-explorer-open {
   z-index: 1;
   width: min(100%, 1320px);
   min-height: calc(100svh - 48px);
+  min-height: calc(100dvh - 48px);
   margin: 0 auto;
   display: grid;
   align-content: center;
@@ -269,11 +279,13 @@ body.armor-explorer-open {
 
 .armor-selector-view {
   width: 100%;
-  min-height: min(860px, calc(100svh - 48px));
+  height: min(860px, calc(100svh - 48px));
+  height: min(860px, calc(100dvh - 48px));
+  min-height: 0;
   display: grid;
-  grid-template-rows: auto minmax(440px, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   align-items: center;
-  padding: 26px 0 18px;
+  padding: clamp(10px, 2.8dvh, 26px) 0 clamp(8px, 2dvh, 18px);
 }
 
 .armor-explorer-head {
@@ -303,7 +315,8 @@ body.armor-explorer-open {
 .armor-carousel {
   position: relative;
   width: 100%;
-  min-height: 540px;
+  height: 100%;
+  min-height: 0;
   touch-action: pan-y;
   user-select: none;
 }
@@ -313,8 +326,7 @@ body.armor-explorer-open {
   inset: 0 42px;
   overflow: hidden;
   perspective: 1300px;
-  transform: translateX(0);
-  transition: transform 130ms ease, opacity 130ms ease;
+  transform-style: preserve-3d;
 }
 
 .armor-carousel-stage::before {
@@ -327,16 +339,6 @@ body.armor-explorer-open {
     radial-gradient(ellipse 19% 15% at 50% 92%, color-mix(in srgb, var(--armor-accent) 28%, transparent), transparent 72%);
 }
 
-.armor-carousel-stage.is-shifting-next {
-  transform: translateX(-18px);
-  opacity: 0.84;
-}
-
-.armor-carousel-stage.is-shifting-prev {
-  transform: translateX(18px);
-  opacity: 0.84;
-}
-
 .armor-option {
   --slot-x: 0px;
   --slot-y: 0px;
@@ -344,11 +346,12 @@ body.armor-explorer-open {
   --slot-opacity: 1;
   --slot-brightness: 1;
   --slot-saturation: 1;
+  --slot-rotate-y: 0deg;
   position: absolute;
   left: 50%;
-  bottom: var(--slot-y);
+  bottom: 0;
   width: clamp(230px, 24vw, 330px);
-  height: min(480px, 58vh);
+  height: min(480px, calc(100% - 12px));
   margin: 0;
   padding: 0;
   border: 0;
@@ -356,10 +359,15 @@ body.armor-explorer-open {
   color: #fff;
   cursor: pointer;
   opacity: var(--slot-opacity);
-  transform: translate3d(calc(-50% + var(--slot-x)), 0, 0) scale(var(--slot-scale));
+  transform: translate3d(calc(-50% + var(--slot-x)), calc(0px - var(--slot-y)), 0)
+    rotateY(var(--slot-rotate-y)) scale(var(--slot-scale));
   transform-origin: 50% 100%;
-  transition: transform 190ms cubic-bezier(0.2, 0.72, 0.2, 1), opacity 180ms ease, filter 180ms ease;
-  will-change: transform;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition:
+    transform 320ms cubic-bezier(0.22, 0.72, 0.18, 1),
+    opacity 260ms ease;
+  will-change: transform, opacity;
 }
 
 .armor-option::before {
@@ -385,7 +393,7 @@ body.armor-explorer-open {
   object-fit: contain;
   object-position: center bottom;
   filter: brightness(var(--slot-brightness)) saturate(var(--slot-saturation)) drop-shadow(0 22px 24px rgba(0, 0, 0, 0.55));
-  transition: filter 180ms ease;
+  transition: filter 320ms cubic-bezier(0.22, 0.72, 0.18, 1);
   pointer-events: none;
 }
 
@@ -422,7 +430,7 @@ body.armor-explorer-open {
 
 .armor-slot-0 {
   z-index: 10;
-  --slot-y: 8px;
+  --slot-y: clamp(2px, 0.8dvh, 8px);
 }
 
 .armor-slot-0::before {
@@ -440,47 +448,94 @@ body.armor-explorer-open {
 .armor-slot-n1,
 .armor-slot-p1 {
   z-index: 8;
-  --slot-y: 62px;
-  --slot-scale: 0.76;
+  --slot-y: clamp(18px, 3.4dvh, 32px);
+  --slot-scale: 0.77;
   --slot-opacity: 0.84;
   --slot-brightness: 0.72;
   --slot-saturation: 0.76;
 }
 
-.armor-slot-n1 { --slot-x: clamp(-205px, -15vw, -145px); }
-.armor-slot-p1 { --slot-x: clamp(145px, 15vw, 205px); }
+.armor-slot-n1 {
+  --slot-x: clamp(-205px, -15vw, -145px);
+  --slot-rotate-y: 5deg;
+}
+
+.armor-slot-p1 {
+  --slot-x: clamp(145px, 15vw, 205px);
+  --slot-rotate-y: -5deg;
+}
 
 .armor-slot-n2,
 .armor-slot-p2 {
   z-index: 5;
-  --slot-y: 132px;
+  --slot-y: clamp(68px, 11.5dvh, 112px);
   --slot-scale: 0.57;
   --slot-opacity: 0.62;
   --slot-brightness: 0.38;
   --slot-saturation: 0.52;
 }
 
-.armor-slot-n2 { --slot-x: clamp(-350px, -27vw, -255px); }
-.armor-slot-p2 { --slot-x: clamp(255px, 27vw, 350px); }
+.armor-slot-n2 {
+  --slot-x: clamp(-350px, -27vw, -255px);
+  --slot-rotate-y: 9deg;
+}
+
+.armor-slot-p2 {
+  --slot-x: clamp(255px, 27vw, 350px);
+  --slot-rotate-y: -9deg;
+}
 
 .armor-slot-n3,
 .armor-slot-p3 {
   z-index: 2;
-  --slot-y: 207px;
-  --slot-scale: 0.42;
+  --slot-y: clamp(138px, 23.5dvh, 220px);
+  --slot-scale: 0.4;
   --slot-opacity: 0.46;
   --slot-brightness: 0.12;
   --slot-saturation: 0.18;
 }
 
-.armor-slot-n3 { --slot-x: clamp(-455px, -38vw, -345px); }
-.armor-slot-p3 { --slot-x: clamp(345px, 38vw, 455px); }
+.armor-slot-n3 {
+  --slot-x: clamp(-455px, -38vw, -345px);
+  --slot-rotate-y: 13deg;
+}
+
+.armor-slot-p3 {
+  --slot-x: clamp(345px, 38vw, 455px);
+  --slot-rotate-y: -13deg;
+}
+
+.armor-slot-n4,
+.armor-slot-p4 {
+  z-index: 1;
+  --slot-y: clamp(205px, 31dvh, 300px);
+  --slot-scale: 0.27;
+  --slot-opacity: 0;
+  --slot-brightness: 0;
+  --slot-saturation: 0;
+  pointer-events: none;
+}
+
+.armor-slot-n4 {
+  --slot-x: clamp(-570px, -47vw, -450px);
+  --slot-rotate-y: 18deg;
+}
+
+.armor-slot-p4 {
+  --slot-x: clamp(450px, 47vw, 570px);
+  --slot-rotate-y: -18deg;
+}
 
 .armor-slot-n2 .armor-option-label strong,
 .armor-slot-p2 .armor-option-label strong,
 .armor-slot-n3 .armor-option-label strong,
 .armor-slot-p3 .armor-option-label strong {
   font-size: 16px;
+}
+
+.armor-slot-n4 .armor-option-label,
+.armor-slot-p4 .armor-option-label {
+  display: none;
 }
 
 .armor-option:hover img,
@@ -1005,9 +1060,55 @@ body.armor-explorer-open {
   .armor-slot-p2 { --slot-x: 270px; }
   .armor-slot-n3 { --slot-x: -350px; }
   .armor-slot-p3 { --slot-x: 350px; }
+  .armor-slot-n4 { --slot-x: -430px; }
+  .armor-slot-p4 { --slot-x: 430px; }
 
   .armor-related-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 821px) and (max-height: 850px) {
+  .armor-explorer {
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  .armor-explorer-shell {
+    min-height: calc(100svh - 32px);
+    min-height: calc(100dvh - 32px);
+  }
+
+  .armor-selector-view {
+    height: calc(100svh - 32px);
+    height: calc(100dvh - 32px);
+    padding: 6px 0;
+  }
+
+  .armor-explorer-head h2 {
+    margin: 5px 0 7px;
+    font-size: clamp(38px, 7.2dvh, 56px);
+  }
+
+  .armor-explorer-head p {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .armor-option {
+    height: min(430px, calc(100% - 8px));
+  }
+
+  .armor-selector-footer {
+    gap: 8px;
+  }
+
+  .armor-open-detail {
+    min-height: 42px;
+  }
+
+  .armor-carousel-arrow {
+    top: 55%;
   }
 }
 
@@ -1017,8 +1118,10 @@ body.armor-explorer-open {
   }
 
   .armor-selector-view {
-    min-height: calc(100svh - 48px);
-    grid-template-rows: auto minmax(390px, 1fr) auto;
+    height: calc(100svh - 48px);
+    height: calc(100dvh - 48px);
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     padding-top: 48px;
   }
 
@@ -1031,7 +1134,8 @@ body.armor-explorer-open {
   }
 
   .armor-carousel {
-    min-height: 440px;
+    height: 100%;
+    min-height: 0;
   }
 
   .armor-carousel-stage {
@@ -1040,7 +1144,7 @@ body.armor-explorer-open {
 
   .armor-option {
     width: min(250px, 50vw);
-    height: 405px;
+    height: min(405px, calc(100% - 8px));
   }
 
   .armor-slot-0 {
@@ -1050,7 +1154,7 @@ body.armor-explorer-open {
 
   .armor-slot-n1,
   .armor-slot-p1 {
-    --slot-y: 55px;
+    --slot-y: clamp(14px, 2.7dvh, 24px);
     --slot-scale: 0.62;
   }
 
@@ -1059,7 +1163,7 @@ body.armor-explorer-open {
 
   .armor-slot-n2,
   .armor-slot-p2 {
-    --slot-y: 112px;
+    --slot-y: clamp(52px, 8.2dvh, 80px);
     --slot-scale: 0.43;
   }
 
@@ -1068,12 +1172,21 @@ body.armor-explorer-open {
 
   .armor-slot-n3,
   .armor-slot-p3 {
-    --slot-y: 170px;
+    --slot-y: clamp(105px, 16.5dvh, 150px);
     --slot-scale: 0.3;
   }
 
   .armor-slot-n3 { --slot-x: -245px; }
   .armor-slot-p3 { --slot-x: 245px; }
+
+  .armor-slot-n4,
+  .armor-slot-p4 {
+    --slot-y: clamp(150px, 23dvh, 205px);
+    --slot-scale: 0.2;
+  }
+
+  .armor-slot-n4 { --slot-x: -310px; }
+  .armor-slot-p4 { --slot-x: 310px; }
 
   .armor-slot-n2 .armor-option-label,
   .armor-slot-p2 .armor-option-label,
@@ -1148,16 +1261,16 @@ body.armor-explorer-open {
   }
 
   .armor-selector-view {
-    grid-template-rows: auto minmax(360px, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
   }
 
   .armor-carousel {
-    min-height: 390px;
+    min-height: 0;
   }
 
   .armor-option {
     width: 230px;
-    height: 360px;
+    height: min(360px, calc(100% - 6px));
   }
 
   .armor-slot-n1 { --slot-x: -88px; }
@@ -1166,6 +1279,8 @@ body.armor-explorer-open {
   .armor-slot-p2 { --slot-x: 146px; }
   .armor-slot-n3 { --slot-x: -190px; }
   .armor-slot-p3 { --slot-x: 190px; }
+  .armor-slot-n4 { --slot-x: -235px; }
+  .armor-slot-p4 { --slot-x: 235px; }
 
   .armor-slot-n1 .armor-option-label strong,
   .armor-slot-p1 .armor-option-label strong {

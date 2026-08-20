@@ -30,11 +30,11 @@
     <link rel="icon" href="/icons/favicon-warspawn-192-v2.png" type="image/png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="preload" href="assets/emblem-cosmic.png" as="image" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260819-arsenal-polish" />
     <link rel="stylesheet" href="dimension-system.css?v=20260802-ui" />
     <link rel="stylesheet" href="food-system.css" />
-    <link rel="stylesheet" href="armor-system.css?v=20260819-armors" />
-    <link rel="stylesheet" href="ui-sound-system.css?v=20260803-profiles" />
+    <link rel="stylesheet" href="armor-system.css?v=20260819-arsenal-polish" />
+    <link rel="stylesheet" href="ui-sound-system.css?v=20260819-arsenal-polish" />
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
   <body>
@@ -48,7 +48,6 @@
         <a href="#bestiario" data-i18n="navBestiary">Bestiário</a>
         <a href="#dimensoes" data-i18n="navDimensions">Dimensões</a>
         <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
-        <a href="#armaduras" data-i18n="navArmor">Armaduras</a>
         <a href="#comidas" data-i18n="navFood">Comidas</a>
         <a href="#galeria" data-i18n="navGallery">Galeria</a>
         <a href="#redes" data-i18n="navSocial">Redes sociais</a>
@@ -217,38 +216,15 @@
         </button>
       </section>
 
-      <section id="arsenal" class="section arsenal-section">
-        <div class="arsenal-copy">
-          <span class="kicker" data-i18n="arsenalKicker">03 — EQUIPAMENTOS</span>
-          <h2 data-i18n="arsenal">Relíquias capazes de mudar uma guerra</h2>
-          <p data-i18n="arsenalText">
-            Espadas lendárias, cajados, projéteis em 3D e armaduras reconstruídas
-            para o combate moderno.
-          </p>
-          <div class="arsenal-tags" aria-label="Armas em destaque">
-            <span>Big Bertha</span>
-            <span>Slice</span>
-            <span>Royal Guardian</span>
-          </div>
-        </div>
-        <img
-          class="swords"
-          src="assets/swords.png"
-          alt="Big Bertha, Slice e Royal Guardian Sword"
-          loading="lazy"
-          decoding="async"
-        />
-      </section>
-
-      <section id="armaduras" class="section armor-section" aria-labelledby="armor-section-title">
+      <section id="arsenal" class="section armor-section" aria-labelledby="arsenal-section-title">
         <div class="armor-section-glow armor-section-glow-blue" aria-hidden="true"></div>
         <div class="armor-section-glow armor-section-glow-gold" aria-hidden="true"></div>
         <div class="section-head narrow armor-section-head">
           <div>
-            <span class="kicker" data-i18n="armorKicker">04 — ARQUIVO DE ARMADURAS</span>
-            <h2 id="armor-section-title" data-i18n="armorTitle">Quatorze caminhos para sobreviver ao impossível</h2>
+            <span class="kicker" data-i18n="arsenalKicker">03 — ARSENAL</span>
+            <h2 id="arsenal-section-title" data-i18n="arsenal">Quatorze caminhos para sobreviver ao impossível</h2>
           </div>
-          <p data-i18n="armorLead">
+          <p data-i18n="arsenalText">
             Entre no arsenal completo, percorra a roda de conjuntos e abra a ficha de cada
             armadura, peça e equipamento relacionado.
           </p>
@@ -284,7 +260,7 @@
       <section id="comidas" class="section food-section">
         <div class="section-head narrow">
           <div>
-            <span class="kicker" data-i18n="foodKicker">05 — COMIDAS &amp; EFEITOS</span>
+            <span class="kicker" data-i18n="foodKicker">04 — COMIDAS &amp; EFEITOS</span>
             <h2 data-i18n="foods">Um banquete para cada expedição</h2>
           </div>
           <p data-i18n="foodsLead">
@@ -413,7 +389,7 @@
       <section id="galeria" class="section gallery-section">
         <div class="section-head">
           <div>
-            <span class="kicker" data-i18n="galleryKicker">06 — GALERIA</span>
+            <span class="kicker" data-i18n="galleryKicker">05 — GALERIA</span>
             <h2 data-i18n="gallery">Arquivos do WarSpawn</h2>
           </div>
         </div>
@@ -438,6 +414,15 @@
             <img src="assets/legacy-new.png" alt="Antigo e novo" loading="lazy" decoding="async" />
             <figcaption data-i18n="galleryLegacy">Antigo e novo</figcaption>
           </figure>
+          <figure class="gallery-swords">
+            <img
+              src="assets/swords.png"
+              alt="Big Bertha, Slice e Royal Guardian Sword"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption data-i18n="gallerySwords">Big Bertha, Slice e Royal Guardian</figcaption>
+          </figure>
         </div>
       </section>
 
@@ -447,7 +432,7 @@
 
         <div class="section-head narrow social-head">
           <div>
-            <span class="kicker" data-i18n="socialKicker">07 — COMUNIDADE</span>
+            <span class="kicker" data-i18n="socialKicker">06 — COMUNIDADE</span>
             <h2 id="social-title" data-i18n="socialTitle">Acompanhe o despertar do WarSpawn.</h2>
           </div>
           <p data-i18n="socialLead">
@@ -858,6 +843,7 @@
     <div
       class="armor-explorer"
       id="armor-explorer"
+      data-armor-view="selector"
       role="dialog"
       aria-modal="true"
       aria-labelledby="armor-explorer-title"
@@ -937,14 +923,14 @@
         Este site precisa de JavaScript para abrir os dossiês e trocar o idioma.
       </div>
     </noscript>
-    <script src="script.js" defer></script>
+    <script src="script.js?v=20260819-arsenal-polish" defer></script>
     <script src="dimension-data.js" defer></script>
     <script src="dimension-system.js?v=20260802-ui" defer></script>
     <script src="food-assets.js?v=20260819-lettuce" defer></script>
     <script src="food-data.js" defer></script>
     <script src="food-system.js" defer></script>
     <script src="armor-data.js?v=20260819-armors" defer></script>
-    <script src="armor-system.js?v=20260819-armors" defer></script>
-    <script src="ui-sound-system.js?v=20260803-profiles" defer></script>
+    <script src="armor-system.js?v=20260819-arsenal-polish" defer></script>
+    <script src="ui-sound-system.js?v=20260819-arsenal-polish" defer></script>
   </body>
 </html>
