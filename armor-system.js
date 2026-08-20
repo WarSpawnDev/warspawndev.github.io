@@ -11,6 +11,11 @@
   const stage = document.querySelector("#armor-carousel-stage");
   const previousButton = document.querySelector("#armor-carousel-prev");
   const nextButton = document.querySelector("#armor-carousel-next");
+  const searchInput = document.querySelector("#armor-search-input");
+  const searchClearButton = document.querySelector("#armor-search-clear");
+  const searchStatus = document.querySelector("#armor-search-status");
+  const sortButton = document.querySelector("#armor-sort-control");
+  const sortIcon = document.querySelector("#armor-sort-icon");
   const openDetailButton = document.querySelector("#armor-open-detail");
   const detailBackButton = document.querySelector("#armor-detail-back");
   const detailIndex = document.querySelector("#armor-detail-index");
@@ -27,6 +32,11 @@
     !stage ||
     !previousButton ||
     !nextButton ||
+    !searchInput ||
+    !searchClearButton ||
+    !searchStatus ||
+    !sortButton ||
+    !sortIcon ||
     !openDetailButton ||
     !detailBackButton ||
     !detailIndex ||
@@ -36,9 +46,32 @@
   }
 
   const setsById = new Map(catalog.sets.map((armorSet) => [armorSet.id, armorSet]));
-  const sets = catalog.order.map((id) => setsById.get(id)).filter(Boolean);
+  const allSets = catalog.order.map((id) => setsById.get(id)).filter(Boolean);
+  let sets = [...allSets];
   const visibleRadius = 3;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const coarsePointer = window.matchMedia("(pointer: coarse)");
+  const relatedSearchSets = new Map([
+    ["emerald", ["experience"]],
+    ["experience", ["emerald"]],
+  ]);
+  const searchAliasOverrides = {
+    emerald: ["esmeralda", "emerald"],
+    amethyst: ["ametista", "amethyst"],
+    experience: ["xp", "experiencia", "experience", "veneno", "poison"],
+    ruby: ["rubi", "ruby"],
+    ultimate: ["ultimate"],
+    mobzilla: ["mobzilla"],
+    "royal-guardian": ["guardiao real", "royal guardian", "royal"],
+    "queen-scale": ["rainha", "the queen", "queen", "queen scale"],
+    "moth-scale": ["mariposa", "moth", "mothra", "mottra"],
+    "lava-eel": ["enguia de lava", "lava eel", "lavaeel"],
+    lapis: ["lapis", "lapis lazuli", "lapis-lazuli"],
+    peacock: ["pavao", "peacock"],
+    tourmaline: ["turmalina", "tourmaline", "pink tourmaline"],
+    "tigers-eye": ["olho de tigre", "tiger eye", "tigers eye", "tigereye"],
+  };
+  const searchAliasCache = new Map();
 
   const text = {
     pt: {
@@ -52,6 +85,14 @@
       previous: "Armadura anterior",
       next: "Próxima armadura",
       carousel: "Seletor circular de armaduras",
+      searchLabel: "Pesquisar armadura",
+      searchPlaceholder: "Pesquisar armadura",
+      clearSearch: "Limpar pesquisa",
+      protectionLevel: "Nível de proteção",
+      sortNeutral: "ordem original",
+      sortStrongest: "mais forte para mais fraca",
+      sortWeakest: "mais fraca para mais forte",
+      searchResults: (count) => `${count} ${count === 1 ? "armadura encontrada" : "armaduras encontradas"}`,
       select: (name) => `Selecionar ${name}`,
       open: (name) => `Abrir ficha de ${name}`,
       setIndex: (position, total) => `Conjunto ${String(position).padStart(2, "0")} de ${total}`,
@@ -104,6 +145,14 @@
       previous: "Previous armor",
       next: "Next armor",
       carousel: "Circular armor selector",
+      searchLabel: "Search armor",
+      searchPlaceholder: "Search armor",
+      clearSearch: "Clear search",
+      protectionLevel: "Protection level",
+      sortNeutral: "original order",
+      sortStrongest: "strongest to weakest",
+      sortWeakest: "weakest to strongest",
+      searchResults: (count) => `${count} ${count === 1 ? "armor set found" : "armor sets found"}`,
       select: (name) => `Select ${name}`,
       open: (name) => `Open ${name} dossier`,
       setIndex: (position, total) => `Set ${String(position).padStart(2, "0")} of ${total}`,
@@ -157,12 +206,20 @@
     view: "selector",
     optionElements: [],
     geometryFrame: 0,
+    geometryMetrics: null,
     historyFrame: 0,
     motionFrame: 0,
     motionKind: "idle",
     motionTimestamp: 0,
     inertiaVelocity: 0,
     wheelAccumulator: 0,
+    wheelResetTimer: 0,
+    lastWheelTime: 0,
+    lastWheelDirection: 0,
+    discreteInputs: new Map(),
+    query: "",
+    sortMode: "neutral",
+    optionSignature: "",
     pointerId: null,
     pointerStartX: 0,
     pointerStartY: 0,
@@ -194,6 +251,176 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+  }
+
+  function normalizeSearchValue(value) {
+    return String(value ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "");
+  }
+
+  function bilingualValues(value) {
+    if (Array.isArray(value)) return value.flatMap(bilingualValues);
+    if (value && typeof value === "object") {
+      return [value.pt, value.en].filter(Boolean);
+    }
+    return value ? [value] : [];
+  }
+
+  function searchAliases(armorSet) {
+    if (searchAliasCache.has(armorSet.id)) return searchAliasCache.get(armorSet.id);
+    const values = [
+      armorSet.id,
+      ...(searchAliasOverrides[armorSet.id] || []),
+      ...bilingualValues(armorSet.name),
+      ...bilingualValues(armorSet.fullName),
+    ];
+    const aliases = [...new Set(values.map(normalizeSearchValue).filter(Boolean))];
+    searchAliasCache.set(armorSet.id, aliases);
+    return aliases;
+  }
+
+  function editDistance(left, right) {
+    if (left === right) return 0;
+    if (!left.length) return right.length;
+    if (!right.length) return left.length;
+    const previous = Array.from({ length: right.length + 1 }, (_, index) => index);
+    const current = new Array(right.length + 1);
+
+    for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
+      current[0] = leftIndex;
+      for (let rightIndex = 1; rightIndex <= right.length; rightIndex += 1) {
+        const substitution = previous[rightIndex - 1] + (
+          left[leftIndex - 1] === right[rightIndex - 1] ? 0 : 1
+        );
+        current[rightIndex] = Math.min(
+          previous[rightIndex] + 1,
+          current[rightIndex - 1] + 1,
+          substitution,
+        );
+      }
+      previous.splice(0, previous.length, ...current);
+    }
+    return previous[right.length];
+  }
+
+  function subsequenceRatio(query, candidate) {
+    let queryIndex = 0;
+    for (const character of candidate) {
+      if (character === query[queryIndex]) queryIndex += 1;
+      if (queryIndex === query.length) break;
+    }
+    return query.length ? queryIndex / query.length : 0;
+  }
+
+  function fuzzyScore(query, armorSet) {
+    let best = -Infinity;
+    for (const alias of searchAliases(armorSet)) {
+      if (alias === query) return 2400;
+      if (alias.startsWith(query)) {
+        best = Math.max(best, 1900 - Math.max(0, alias.length - query.length) * 4);
+      }
+      if (alias.includes(query)) {
+        best = Math.max(best, 1650 - Math.max(0, alias.length - query.length) * 2);
+      }
+      if (query.length >= 4 && query.includes(alias)) {
+        best = Math.max(best, 1450 - Math.max(0, query.length - alias.length) * 3);
+      }
+
+      const maximumLength = Math.max(query.length, alias.length);
+      const similarity = maximumLength
+        ? 1 - editDistance(query, alias) / maximumLength
+        : 0;
+      const lengthPenalty = Math.abs(query.length - alias.length) * 5;
+      best = Math.max(
+        best,
+        similarity * 1200 - lengthPenalty,
+        subsequenceRatio(query, alias) * 720 - lengthPenalty,
+      );
+    }
+    return best;
+  }
+
+  function searchResults(query) {
+    const normalizedQuery = normalizeSearchValue(query);
+    if (!normalizedQuery) return [];
+    const ranked = allSets
+      .map((armorSet) => ({ armorSet, score: fuzzyScore(normalizedQuery, armorSet) }))
+      .sort((left, right) => right.score - left.score || left.armorSet.order - right.armorSet.order);
+    const results = [];
+    const append = (armorSet) => {
+      if (armorSet && !results.some((entry) => entry.id === armorSet.id)) results.push(armorSet);
+    };
+
+    append(ranked[0]?.armorSet);
+    for (const relatedId of relatedSearchSets.get(results[0]?.id) || []) {
+      append(setsById.get(relatedId));
+    }
+    for (const entry of ranked) {
+      append(entry.armorSet);
+      if (results.length === 3) break;
+    }
+    return results.slice(0, 3);
+  }
+
+  function sortedCatalog() {
+    if (state.sortMode === "neutral") return [...allSets];
+    const direction = state.sortMode === "strongest" ? -1 : 1;
+    return [...allSets].sort((left, right) => (
+      (left.totalDefense - right.totalDefense) * direction || left.order - right.order
+    ));
+  }
+
+  function updateSelectorTools() {
+    const sortLabel = state.sortMode === "strongest"
+      ? t().sortStrongest
+      : state.sortMode === "weakest"
+        ? t().sortWeakest
+        : t().sortNeutral;
+    const icon = state.sortMode === "strongest" ? "↓" : state.sortMode === "weakest" ? "↑" : "↕";
+    searchInput.placeholder = t().searchPlaceholder;
+    searchInput.setAttribute("aria-label", t().searchLabel);
+    searchClearButton.setAttribute("aria-label", t().clearSearch);
+    searchClearButton.hidden = !state.query;
+    sortButton.dataset.sortMode = state.sortMode;
+    sortButton.setAttribute("aria-label", `${t().protectionLevel}: ${sortLabel}`);
+    sortButton.title = `${t().protectionLevel}: ${sortLabel}`;
+    sortIcon.textContent = icon;
+    searchStatus.textContent = state.query ? t().searchResults(sets.length) : "";
+  }
+
+  function applyCatalogView({ preferredId = null, searchChanged = false } = {}) {
+    const previousId = preferredId || selectedSet()?.id || allSets[0].id;
+    const nextSets = state.query ? searchResults(state.query) : sortedCatalog();
+    sets = nextSets.length ? nextSets : [allSets[0]];
+    const selectedIndex = searchChanged
+      ? 0
+      : Math.max(0, sets.findIndex((armorSet) => armorSet.id === previousId));
+
+    cancelMotion();
+    state.selectedIndex = selectedIndex;
+    state.selectionPosition = selectedIndex;
+    state.position = selectedIndex;
+    state.targetPosition = selectedIndex;
+    state.optionSignature = "";
+    stage.replaceChildren();
+    updateSelectorTools();
+    if (state.open && state.view === "selector") renderSelector();
+  }
+
+  function acceptDiscreteInput(source, direction, minimumInterval = 120, timestamp = performance.now()) {
+    const previous = state.discreteInputs.get(source);
+    if (
+      previous &&
+      previous.direction === Math.sign(direction) &&
+      timestamp - previous.timestamp < minimumInterval
+    ) {
+      return false;
+    }
+    state.discreteInputs.set(source, { direction: Math.sign(direction), timestamp });
+    return true;
   }
 
   function wrappedIndex(index) {
@@ -233,6 +460,7 @@
     previousButton.setAttribute("aria-label", t().previous);
     nextButton.setAttribute("aria-label", t().next);
     carousel.setAttribute("aria-label", t().carousel);
+    updateSelectorTools();
   }
 
   function optionMarkup(armorSet, index) {
@@ -250,7 +478,7 @@
         data-armor-id="${escapeHtml(armorSet.id)}"
         style="--option-accent: ${escapeHtml(armorSet.accent)}"
         aria-label="${escapeHtml(isCurrent ? t().open(name) : t().select(name))}"
-        aria-posinset="${armorSet.order}"
+        aria-posinset="${index + 1}"
         aria-setsize="${sets.length}"
         ${isVisible ? "" : 'aria-hidden="true" tabindex="-1"'}
         ${isCurrent ? 'aria-current="true"' : ""}
@@ -274,8 +502,10 @@
   }
 
   function ensureOptions() {
-    if (stage.childElementCount !== sets.length) {
+    const signature = sets.map((armorSet) => armorSet.id).join("|");
+    if (state.optionSignature !== signature) {
       stage.innerHTML = sets.map(optionMarkup).join("");
+      state.optionSignature = signature;
     }
     state.optionElements = [...stage.querySelectorAll(".armor-option")];
   }
@@ -289,16 +519,30 @@
   }
 
   function carouselMetrics() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const mobile = width <= 820;
+    if (state.geometryMetrics) return state.geometryMetrics;
+    const bounds = carousel.getBoundingClientRect();
+    const width = Math.max(280, bounds.width || window.innerWidth);
+    const height = Math.max(180, bounds.height || window.innerHeight);
+    const mobile = window.innerWidth <= 820 || (window.innerHeight <= 560 && coarsePointer.matches);
     const compact = width <= 520;
     let x;
 
     if (compact) {
-      x = [0, 88, 146, 190, 235];
+      x = [
+        0,
+        clamp(width * 0.265, 82, 108),
+        clamp(width * 0.46, 138, 188),
+        clamp(width * 0.62, 178, 250),
+        clamp(width * 0.76, 220, 310),
+      ];
     } else if (mobile) {
-      x = [0, 105, 185, 245, 310];
+      x = [
+        0,
+        clamp(width * 0.25, 104, 145),
+        clamp(width * 0.44, 182, 245),
+        clamp(width * 0.59, 238, 330),
+        clamp(width * 0.72, 295, 410),
+      ];
     } else if (width <= 1100) {
       x = [0, 155, 270, 350, 430];
     } else {
@@ -313,11 +557,11 @@
 
     const y = mobile
       ? [
-          3,
-          clamp(height * 0.027, 14, 24),
-          clamp(height * 0.082, 52, 80),
-          clamp(height * 0.165, 105, 150),
-          clamp(height * 0.23, 150, 205),
+          0,
+          clamp(height * 0.04, 10, 24),
+          clamp(height * 0.14, 34, 82),
+          clamp(height * 0.28, 70, 150),
+          clamp(height * 0.4, 105, 210),
         ]
       : [
           clamp(height * 0.008, 2, 8),
@@ -327,15 +571,16 @@
           clamp(height * 0.31, 205, 300),
         ];
 
-    return {
+    state.geometryMetrics = {
       x,
       y,
-      scale: mobile ? [0.9, 0.62, 0.43, 0.3, 0.2] : [1, 0.77, 0.57, 0.4, 0.27],
+      scale: mobile ? [1, 0.64, 0.43, 0.29, 0.18] : [1, 0.77, 0.57, 0.4, 0.27],
       opacity: [1, 0.84, 0.62, 0.46, 0],
       brightness: [1, 0.72, 0.38, 0.12, 0],
       saturation: [1, 0.76, 0.52, 0.18, 0],
       rotation: mobile ? [0, 0, 0, 0, 0] : [0, 5, 9, 13, 18],
     };
+    return state.geometryMetrics;
   }
 
   function geometryForOffset(offset, metrics) {
@@ -397,6 +642,8 @@
           kind: "armor",
           view: "selector",
           id: selectedSet().id,
+          query: state.query,
+          sortMode: state.sortMode,
         },
       },
       "",
@@ -428,6 +675,8 @@
       option.className = `armor-option ${slotClass(offset)}${armorSet.conceptFallback ? " is-pixel-fallback" : ""}`;
       option.dataset.armorOffset = String(offset);
       option.setAttribute("aria-label", isCurrent ? t().open(name) : t().select(name));
+      option.setAttribute("aria-posinset", String(index + 1));
+      option.setAttribute("aria-setsize", String(sets.length));
       if (isCurrent) option.setAttribute("aria-current", "true");
       else option.removeAttribute("aria-current");
       if (isVisible) option.removeAttribute("aria-hidden");
@@ -437,6 +686,7 @@
       option.querySelector(".armor-option-label strong").textContent = name;
     });
 
+    updateSelectorTools();
     replaceSelectorHistoryState();
     requestGeometry();
 
@@ -536,13 +786,13 @@
       ? clamp(timestamp - state.motionTimestamp, 1, 32)
       : 16;
     state.motionTimestamp = timestamp;
-    state.inertiaVelocity *= Math.exp(-0.0042 * elapsed);
+    state.inertiaVelocity *= Math.exp(-0.0072 * elapsed);
     state.position += state.inertiaVelocity * elapsed;
     state.targetPosition = state.position;
     moveSelectionTo(Math.round(state.position));
     renderGeometry();
 
-    if (Math.abs(state.inertiaVelocity) < 0.00035) {
+    if (Math.abs(state.inertiaVelocity) < 0.00075) {
       state.motionFrame = 0;
       state.motionKind = "idle";
       state.motionTimestamp = 0;
@@ -557,12 +807,12 @@
 
   function startInertia(velocity) {
     cancelMotion();
-    if (reduceMotion.matches || Math.abs(velocity) < 0.0007) {
+    if (reduceMotion.matches || Math.abs(velocity) < 0.00115) {
       settleToNearest();
       return;
     }
     state.motionKind = "inertia";
-    state.inertiaVelocity = clamp(velocity, -0.045, 0.045);
+    state.inertiaVelocity = clamp(velocity, -0.018, 0.018);
     state.motionTimestamp = 0;
     carousel.classList.add("is-moving", "is-inertia");
     state.motionFrame = requestAnimationFrame(runInertia);
@@ -633,7 +883,7 @@
     const armorSet = selectedSet();
     const name = local(armorSet.fullName);
     setAccent(armorSet);
-    detailIndex.textContent = t().setIndex(armorSet.order, sets.length);
+    detailIndex.textContent = t().setIndex(armorSet.order, allSets.length);
     detailContent.setAttribute("aria-label", t().detailLabel(name));
 
     const abilities = armorSet.abilities.map((ability) => `
@@ -744,7 +994,7 @@
   function preloadConcepts() {
     if (state.preloaded) return;
     state.preloaded = true;
-    const preload = () => sets.forEach((armorSet) => {
+    const preload = () => allSets.forEach((armorSet) => {
       const image = new Image();
       image.decoding = "async";
       image.src = armorSet.concept;
@@ -757,7 +1007,17 @@
   }
 
   function restoreSelection(armorId = sets[0].id) {
-    const index = Math.max(0, sets.findIndex((armorSet) => armorSet.id === armorId));
+    let index = sets.findIndex((armorSet) => armorSet.id === armorId);
+    if (index < 0 && setsById.has(armorId)) {
+      state.query = "";
+      searchInput.value = "";
+      sets = sortedCatalog();
+      state.optionSignature = "";
+      stage.replaceChildren();
+      updateSelectorTools();
+      index = sets.findIndex((armorSet) => armorSet.id === armorId);
+    }
+    index = Math.max(0, index);
     cancelMotion();
     state.selectedIndex = index;
     state.selectionPosition = index;
@@ -772,6 +1032,8 @@
         kind: "armor",
         view,
         id: selectedSet().id,
+        query: state.query,
+        sortMode: state.sortMode,
       },
     };
   }
@@ -806,9 +1068,24 @@
     requestAnimationFrame(() => detailContent.focus({ preventScroll: true }));
   }
 
-  function openExplorer({ fromHistory = false, armorId = sets[0].id, view = "selector" } = {}) {
+  function openExplorer({
+    fromHistory = false,
+    armorId = allSets[0].id,
+    view = "selector",
+    query = "",
+    sortMode = "neutral",
+  } = {}) {
     state.previousFocus = document.activeElement;
+    state.query = fromHistory ? String(query || "") : "";
+    state.sortMode = ["strongest", "weakest"].includes(sortMode) && fromHistory
+      ? sortMode
+      : "neutral";
+    searchInput.value = state.query;
+    sets = state.query ? searchResults(state.query) : sortedCatalog();
+    state.optionSignature = "";
+    stage.replaceChildren();
     restoreSelection(armorId);
+    state.geometryMetrics = null;
     state.open = true;
     explorer.hidden = false;
     document.body.classList.add("armor-explorer-open");
@@ -824,6 +1101,10 @@
     cancelMotion();
     if (state.historyFrame) cancelAnimationFrame(state.historyFrame);
     state.historyFrame = 0;
+    window.clearTimeout(state.wheelResetTimer);
+    state.wheelResetTimer = 0;
+    state.wheelAccumulator = 0;
+    state.discreteInputs.clear();
     state.open = false;
     explorer.hidden = true;
     document.body.classList.remove("armor-explorer-open");
@@ -859,14 +1140,30 @@
       return;
     }
 
-    const armorId = setsById.has(overlay.id) ? overlay.id : sets[0].id;
+    const armorId = setsById.has(overlay.id) ? overlay.id : allSets[0].id;
     if (!state.open) {
       openExplorer({
         fromHistory: true,
         armorId,
         view: overlay.view === "detail" ? "detail" : "selector",
+        query: overlay.query || "",
+        sortMode: overlay.sortMode || "neutral",
       });
       return;
+    }
+
+    const restoredQuery = String(overlay.query || "");
+    const restoredSortMode = ["strongest", "weakest"].includes(overlay.sortMode)
+      ? overlay.sortMode
+      : "neutral";
+    if (restoredQuery !== state.query || restoredSortMode !== state.sortMode) {
+      state.query = restoredQuery;
+      state.sortMode = restoredSortMode;
+      searchInput.value = state.query;
+      sets = state.query ? searchResults(state.query) : sortedCatalog();
+      state.optionSignature = "";
+      stage.replaceChildren();
+      updateSelectorTools();
     }
 
     if (overlay.view === "detail") showDetail({ armorId });
@@ -896,16 +1193,49 @@
 
   openButton.addEventListener("click", () => openExplorer());
   closeButton.addEventListener("click", requestCloseExplorer);
-  previousButton.addEventListener("click", () => navigate(-1, { focusCurrent: false }));
-  nextButton.addEventListener("click", () => navigate(1, { focusCurrent: false }));
+  previousButton.addEventListener("click", (event) => {
+    if (acceptDiscreteInput("previous-button", -1, 150, event.timeStamp || performance.now())) {
+      navigate(-1, { focusCurrent: false });
+    }
+  });
+  nextButton.addEventListener("click", (event) => {
+    if (acceptDiscreteInput("next-button", 1, 150, event.timeStamp || performance.now())) {
+      navigate(1, { focusCurrent: false });
+    }
+  });
   openDetailButton.addEventListener("click", () => showDetail({ pushHistory: true }));
   detailBackButton.addEventListener("click", requestPreviousOverlayView);
+
+  searchInput.addEventListener("input", () => {
+    const value = searchInput.value;
+    state.query = normalizeSearchValue(value) ? value : "";
+    if (!state.query && value) searchInput.value = "";
+    applyCatalogView({ searchChanged: Boolean(state.query) });
+  });
+
+  searchClearButton.addEventListener("click", () => {
+    state.query = "";
+    searchInput.value = "";
+    applyCatalogView();
+    searchInput.focus({ preventScroll: true });
+  });
+
+  sortButton.addEventListener("click", (event) => {
+    if (!acceptDiscreteInput("sort-button", 1, 180, event.timeStamp || performance.now())) return;
+    state.sortMode = state.sortMode === "neutral"
+      ? "strongest"
+      : state.sortMode === "strongest"
+        ? "weakest"
+        : "neutral";
+    applyCatalogView();
+  });
 
   stage.addEventListener("click", (event) => {
     if (performance.now() < state.suppressClickUntil) return;
     const option = event.target.closest("[data-armor-offset]");
     if (!option) return;
     const offset = Number(option.dataset.armorOffset);
+    if (!acceptDiscreteInput(`armor-option-${option.dataset.armorId}`, offset || 1, 170, event.timeStamp || performance.now())) return;
     if (offset === 0) {
       showDetail({ pushHistory: true });
     } else {
@@ -920,24 +1250,34 @@
       : event.deltaY;
     if (!movement) return;
     event.preventDefault();
-    const contribution = event.deltaMode === WheelEvent.DOM_DELTA_PIXEL
-      ? movement / 64
-      : event.deltaMode === WheelEvent.DOM_DELTA_LINE
-        ? movement / 3
-        : Math.sign(movement);
-    if (
-      state.wheelAccumulator &&
-      Math.sign(state.wheelAccumulator) !== Math.sign(contribution)
-    ) {
+    const now = event.timeStamp || performance.now();
+    const direction = Math.sign(movement);
+    const discreteWheel = event.deltaMode !== WheelEvent.DOM_DELTA_PIXEL || Math.abs(movement) >= 40;
+
+    if (discreteWheel) {
+      state.wheelAccumulator = 0;
+      if (
+        direction === state.lastWheelDirection &&
+        now - state.lastWheelTime < 45
+      ) return;
+      state.lastWheelTime = now;
+      state.lastWheelDirection = direction;
+      navigate(direction);
+      return;
+    }
+
+    if (state.wheelAccumulator && Math.sign(state.wheelAccumulator) !== direction) {
       state.wheelAccumulator = 0;
     }
-    state.wheelAccumulator += contribution;
-    const steps = state.wheelAccumulator > 0
-      ? Math.floor(state.wheelAccumulator)
-      : Math.ceil(state.wheelAccumulator);
-    if (!steps) return;
-    state.wheelAccumulator -= steps;
-    navigate(steps);
+    state.wheelAccumulator += movement;
+    window.clearTimeout(state.wheelResetTimer);
+    state.wheelResetTimer = window.setTimeout(() => {
+      state.wheelAccumulator = 0;
+      state.wheelResetTimer = 0;
+    }, 150);
+    if (Math.abs(state.wheelAccumulator) < 72) return;
+    state.wheelAccumulator -= direction * 72;
+    if (acceptDiscreteInput("precision-wheel", direction, 28, now)) navigate(direction);
   }, { passive: false });
 
   carousel.addEventListener("pointerdown", (event) => {
@@ -958,8 +1298,8 @@
     const totalX = event.clientX - state.pointerStartX;
     const totalY = event.clientY - state.pointerStartY;
     if (!state.pointerDragging) {
-      if (Math.abs(totalX) < 3) return;
-      if (Math.abs(totalX) <= Math.abs(totalY) * 0.78) return;
+      if (Math.abs(totalX) < 6) return;
+      if (Math.abs(totalX) <= Math.abs(totalY) * 0.9) return;
       cancelMotion();
       state.targetPosition = state.position;
       moveSelectionTo(Math.round(state.position), { sound: false });
@@ -977,10 +1317,10 @@
     const now = event.timeStamp || performance.now();
     const elapsed = clamp(now - state.pointerLastTime, 1, 64);
     const distance = event.clientX - state.pointerLastX;
-    const pixelsPerStep = Math.max(72, carouselMetrics().x[1]);
+    const pixelsPerStep = Math.max(140, carouselMetrics().x[1] * 1.55);
     const movement = -distance / pixelsPerStep;
     const instantaneousVelocity = movement / elapsed;
-    state.pointerVelocity = state.pointerVelocity * 0.62 + instantaneousVelocity * 0.38;
+    state.pointerVelocity = state.pointerVelocity * 0.78 + instantaneousVelocity * 0.22;
     state.position += movement;
     state.targetPosition = state.position;
     moveSelectionTo(Math.round(state.position));
@@ -1030,23 +1370,32 @@
       return;
     }
     if (state.view !== "selector") return;
+    if (event.target instanceof HTMLElement && event.target.matches("input, textarea, [contenteditable='true']")) return;
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      navigate(-1, { focusCurrent: true });
+      if (!event.repeat && acceptDiscreteInput("arrow-left", -1, 110, event.timeStamp || performance.now())) {
+        navigate(-1, { focusCurrent: true });
+      }
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      navigate(1, { focusCurrent: true });
+      if (!event.repeat && acceptDiscreteInput("arrow-right", 1, 110, event.timeStamp || performance.now())) {
+        navigate(1, { focusCurrent: true });
+      }
     } else if ((event.key === "Enter" || event.key === " ") && document.activeElement === carousel) {
       event.preventDefault();
       showDetail({ pushHistory: true });
     }
   });
 
-  window.addEventListener("resize", requestGeometry, { passive: true });
+  window.addEventListener("resize", () => {
+    state.geometryMetrics = null;
+    requestGeometry();
+  }, { passive: true });
   window.addEventListener("popstate", handleHistoryChange);
 
   document.addEventListener("warspawn:languagechange", (event) => {
     state.language = event.detail?.language === "en" ? "en" : "pt";
+    state.geometryMetrics = null;
     updateStaticText();
     if (!state.open) return;
     if (state.view === "detail") renderDetail();
