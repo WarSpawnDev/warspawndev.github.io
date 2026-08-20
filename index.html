@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="dimension-system.css?v=20260802-ui" />
     <link rel="stylesheet" href="food-system.css" />
+    <link rel="stylesheet" href="armor-system.css?v=20260819-armors" />
     <link rel="stylesheet" href="ui-sound-system.css?v=20260803-profiles" />
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
@@ -47,6 +48,7 @@
         <a href="#bestiario" data-i18n="navBestiary">Bestiário</a>
         <a href="#dimensoes" data-i18n="navDimensions">Dimensões</a>
         <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
+        <a href="#armaduras" data-i18n="navArmor">Armaduras</a>
         <a href="#comidas" data-i18n="navFood">Comidas</a>
         <a href="#galeria" data-i18n="navGallery">Galeria</a>
         <a href="#redes" data-i18n="navSocial">Redes sociais</a>
@@ -238,10 +240,51 @@
         />
       </section>
 
+      <section id="armaduras" class="section armor-section" aria-labelledby="armor-section-title">
+        <div class="armor-section-glow armor-section-glow-blue" aria-hidden="true"></div>
+        <div class="armor-section-glow armor-section-glow-gold" aria-hidden="true"></div>
+        <div class="section-head narrow armor-section-head">
+          <div>
+            <span class="kicker" data-i18n="armorKicker">04 — ARQUIVO DE ARMADURAS</span>
+            <h2 id="armor-section-title" data-i18n="armorTitle">Quatorze caminhos para sobreviver ao impossível</h2>
+          </div>
+          <p data-i18n="armorLead">
+            Entre no arsenal completo, percorra a roda de conjuntos e abra a ficha de cada
+            armadura, peça e equipamento relacionado.
+          </p>
+        </div>
+
+        <button
+          class="armor-showcase"
+          id="armor-explorer-open"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="armor-explorer"
+        >
+          <span class="armor-showcase-media">
+            <img
+              src="assets/armors/portal/all-armor.webp"
+              alt="As quatorze armaduras do WarSpawn reunidas"
+              data-i18n-alt="armorShowcaseAlt"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="armor-showcase-vignette" aria-hidden="true"></span>
+          </span>
+          <span class="armor-showcase-footer">
+            <span>
+              <small data-i18n="armorShowcaseEyebrow">14 CONJUNTOS • SELETOR CIRCULAR</small>
+              <strong data-i18n="armorShowcaseAction">Abrir arquivo de armaduras</strong>
+            </span>
+            <i aria-hidden="true">↗</i>
+          </span>
+        </button>
+      </section>
+
       <section id="comidas" class="section food-section">
         <div class="section-head narrow">
           <div>
-            <span class="kicker" data-i18n="foodKicker">04 — COMIDAS &amp; EFEITOS</span>
+            <span class="kicker" data-i18n="foodKicker">05 — COMIDAS &amp; EFEITOS</span>
             <h2 data-i18n="foods">Um banquete para cada expedição</h2>
           </div>
           <p data-i18n="foodsLead">
@@ -370,7 +413,7 @@
       <section id="galeria" class="section gallery-section">
         <div class="section-head">
           <div>
-            <span class="kicker" data-i18n="galleryKicker">05 — GALERIA</span>
+            <span class="kicker" data-i18n="galleryKicker">06 — GALERIA</span>
             <h2 data-i18n="gallery">Arquivos do WarSpawn</h2>
           </div>
         </div>
@@ -404,7 +447,7 @@
 
         <div class="section-head narrow social-head">
           <div>
-            <span class="kicker" data-i18n="socialKicker">06 — COMUNIDADE</span>
+            <span class="kicker" data-i18n="socialKicker">07 — COMUNIDADE</span>
             <h2 id="social-title" data-i18n="socialTitle">Acompanhe o despertar do WarSpawn.</h2>
           </div>
           <p data-i18n="socialLead">
@@ -812,6 +855,83 @@
       </div>
     </div>
 
+    <div
+      class="armor-explorer"
+      id="armor-explorer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="armor-explorer-title"
+      hidden
+    >
+      <div class="armor-explorer-shell">
+        <button
+          class="armor-explorer-close"
+          id="armor-explorer-close"
+          type="button"
+          aria-label="Fechar arquivo de armaduras"
+        >
+          ×
+        </button>
+
+        <section class="armor-selector-view" id="armor-selector-view">
+          <header class="armor-explorer-head">
+            <span class="kicker" data-armor-i18n="selectorKicker">ARSENAL WARSPAWN</span>
+            <h2 id="armor-explorer-title" data-armor-i18n="selectorTitle">
+              Escolha sua armadura
+            </h2>
+            <p data-armor-i18n="selectorHelp">
+              Deslize, use a roda do mouse ou selecione uma silhueta para percorrer os
+              quatorze conjuntos.
+            </p>
+          </header>
+
+          <div
+            class="armor-carousel"
+            id="armor-carousel"
+            tabindex="0"
+            aria-label="Seletor circular de armaduras"
+          >
+            <button
+              class="armor-carousel-arrow armor-carousel-prev"
+              id="armor-carousel-prev"
+              type="button"
+              aria-label="Armadura anterior"
+            >
+              <span aria-hidden="true">←</span>
+            </button>
+            <div class="armor-carousel-stage" id="armor-carousel-stage"></div>
+            <button
+              class="armor-carousel-arrow armor-carousel-next"
+              id="armor-carousel-next"
+              type="button"
+              aria-label="Próxima armadura"
+            >
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+
+          <div class="armor-selector-footer">
+            <p class="armor-selector-status" id="armor-selector-status" aria-live="polite"></p>
+            <button class="armor-open-detail" id="armor-open-detail" type="button">
+              <span data-armor-i18n="openDossier">Abrir ficha completa</span>
+              <i aria-hidden="true">↗</i>
+            </button>
+          </div>
+        </section>
+
+        <section class="armor-detail-view" id="armor-detail-view" hidden>
+          <header class="armor-detail-head">
+            <button class="armor-back" id="armor-detail-back" type="button">
+              <span aria-hidden="true">←</span>
+              <span data-armor-i18n="backToSelector">Voltar às armaduras</span>
+            </button>
+            <span class="armor-detail-index" id="armor-detail-index"></span>
+          </header>
+          <article class="armor-detail-content" id="armor-detail-content" tabindex="-1"></article>
+        </section>
+      </div>
+    </div>
+
     <noscript>
       <div class="noscript">
         Este site precisa de JavaScript para abrir os dossiês e trocar o idioma.
@@ -823,6 +943,8 @@
     <script src="food-assets.js?v=20260819-lettuce" defer></script>
     <script src="food-data.js" defer></script>
     <script src="food-system.js" defer></script>
+    <script src="armor-data.js?v=20260819-armors" defer></script>
+    <script src="armor-system.js?v=20260819-armors" defer></script>
     <script src="ui-sound-system.js?v=20260803-profiles" defer></script>
   </body>
 </html>
