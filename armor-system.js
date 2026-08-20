@@ -1227,7 +1227,7 @@
       : state.sortMode === "strongest"
         ? "weakest"
         : "neutral";
-    applyCatalogView();
+    applyCatalogView({ searchChanged: true });
   });
 
   stage.addEventListener("click", (event) => {
