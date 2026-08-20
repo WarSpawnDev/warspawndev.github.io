@@ -213,7 +213,7 @@
   function handleExplorerKeys(event) {
     if (event.key === "Escape") {
       event.preventDefault();
-      closeExplorer();
+      requestPreviousOverlayView();
       return;
     }
 
@@ -249,7 +249,22 @@
     state.sectorButtons[nextIndex].focus();
   }
 
-  function openExplorer() {
+  function dimensionHistoryState(view, slug = null) {
+    return {
+      ...(history.state || {}),
+      warspawnOverlay: {
+        kind: "dimension",
+        view,
+        slug,
+      },
+    };
+  }
+
+  function pushDimensionHistory(view, slug = null) {
+    history.pushState(dimensionHistoryState(view, slug), "");
+  }
+
+  function openExplorer({ fromHistory = false, view = "selector", slug = null } = {}) {
     state.lastTrigger = document.activeElement;
     loadSelector();
     elements.explorer.hidden = false;
@@ -257,6 +272,16 @@
     elements.detailView.hidden = true;
     document.body.classList.add("dimension-explorer-open");
     elements.explorer.addEventListener("keydown", handleExplorerKeys);
+    if (!fromHistory) pushDimensionHistory("selector");
+
+    const restoredEntry = slug ? registry.bySlug[slug] : null;
+    if (view === "detail" && restoredEntry) {
+      const restoredTrigger = state.sectorButtons.find(
+        (button) => button.dataset.dimension === restoredEntry.slug,
+      );
+      openDetail(restoredEntry, restoredTrigger || state.sectorButtons[0], { pushHistory: false });
+      return;
+    }
 
     requestAnimationFrame(() => {
       const overworld = state.sectorButtons.find(
@@ -278,13 +303,33 @@
     state.lastTrigger?.focus();
   }
 
+  function requestCloseExplorer() {
+    const overlay = history.state?.warspawnOverlay;
+    if (overlay?.kind !== "dimension") {
+      closeExplorer();
+      return;
+    }
+    history.go(state.selected ? -2 : -1);
+  }
+
+  function requestPreviousOverlayView() {
+    const overlay = history.state?.warspawnOverlay;
+    if (overlay?.kind === "dimension") {
+      history.back();
+      return;
+    }
+    if (state.selected) backToWheel();
+    else closeExplorer();
+  }
+
   function finishImageRequest(requestId) {
     if (requestId === state.imageRequest) elements.detailArt.classList.remove("is-loading");
   }
 
-  function openDetail(entry, trigger) {
+  function openDetail(entry, trigger, { pushHistory = true } = {}) {
     state.selected = entry;
     state.lastSector = trigger;
+    if (pushHistory) pushDimensionHistory("detail", entry.slug);
     state.imageRequest += 1;
     const requestId = state.imageRequest;
     const t = text();
@@ -323,14 +368,41 @@
     requestAnimationFrame(() => (state.lastSector || state.sectorButtons[0]).focus());
   }
 
+  function handleHistoryChange(event) {
+    const overlay = event.state?.warspawnOverlay;
+    if (overlay?.kind !== "dimension") {
+      if (!elements.explorer.hidden) closeExplorer();
+      return;
+    }
+
+    const entry = overlay.slug ? registry.bySlug[overlay.slug] : null;
+    if (elements.explorer.hidden) {
+      openExplorer({
+        fromHistory: true,
+        view: overlay.view === "detail" && entry ? "detail" : "selector",
+        slug: entry?.slug || null,
+      });
+      return;
+    }
+
+    if (overlay.view === "detail" && entry) {
+      const trigger = state.sectorButtons.find(
+        (button) => button.dataset.dimension === entry.slug,
+      );
+      openDetail(entry, trigger || state.sectorButtons[0], { pushHistory: false });
+    } else {
+      backToWheel();
+    }
+  }
+
   renderSectors();
   updateLanguage();
 
-  elements.showcase.addEventListener("click", openExplorer);
+  elements.showcase.addEventListener("click", () => openExplorer());
   elements.showcase.addEventListener("pointermove", handleShowcasePointer);
   elements.showcase.addEventListener("pointerleave", resetShowcase);
-  elements.close.addEventListener("click", closeExplorer);
-  elements.detailBack.addEventListener("click", backToWheel);
+  elements.close.addEventListener("click", requestCloseExplorer);
+  elements.detailBack.addEventListener("click", requestPreviousOverlayView);
   elements.wheelFrame.addEventListener("pointermove", handleWheelPointer);
   elements.wheelFrame.addEventListener("pointerleave", resetCamera);
   elements.sectorLayer.addEventListener("pointerleave", () => {
@@ -339,8 +411,10 @@
   });
   elements.sectorLayer.addEventListener("keydown", handleSectorKeys);
   elements.explorer.addEventListener("pointerdown", (event) => {
-    if (event.target === elements.explorer) closeExplorer();
+    if (event.target === elements.explorer) requestCloseExplorer();
   });
+
+  window.addEventListener("popstate", handleHistoryChange);
 
   document.addEventListener("warspawn:languagechange", (event) => {
     state.language = event.detail?.language === "en" ? "en" : "pt";

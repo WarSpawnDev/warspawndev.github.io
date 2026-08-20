@@ -319,6 +319,12 @@ body.armor-explorer-open {
   min-height: 0;
   touch-action: pan-y;
   user-select: none;
+  cursor: grab;
+  contain: layout paint;
+}
+
+.armor-carousel.is-dragging {
+  cursor: grabbing;
 }
 
 .armor-carousel-stage {
@@ -327,6 +333,7 @@ body.armor-explorer-open {
   overflow: hidden;
   perspective: 1300px;
   transform-style: preserve-3d;
+  contain: layout paint;
 }
 
 .armor-carousel-stage::before {
@@ -364,9 +371,12 @@ body.armor-explorer-open {
   transform-origin: 50% 100%;
   transform-style: preserve-3d;
   backface-visibility: hidden;
-  transition:
-    transform 320ms cubic-bezier(0.22, 0.72, 0.18, 1),
-    opacity 260ms ease;
+  transition: none;
+  will-change: auto;
+  contain: layout paint;
+}
+
+.armor-carousel.is-moving .armor-option {
   will-change: transform, opacity;
 }
 
@@ -393,7 +403,7 @@ body.armor-explorer-open {
   object-fit: contain;
   object-position: center bottom;
   filter: brightness(var(--slot-brightness)) saturate(var(--slot-saturation)) drop-shadow(0 22px 24px rgba(0, 0, 0, 0.55));
-  transition: filter 320ms cubic-bezier(0.22, 0.72, 0.18, 1);
+  transition: none;
   pointer-events: none;
 }
 
@@ -577,16 +587,7 @@ body.armor-explorer-open {
   z-index: 15;
   display: grid;
   justify-items: center;
-  gap: 14px;
-}
-
-.armor-selector-status {
-  margin: 0;
-  color: #9298a5;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  gap: 0;
 }
 
 .armor-open-detail {
@@ -1115,6 +1116,11 @@ body.armor-explorer-open {
 @media (max-width: 820px) {
   .armor-explorer {
     padding-inline: 14px;
+    backdrop-filter: none;
+  }
+
+  .armor-explorer::before {
+    opacity: 0.18;
   }
 
   .armor-selector-view {
@@ -1140,11 +1146,24 @@ body.armor-explorer-open {
 
   .armor-carousel-stage {
     inset-inline: 0;
+    perspective: none;
+    transform-style: flat;
   }
 
   .armor-option {
     width: min(250px, 50vw);
     height: min(405px, calc(100% - 8px));
+    transform-style: flat;
+  }
+
+  .armor-option img,
+  .armor-option:hover img,
+  .armor-option:focus-visible img {
+    filter: brightness(var(--slot-brightness)) saturate(var(--slot-saturation));
+  }
+
+  .armor-option::before {
+    filter: blur(14px);
   }
 
   .armor-slot-0 {
@@ -1285,11 +1304,6 @@ body.armor-explorer-open {
   .armor-slot-n1 .armor-option-label strong,
   .armor-slot-p1 .armor-option-label strong {
     font-size: 14px;
-  }
-
-  .armor-selector-status {
-    max-width: 70vw;
-    text-align: center;
   }
 
   .armor-open-detail {

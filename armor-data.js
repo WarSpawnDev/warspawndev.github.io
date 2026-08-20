@@ -101,7 +101,7 @@
       order: 1,
       name: local("Esmeralda", "Emerald"),
       fullName: local("Armadura de Esmeralda", "Emerald Armor"),
-      concept: "assets/armors/concepts/emerald.webp",
+      concept: "assets/armors/concepts-normalized/emerald.webp",
       game: "assets/armors/game/emerald.png",
       accent: "#42ff70",
       description: local(
@@ -137,7 +137,7 @@
       order: 2,
       name: local("Ametista", "Amethyst"),
       fullName: local("Armadura de Ametista", "Amethyst Armor"),
-      concept: "assets/armors/concepts/amethyst.webp",
+      concept: "assets/armors/concepts-normalized/amethyst.webp",
       game: "assets/armors/game/amethyst.png",
       accent: "#a86bff",
       description: local(
@@ -168,7 +168,7 @@
       order: 3,
       name: local("XP", "XP"),
       fullName: local("Armadura de Experiência", "Experience Armor"),
-      concept: "assets/armors/concepts/experience.webp",
+      concept: "assets/armors/concepts-normalized/experience.webp",
       game: "assets/armors/game/experience.png",
       accent: "#adff38",
       description: local(
@@ -202,7 +202,7 @@
       order: 4,
       name: local("Rubi", "Ruby"),
       fullName: local("Armadura de Rubi", "Ruby Armor"),
-      concept: "assets/armors/concepts/ruby.webp",
+      concept: "assets/armors/concepts-normalized/ruby.webp",
       game: "assets/armors/game/ruby.png",
       accent: "#ff454d",
       description: local(
@@ -234,7 +234,7 @@
       order: 5,
       name: local("Ultimate", "Ultimate"),
       fullName: local("Armadura Ultimate", "Ultimate Armor"),
-      concept: "assets/armors/concepts/ultimate.webp",
+      concept: "assets/armors/concepts-normalized/ultimate.webp",
       game: "assets/armors/game/ultimate.png",
       accent: "#3c8dff",
       description: local(
@@ -273,7 +273,7 @@
       order: 6,
       name: local("Mobzilla", "Mobzilla"),
       fullName: local("Armadura de Mobzilla", "Mobzilla Armor"),
-      concept: "assets/armors/concepts/mobzilla.webp",
+      concept: "assets/armors/concepts-normalized/mobzilla.webp",
       game: "assets/armors/game/mobzilla.png",
       accent: "#a26cff",
       description: local(
@@ -298,7 +298,7 @@
       order: 7,
       name: local("Guardião Real", "Royal Guardian"),
       fullName: local("Armadura do Guardião Real", "Royal Guardian Armor"),
-      concept: "assets/armors/concepts/royal-guardian.webp",
+      concept: "assets/armors/concepts-normalized/royal-guardian.webp",
       game: "assets/armors/game/royal-guardian.png",
       accent: "#ffda57",
       description: local(
@@ -328,7 +328,7 @@
       order: 8,
       name: local("A Rainha", "The Queen"),
       fullName: local("Armadura de Escamas da Rainha", "Queen Scale Armor"),
-      concept: "assets/armors/concepts/queen-scale.webp",
+      concept: "assets/armors/concepts-normalized/queen-scale.webp",
       game: "assets/armors/game/queen-scale.png",
       accent: "#ff3345",
       description: local(
@@ -357,7 +357,7 @@
       order: 9,
       name: local("Mariposa", "Moth"),
       fullName: local("Armadura de Escamas de Mothra", "Moth Scale Armor"),
-      concept: "assets/armors/concepts/moth-scale.webp",
+      concept: "assets/armors/concepts-normalized/moth-scale.webp",
       game: "assets/armors/game/moth-scale.png",
       accent: "#ff8138",
       description: local(
@@ -384,7 +384,7 @@
       order: 10,
       name: local("Enguia de Lava", "Lava Eel"),
       fullName: local("Armadura de Enguia de Lava", "Lava Eel Armor"),
-      concept: "assets/armors/concepts/lava-eel.webp",
+      concept: "assets/armors/concepts-normalized/lava-eel.webp",
       game: "assets/armors/game/lava-eel.png",
       accent: "#ff521f",
       description: local(
@@ -414,7 +414,7 @@
       order: 11,
       name: local("Lápis-Lazúli", "Lapis"),
       fullName: local("Armadura de Lápis-Lazúli", "Lapis Armor"),
-      concept: "assets/armors/concepts/lapis.webp",
+      concept: "assets/armors/concepts-normalized/lapis.webp",
       game: "assets/armors/game/lapis.png",
       accent: "#55d5ff",
       description: local(
@@ -439,7 +439,7 @@
       order: 12,
       name: local("Pavão", "Peacock"),
       fullName: local("Armadura de Penas de Pavão", "Peacock Feather Armor"),
-      concept: "assets/armors/concepts/peacock.webp",
+      concept: "assets/armors/concepts-normalized/peacock.webp",
       game: "assets/armors/game/peacock.png",
       accent: "#38e0b9",
       description: local(
@@ -467,7 +467,7 @@
       order: 13,
       name: local("Turmalina", "Tourmaline"),
       fullName: local("Armadura de Turmalina Rosa", "Pink Tourmaline Armor"),
-      concept: "assets/armors/concepts/tourmaline.webp",
+      concept: "assets/armors/concepts-normalized/tourmaline.webp",
       game: "assets/armors/game/tourmaline.png",
       accent: "#ff64dc",
       description: local(
@@ -498,7 +498,7 @@
       order: 14,
       name: local("Olho de Tigre", "Tiger's Eye"),
       fullName: local("Armadura de Olho de Tigre", "Tiger's Eye Armor"),
-      concept: "assets/armors/concepts/tigers-eye.webp",
+      concept: "assets/armors/concepts-normalized/tigers-eye.webp",
       game: "assets/armors/game/tigers-eye.png",
       accent: "#d5a34e",
       description: local(
