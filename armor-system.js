@@ -11,7 +11,6 @@
   const stage = document.querySelector("#armor-carousel-stage");
   const previousButton = document.querySelector("#armor-carousel-prev");
   const nextButton = document.querySelector("#armor-carousel-next");
-  const status = document.querySelector("#armor-selector-status");
   const openDetailButton = document.querySelector("#armor-open-detail");
   const detailBackButton = document.querySelector("#armor-detail-back");
   const detailIndex = document.querySelector("#armor-detail-index");
@@ -28,7 +27,6 @@
     !stage ||
     !previousButton ||
     !nextButton ||
-    !status ||
     !openDetailButton ||
     !detailBackButton ||
     !detailIndex ||
@@ -56,7 +54,6 @@
       carousel: "Seletor circular de armaduras",
       select: (name) => `Selecionar ${name}`,
       open: (name) => `Abrir ficha de ${name}`,
-      position: (position, total, name) => `${String(position).padStart(2, "0")} / ${total} • ${name}`,
       setIndex: (position, total) => `Conjunto ${String(position).padStart(2, "0")} de ${total}`,
       gameVersion: "VERSÃO NO JOGO",
       gameAlt: (name) => `${name} em sua versão do Minecraft`,
@@ -109,7 +106,6 @@
       carousel: "Circular armor selector",
       select: (name) => `Select ${name}`,
       open: (name) => `Open ${name} dossier`,
-      position: (position, total, name) => `${String(position).padStart(2, "0")} / ${total} • ${name}`,
       setIndex: (position, total) => `Set ${String(position).padStart(2, "0")} of ${total}`,
       gameVersion: "IN-GAME VERSION",
       gameAlt: (name) => `${name} in its Minecraft version`,
@@ -154,15 +150,28 @@
   const state = {
     language: localStorage.getItem("warspawn-language") === "en" ? "en" : "pt",
     selectedIndex: 0,
+    selectionPosition: 0,
+    position: 0,
+    targetPosition: 0,
     open: false,
     view: "selector",
-    animating: false,
-    wheelLocked: false,
+    optionElements: [],
+    geometryFrame: 0,
+    historyFrame: 0,
+    motionFrame: 0,
+    motionKind: "idle",
+    motionTimestamp: 0,
+    inertiaVelocity: 0,
+    wheelAccumulator: 0,
     pointerId: null,
-    pointerCaptured: false,
     pointerStartX: 0,
     pointerStartY: 0,
-    suppressClick: false,
+    pointerLastX: 0,
+    pointerLastY: 0,
+    pointerLastTime: 0,
+    pointerVelocity: 0,
+    pointerDragging: false,
+    suppressClickUntil: 0,
     previousFocus: null,
     preloaded: false,
   };
@@ -250,7 +259,9 @@
           src="${escapeHtml(armorSet.concept)}"
           alt=""
           aria-hidden="true"
-          loading="eager"
+          width="576"
+          height="768"
+          loading="${isVisible ? "eager" : "lazy"}"
           decoding="async"
           draggable="false"
         >
@@ -263,8 +274,143 @@
   }
 
   function ensureOptions() {
-    if (stage.childElementCount === sets.length) return;
-    stage.innerHTML = sets.map(optionMarkup).join("");
+    if (stage.childElementCount !== sets.length) {
+      stage.innerHTML = sets.map(optionMarkup).join("");
+    }
+    state.optionElements = [...stage.querySelectorAll(".armor-option")];
+  }
+
+  function clamp(value, minimum, maximum) {
+    return Math.min(maximum, Math.max(minimum, value));
+  }
+
+  function interpolate(from, to, progress) {
+    return from + (to - from) * progress;
+  }
+
+  function carouselMetrics() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const mobile = width <= 820;
+    const compact = width <= 520;
+    let x;
+
+    if (compact) {
+      x = [0, 88, 146, 190, 235];
+    } else if (mobile) {
+      x = [0, 105, 185, 245, 310];
+    } else if (width <= 1100) {
+      x = [0, 155, 270, 350, 430];
+    } else {
+      x = [
+        0,
+        clamp(width * 0.15, 145, 205),
+        clamp(width * 0.27, 255, 350),
+        clamp(width * 0.38, 345, 455),
+        clamp(width * 0.47, 450, 570),
+      ];
+    }
+
+    const y = mobile
+      ? [
+          3,
+          clamp(height * 0.027, 14, 24),
+          clamp(height * 0.082, 52, 80),
+          clamp(height * 0.165, 105, 150),
+          clamp(height * 0.23, 150, 205),
+        ]
+      : [
+          clamp(height * 0.008, 2, 8),
+          clamp(height * 0.034, 18, 32),
+          clamp(height * 0.115, 68, 112),
+          clamp(height * 0.235, 138, 220),
+          clamp(height * 0.31, 205, 300),
+        ];
+
+    return {
+      x,
+      y,
+      scale: mobile ? [0.9, 0.62, 0.43, 0.3, 0.2] : [1, 0.77, 0.57, 0.4, 0.27],
+      opacity: [1, 0.84, 0.62, 0.46, 0],
+      brightness: [1, 0.72, 0.38, 0.12, 0],
+      saturation: [1, 0.76, 0.52, 0.18, 0],
+      rotation: mobile ? [0, 0, 0, 0, 0] : [0, 5, 9, 13, 18],
+    };
+  }
+
+  function geometryForOffset(offset, metrics) {
+    const absolute = Math.min(4, Math.abs(offset));
+    const lower = Math.floor(absolute);
+    const upper = Math.min(4, lower + 1);
+    const progress = absolute - lower;
+    const direction = Math.sign(offset);
+
+    return {
+      x: direction * interpolate(metrics.x[lower], metrics.x[upper], progress),
+      y: interpolate(metrics.y[lower], metrics.y[upper], progress),
+      scale: interpolate(metrics.scale[lower], metrics.scale[upper], progress),
+      opacity: interpolate(metrics.opacity[lower], metrics.opacity[upper], progress),
+      brightness: interpolate(metrics.brightness[lower], metrics.brightness[upper], progress),
+      saturation: interpolate(metrics.saturation[lower], metrics.saturation[upper], progress),
+      rotation: -direction * interpolate(metrics.rotation[lower], metrics.rotation[upper], progress),
+      absolute,
+    };
+  }
+
+  function renderGeometry() {
+    state.geometryFrame = 0;
+    if (!state.optionElements.length) return;
+    const metrics = carouselMetrics();
+
+    state.optionElements.forEach((option) => {
+      const index = Number(option.dataset.armorIndex);
+      let offset = index - state.position;
+      offset -= Math.round(offset / sets.length) * sets.length;
+      const geometry = geometryForOffset(offset, metrics);
+
+      option.style.setProperty("--slot-x", `${geometry.x.toFixed(2)}px`);
+      option.style.setProperty("--slot-y", `${geometry.y.toFixed(2)}px`);
+      option.style.setProperty("--slot-scale", geometry.scale.toFixed(4));
+      option.style.setProperty("--slot-opacity", geometry.opacity.toFixed(4));
+      option.style.setProperty("--slot-brightness", geometry.brightness.toFixed(4));
+      option.style.setProperty("--slot-saturation", geometry.saturation.toFixed(4));
+      option.style.setProperty("--slot-rotate-y", `${geometry.rotation.toFixed(2)}deg`);
+      option.style.zIndex = String(Math.max(1, 20 - Math.round(geometry.absolute * 4)));
+      option.style.pointerEvents = geometry.absolute <= visibleRadius + 0.35 ? "" : "none";
+      option.dataset.armorVisualOffset = offset.toFixed(3);
+    });
+  }
+
+  function requestGeometry() {
+    if (state.geometryFrame) return;
+    state.geometryFrame = requestAnimationFrame(renderGeometry);
+  }
+
+  function commitSelectorHistoryState() {
+    state.historyFrame = 0;
+    const overlay = history.state?.warspawnOverlay;
+    if (!state.open || state.view !== "selector" || overlay?.kind !== "armor") return;
+    history.replaceState(
+      {
+        ...(history.state || {}),
+        warspawnOverlay: {
+          kind: "armor",
+          view: "selector",
+          id: selectedSet().id,
+        },
+      },
+      "",
+    );
+  }
+
+  function replaceSelectorHistoryState({ immediate = false } = {}) {
+    if (immediate) {
+      if (state.historyFrame) cancelAnimationFrame(state.historyFrame);
+      commitSelectorHistoryState();
+      return;
+    }
+    if (state.historyFrame) return;
+    state.historyFrame = requestAnimationFrame(commitSelectorHistoryState);
   }
 
   function renderSelector({ focusCurrent = false } = {}) {
@@ -272,7 +418,7 @@
     setAccent(current);
     ensureOptions();
 
-    stage.querySelectorAll(".armor-option").forEach((option) => {
+    state.optionElements.forEach((option) => {
       const index = Number(option.dataset.armorIndex);
       const armorSet = sets[index];
       const offset = signedOffset(index);
@@ -291,41 +437,144 @@
       option.querySelector(".armor-option-label strong").textContent = name;
     });
 
-    status.textContent = t().position(current.order, sets.length, local(current.name));
+    replaceSelectorHistoryState();
+    requestGeometry();
 
     if (focusCurrent) {
       stage.querySelector('[data-armor-offset="0"]')?.focus({ preventScroll: true });
     }
   }
 
-  function navigate(delta, { focusCurrent = false } = {}) {
-    if (!delta || state.animating || state.view !== "selector") return;
-    const direction = delta > 0 ? 1 : -1;
-    let remaining = Math.min(visibleRadius, Math.abs(Math.trunc(delta)));
-    if (!remaining) return;
-    state.animating = true;
+  function dispatchArmorSelection(armorSet, direction) {
+    document.dispatchEvent(new CustomEvent("warspawn:armorchange", {
+      detail: {
+        id: armorSet.id,
+        index: armorSet.order - 1,
+        order: armorSet.order,
+        direction,
+        element: state.optionElements.find((option) => option.dataset.armorId === armorSet.id) || null,
+      },
+    }));
+  }
 
-    if (reduceMotion.matches) {
-      state.selectedIndex = wrappedIndex(state.selectedIndex + direction * remaining);
-      renderSelector({ focusCurrent });
-      state.animating = false;
+  function moveSelectionTo(selectionPosition, { focusCurrent = false, sound = true } = {}) {
+    const destination = Math.trunc(selectionPosition);
+    if (destination === state.selectionPosition) return;
+    const direction = destination > state.selectionPosition ? 1 : -1;
+    const changes = [];
+
+    while (state.selectionPosition !== destination) {
+      state.selectionPosition += direction;
+      state.selectedIndex = wrappedIndex(state.selectionPosition);
+      changes.push(selectedSet());
+    }
+
+    renderSelector({ focusCurrent });
+    if (sound) changes.forEach((armorSet) => dispatchArmorSelection(armorSet, direction));
+  }
+
+  function finishMotion() {
+    state.motionFrame = 0;
+    state.motionKind = "idle";
+    state.motionTimestamp = 0;
+    state.inertiaVelocity = 0;
+    carousel.classList.remove("is-moving", "is-inertia");
+  }
+
+  function cancelMotion() {
+    if (state.motionFrame) cancelAnimationFrame(state.motionFrame);
+    finishMotion();
+  }
+
+  function runTargetMotion(timestamp) {
+    if (state.motionKind !== "target") return;
+    const elapsed = state.motionTimestamp
+      ? clamp(timestamp - state.motionTimestamp, 1, 48)
+      : 16;
+    state.motionTimestamp = timestamp;
+    const difference = state.targetPosition - state.position;
+
+    if (Math.abs(difference) < 0.0015) {
+      state.position = state.targetPosition;
+      renderGeometry();
+      finishMotion();
       return;
     }
 
-    const advance = () => {
-      state.selectedIndex = wrappedIndex(state.selectedIndex + direction);
-      renderSelector({ focusCurrent: focusCurrent && remaining === 1 });
-      remaining -= 1;
-      if (remaining > 0) {
-        window.setTimeout(advance, 210);
-        return;
-      }
-      window.setTimeout(() => {
-        state.animating = false;
-      }, 330);
-    };
+    const progress = 1 - Math.exp(-elapsed / 62);
+    state.position += difference * progress;
+    renderGeometry();
+    state.motionFrame = requestAnimationFrame(runTargetMotion);
+  }
 
-    advance();
+  function startTargetMotion() {
+    if (reduceMotion.matches) {
+      cancelMotion();
+      state.position = state.targetPosition;
+      renderGeometry();
+      return;
+    }
+    if (state.motionKind === "inertia") cancelMotion();
+    state.motionKind = "target";
+    carousel.classList.add("is-moving");
+    carousel.classList.remove("is-inertia");
+    if (!state.motionFrame) {
+      state.motionTimestamp = 0;
+      state.motionFrame = requestAnimationFrame(runTargetMotion);
+    }
+  }
+
+  function settleToNearest() {
+    state.targetPosition = Math.round(state.position);
+    moveSelectionTo(state.targetPosition);
+    startTargetMotion();
+  }
+
+  function runInertia(timestamp) {
+    if (state.motionKind !== "inertia") return;
+    const elapsed = state.motionTimestamp
+      ? clamp(timestamp - state.motionTimestamp, 1, 32)
+      : 16;
+    state.motionTimestamp = timestamp;
+    state.inertiaVelocity *= Math.exp(-0.0042 * elapsed);
+    state.position += state.inertiaVelocity * elapsed;
+    state.targetPosition = state.position;
+    moveSelectionTo(Math.round(state.position));
+    renderGeometry();
+
+    if (Math.abs(state.inertiaVelocity) < 0.00035) {
+      state.motionFrame = 0;
+      state.motionKind = "idle";
+      state.motionTimestamp = 0;
+      state.inertiaVelocity = 0;
+      carousel.classList.remove("is-inertia");
+      settleToNearest();
+      return;
+    }
+
+    state.motionFrame = requestAnimationFrame(runInertia);
+  }
+
+  function startInertia(velocity) {
+    cancelMotion();
+    if (reduceMotion.matches || Math.abs(velocity) < 0.0007) {
+      settleToNearest();
+      return;
+    }
+    state.motionKind = "inertia";
+    state.inertiaVelocity = clamp(velocity, -0.045, 0.045);
+    state.motionTimestamp = 0;
+    carousel.classList.add("is-moving", "is-inertia");
+    state.motionFrame = requestAnimationFrame(runInertia);
+  }
+
+  function navigate(delta, { focusCurrent = false } = {}) {
+    const steps = Math.trunc(delta);
+    if (!steps || state.view !== "selector" || !state.open) return;
+    if (state.motionKind === "inertia") cancelMotion();
+    state.targetPosition = Math.round(state.targetPosition) + steps;
+    moveSelectionTo(state.targetPosition, { focusCurrent, sound: true });
+    startTargetMotion();
   }
 
   function itemStat(itemEntry) {
@@ -507,7 +756,32 @@
     }
   }
 
-  function showSelector({ focus = true } = {}) {
+  function restoreSelection(armorId = sets[0].id) {
+    const index = Math.max(0, sets.findIndex((armorSet) => armorSet.id === armorId));
+    cancelMotion();
+    state.selectedIndex = index;
+    state.selectionPosition = index;
+    state.position = index;
+    state.targetPosition = index;
+  }
+
+  function armorHistoryState(view) {
+    return {
+      ...(history.state || {}),
+      warspawnOverlay: {
+        kind: "armor",
+        view,
+        id: selectedSet().id,
+      },
+    };
+  }
+
+  function pushArmorHistory(view) {
+    history.pushState(armorHistoryState(view), "");
+  }
+
+  function showSelector({ focus = true, armorId = null } = {}) {
+    if (armorId) restoreSelection(armorId);
     state.view = "selector";
     explorer.dataset.armorView = "selector";
     detailView.hidden = true;
@@ -519,9 +793,12 @@
     }
   }
 
-  function showDetail() {
+  function showDetail({ pushHistory = false, armorId = null } = {}) {
+    if (armorId) restoreSelection(armorId);
+    if (pushHistory) replaceSelectorHistoryState({ immediate: true });
     state.view = "detail";
     explorer.dataset.armorView = "detail";
+    if (pushHistory) pushArmorHistory("detail");
     renderDetail();
     selectorView.hidden = true;
     detailView.hidden = false;
@@ -529,22 +806,71 @@
     requestAnimationFrame(() => detailContent.focus({ preventScroll: true }));
   }
 
-  function openExplorer() {
+  function openExplorer({ fromHistory = false, armorId = sets[0].id, view = "selector" } = {}) {
     state.previousFocus = document.activeElement;
-    state.selectedIndex = 0;
+    restoreSelection(armorId);
     state.open = true;
     explorer.hidden = false;
     document.body.classList.add("armor-explorer-open");
     updateStaticText();
-    showSelector();
+    if (!fromHistory) pushArmorHistory("selector");
+    if (view === "detail") showDetail({ armorId });
+    else showSelector({ armorId });
     preloadConcepts();
   }
 
   function closeExplorer() {
+    if (!state.open) return;
+    cancelMotion();
+    if (state.historyFrame) cancelAnimationFrame(state.historyFrame);
+    state.historyFrame = 0;
     state.open = false;
     explorer.hidden = true;
     document.body.classList.remove("armor-explorer-open");
+    carousel.classList.remove("is-dragging");
+    state.pointerId = null;
+    state.pointerDragging = false;
     state.previousFocus?.focus?.({ preventScroll: true });
+  }
+
+  function requestCloseExplorer() {
+    const overlay = history.state?.warspawnOverlay;
+    if (overlay?.kind !== "armor") {
+      closeExplorer();
+      return;
+    }
+    history.go(state.view === "detail" ? -2 : -1);
+  }
+
+  function requestPreviousOverlayView() {
+    const overlay = history.state?.warspawnOverlay;
+    if (overlay?.kind === "armor") {
+      history.back();
+      return;
+    }
+    if (state.view === "detail") showSelector();
+    else closeExplorer();
+  }
+
+  function handleHistoryChange(event) {
+    const overlay = event.state?.warspawnOverlay;
+    if (overlay?.kind !== "armor") {
+      if (state.open) closeExplorer();
+      return;
+    }
+
+    const armorId = setsById.has(overlay.id) ? overlay.id : sets[0].id;
+    if (!state.open) {
+      openExplorer({
+        fromHistory: true,
+        armorId,
+        view: overlay.view === "detail" ? "detail" : "selector",
+      });
+      return;
+    }
+
+    if (overlay.view === "detail") showDetail({ armorId });
+    else showSelector({ armorId });
   }
 
   function visibleFocusableElements() {
@@ -568,20 +894,20 @@
     }
   }
 
-  openButton.addEventListener("click", openExplorer);
-  closeButton.addEventListener("click", closeExplorer);
+  openButton.addEventListener("click", () => openExplorer());
+  closeButton.addEventListener("click", requestCloseExplorer);
   previousButton.addEventListener("click", () => navigate(-1, { focusCurrent: false }));
   nextButton.addEventListener("click", () => navigate(1, { focusCurrent: false }));
-  openDetailButton.addEventListener("click", showDetail);
-  detailBackButton.addEventListener("click", () => showSelector());
+  openDetailButton.addEventListener("click", () => showDetail({ pushHistory: true }));
+  detailBackButton.addEventListener("click", requestPreviousOverlayView);
 
   stage.addEventListener("click", (event) => {
-    if (state.suppressClick || state.animating) return;
+    if (performance.now() < state.suppressClickUntil) return;
     const option = event.target.closest("[data-armor-offset]");
     if (!option) return;
     const offset = Number(option.dataset.armorOffset);
     if (offset === 0) {
-      showDetail();
+      showDetail({ pushHistory: true });
     } else {
       navigate(offset);
     }
@@ -592,68 +918,115 @@
     const movement = Math.abs(event.deltaX) > Math.abs(event.deltaY)
       ? event.deltaX
       : event.deltaY;
-    if (Math.abs(movement) < 4) return;
+    if (!movement) return;
     event.preventDefault();
-    if (state.wheelLocked) return;
-    state.wheelLocked = true;
-    navigate(movement > 0 ? 1 : -1);
-    window.setTimeout(() => {
-      state.wheelLocked = false;
-    }, 360);
+    const contribution = event.deltaMode === WheelEvent.DOM_DELTA_PIXEL
+      ? movement / 64
+      : event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? movement / 3
+        : Math.sign(movement);
+    if (
+      state.wheelAccumulator &&
+      Math.sign(state.wheelAccumulator) !== Math.sign(contribution)
+    ) {
+      state.wheelAccumulator = 0;
+    }
+    state.wheelAccumulator += contribution;
+    const steps = state.wheelAccumulator > 0
+      ? Math.floor(state.wheelAccumulator)
+      : Math.ceil(state.wheelAccumulator);
+    if (!steps) return;
+    state.wheelAccumulator -= steps;
+    navigate(steps);
   }, { passive: false });
 
   carousel.addEventListener("pointerdown", (event) => {
+    if (state.view !== "selector") return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     state.pointerId = event.pointerId;
-    state.pointerCaptured = false;
     state.pointerStartX = event.clientX;
     state.pointerStartY = event.clientY;
+    state.pointerLastX = event.clientX;
+    state.pointerLastY = event.clientY;
+    state.pointerLastTime = event.timeStamp || performance.now();
+    state.pointerVelocity = 0;
+    state.pointerDragging = false;
   });
 
   carousel.addEventListener("pointermove", (event) => {
-    if (event.pointerId !== state.pointerId || state.pointerCaptured) return;
-    const horizontal = event.clientX - state.pointerStartX;
-    const vertical = event.clientY - state.pointerStartY;
-    if (Math.abs(horizontal) < 12 || Math.abs(horizontal) <= Math.abs(vertical)) return;
-    if (typeof carousel.setPointerCapture !== "function") return;
-    try {
-      carousel.setPointerCapture(event.pointerId);
-      state.pointerCaptured = true;
-    } catch {
-      state.pointerCaptured = false;
+    if (event.pointerId !== state.pointerId) return;
+    const totalX = event.clientX - state.pointerStartX;
+    const totalY = event.clientY - state.pointerStartY;
+    if (!state.pointerDragging) {
+      if (Math.abs(totalX) < 3) return;
+      if (Math.abs(totalX) <= Math.abs(totalY) * 0.78) return;
+      cancelMotion();
+      state.targetPosition = state.position;
+      moveSelectionTo(Math.round(state.position), { sound: false });
+      renderGeometry();
+      state.pointerDragging = true;
+      carousel.classList.add("is-dragging", "is-moving");
+      try {
+        carousel.setPointerCapture(event.pointerId);
+      } catch {
+        // Pointer capture is an enhancement; dragging still works without it.
+      }
     }
+
+    if (event.cancelable) event.preventDefault();
+    const now = event.timeStamp || performance.now();
+    const elapsed = clamp(now - state.pointerLastTime, 1, 64);
+    const distance = event.clientX - state.pointerLastX;
+    const pixelsPerStep = Math.max(72, carouselMetrics().x[1]);
+    const movement = -distance / pixelsPerStep;
+    const instantaneousVelocity = movement / elapsed;
+    state.pointerVelocity = state.pointerVelocity * 0.62 + instantaneousVelocity * 0.38;
+    state.position += movement;
+    state.targetPosition = state.position;
+    moveSelectionTo(Math.round(state.position));
+    requestGeometry();
+    state.pointerLastX = event.clientX;
+    state.pointerLastY = event.clientY;
+    state.pointerLastTime = now;
   });
 
   carousel.addEventListener("pointerup", (event) => {
     if (event.pointerId !== state.pointerId) return;
-    const horizontal = event.clientX - state.pointerStartX;
-    const vertical = event.clientY - state.pointerStartY;
+    const wasDragging = state.pointerDragging;
+    const velocity = state.pointerVelocity;
     state.pointerId = null;
-    state.pointerCaptured = false;
-    if (Math.abs(horizontal) >= 38 && Math.abs(horizontal) > Math.abs(vertical) * 1.15) {
-      state.suppressClick = true;
-      navigate(horizontal < 0 ? 1 : -1);
-      window.setTimeout(() => {
-        state.suppressClick = false;
-      }, 220);
+    state.pointerDragging = false;
+    carousel.classList.remove("is-dragging");
+    if (wasDragging) {
+      state.suppressClickUntil = performance.now() + 280;
+      startInertia(velocity);
+    } else if (state.motionKind === "idle") {
+      carousel.classList.remove("is-moving");
     }
   });
 
   carousel.addEventListener("pointercancel", () => {
+    const wasDragging = state.pointerDragging;
     state.pointerId = null;
-    state.pointerCaptured = false;
+    state.pointerDragging = false;
+    carousel.classList.remove("is-dragging");
+    if (wasDragging) {
+      state.suppressClickUntil = performance.now() + 280;
+      settleToNearest();
+    } else if (state.motionKind === "idle") {
+      carousel.classList.remove("is-moving");
+    }
   });
 
   explorer.addEventListener("click", (event) => {
-    if (event.target === explorer) closeExplorer();
+    if (event.target === explorer) requestCloseExplorer();
   });
 
   explorer.addEventListener("keydown", (event) => {
     trapFocus(event);
     if (event.key === "Escape") {
       event.preventDefault();
-      if (state.view === "detail") showSelector();
-      else closeExplorer();
+      requestPreviousOverlayView();
       return;
     }
     if (state.view !== "selector") return;
@@ -665,9 +1038,12 @@
       navigate(1, { focusCurrent: true });
     } else if ((event.key === "Enter" || event.key === " ") && document.activeElement === carousel) {
       event.preventDefault();
-      showDetail();
+      showDetail({ pushHistory: true });
     }
   });
+
+  window.addEventListener("resize", requestGeometry, { passive: true });
+  window.addEventListener("popstate", handleHistoryChange);
 
   document.addEventListener("warspawn:languagechange", (event) => {
     state.language = event.detail?.language === "en" ? "en" : "pt";

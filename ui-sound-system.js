@@ -445,6 +445,7 @@
   function pitchVariation(element) {
     const identity =
       element?.dataset?.dimension ||
+      element?.dataset?.armorId ||
       element?.dataset?.foodId ||
       element?.dataset?.slug ||
       element?.textContent ||
@@ -553,6 +554,10 @@
     return node instanceof Element ? node.closest(selectableSelector) : null;
   }
 
+  function isArmorMotionControl(element) {
+    return Boolean(element?.matches?.(".armor-option, .armor-carousel-arrow"));
+  }
+
   async function selectProfile(profileId, trigger) {
     if (!soundProfiles[profileId] || !AudioContextConstructor) return;
     state.profile = profileId;
@@ -593,7 +598,7 @@
 
       const previewProfile = element.dataset.audioProfile;
       if (previewProfile) playSound("preview", element, true, previewProfile);
-      else playSound(soundKind(element), element);
+      else if (!isArmorMotionControl(element)) playSound(soundKind(element), element);
     }
 
     document.dispatchEvent(
@@ -649,7 +654,7 @@
   document.addEventListener("pointerover", (event) => {
     if (event.pointerType === "touch") return;
     const element = closestSelectable(event.target);
-    if (!element || element === state.hovered) return;
+    if (!element || element === state.hovered || isArmorMotionControl(element)) return;
     state.hovered = element;
 
     const previewProfile = element.dataset.audioProfile;
@@ -667,7 +672,7 @@
 
   document.addEventListener("focusin", (event) => {
     const element = closestSelectable(event.target);
-    if (!element || element === state.hovered) return;
+    if (!element || element === state.hovered || isArmorMotionControl(element)) return;
 
     const previewProfile = element.dataset.audioProfile;
     if (previewProfile) playSound("preview", element, true, previewProfile);
@@ -743,8 +748,13 @@
       element.matches("[data-audio-profile]")
     ) return;
 
+    if (
+      isArmorMotionControl(element) &&
+      !element.matches('.armor-option[data-armor-offset="0"]')
+    ) return;
+
     const isBackAction = element.matches(
-      ".dimension-back, .dimension-explorer-close, .modal-close, #modal-close-button",
+      ".dimension-back, .dimension-explorer-close, .armor-back, .armor-explorer-close, .modal-close, #modal-close-button",
     );
     playSound(isBackAction ? "back" : "confirm", element, true);
   }, true);
@@ -768,6 +778,13 @@
   elements.menuToggle.addEventListener("click", () => {
     setMenuOpen(!state.menuOpen);
     playSound("navigation", elements.menuToggle, true);
+  });
+
+  document.addEventListener("warspawn:armorchange", async (event) => {
+    const armorElement = event.detail?.element instanceof Element
+      ? event.detail.element
+      : document.querySelector(`[data-armor-id="${CSS.escape(event.detail?.id || "")}"]`);
+    if (await unlockAudio()) playSound("dimension", armorElement, true);
   });
 
   document.addEventListener("warspawn:languagechange", (event) => {
