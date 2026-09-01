@@ -46,6 +46,134 @@
     boots: local("Botas", "Boots"),
   };
 
+  const armorSlots = ["helmet", "chestplate", "leggings", "boots"];
+
+  const enchantmentCatalog = Object.freeze({
+    protection: {
+      id: "protection",
+      name: local("Proteção", "Protection"),
+      image: "assets/armors/enchantments/protection.png",
+    },
+    "blast-protection": {
+      id: "blast-protection",
+      name: local("Proteção contra Explosões", "Blast Protection"),
+      image: "assets/armors/enchantments/blast-protection.png",
+    },
+    "fire-protection": {
+      id: "fire-protection",
+      name: local("Proteção contra Fogo", "Fire Protection"),
+      image: "assets/armors/enchantments/fire-protection.png",
+    },
+    "projectile-protection": {
+      id: "projectile-protection",
+      name: local("Proteção contra Projéteis", "Projectile Protection"),
+      image: "assets/armors/enchantments/projectile-protection.png",
+    },
+    respiration: {
+      id: "respiration",
+      name: local("Respiração", "Respiration"),
+      image: "assets/armors/enchantments/respiration.png",
+    },
+    "aqua-affinity": {
+      id: "aqua-affinity",
+      name: local("Afinidade Aquática", "Aqua Affinity"),
+      image: "assets/armors/enchantments/aqua-affinity.png",
+    },
+    "feather-falling": {
+      id: "feather-falling",
+      name: local("Peso-Pena", "Feather Falling"),
+      image: "assets/armors/enchantments/feather-falling.png",
+    },
+    unbreaking: {
+      id: "unbreaking",
+      name: local("Inquebrável", "Unbreaking"),
+      image: "assets/armors/enchantments/unbreaking.png",
+    },
+  });
+
+  const enchantments = (...entries) => entries.map(([id, level]) => ({
+    ...enchantmentCatalog[id],
+    level,
+  }));
+
+  const pieceEnchantments = (base = [], extras = {}) => Object.fromEntries(
+    armorSlots.map((slot) => [slot, [...base, ...(extras[slot] ?? [])]]),
+  );
+
+  const armorEnchantments = {
+    experience: pieceEnchantments(
+      enchantments(["protection", 2], ["blast-protection", 1]),
+      { boots: enchantments(["feather-falling", 1]) },
+    ),
+    ultimate: pieceEnchantments(
+      enchantments(
+        ["protection", 5],
+        ["blast-protection", 5],
+        ["fire-protection", 5],
+        ["projectile-protection", 5],
+      ),
+      {
+        helmet: enchantments(["respiration", 2], ["aqua-affinity", 3]),
+        boots: enchantments(["feather-falling", 3]),
+      },
+    ),
+    mobzilla: pieceEnchantments(
+      enchantments(
+        ["protection", 10],
+        ["blast-protection", 10],
+        ["fire-protection", 10],
+        ["projectile-protection", 10],
+      ),
+      {
+        helmet: enchantments(["unbreaking", 5]),
+        chestplate: enchantments(["unbreaking", 5]),
+        leggings: enchantments(["unbreaking", 5]),
+        boots: enchantments(["feather-falling", 10], ["unbreaking", 5]),
+      },
+    ),
+    "royal-guardian": pieceEnchantments(
+      enchantments(
+        ["protection", 10],
+        ["blast-protection", 10],
+        ["fire-protection", 10],
+        ["projectile-protection", 10],
+      ),
+      {
+        helmet: enchantments(["respiration", 1], ["aqua-affinity", 2], ["unbreaking", 5]),
+        chestplate: enchantments(["unbreaking", 5]),
+        leggings: enchantments(["unbreaking", 5]),
+        boots: enchantments(["feather-falling", 10], ["unbreaking", 5]),
+      },
+    ),
+    "moth-scale": pieceEnchantments(
+      enchantments(
+        ["protection", 3],
+        ["blast-protection", 3],
+        ["fire-protection", 3],
+      ),
+      { boots: enchantments(["feather-falling", 5]) },
+    ),
+    "lava-eel": pieceEnchantments(
+      enchantments(
+        ["protection", 3],
+        ["blast-protection", 10],
+        ["fire-protection", 2],
+      ),
+      {
+        helmet: enchantments(["respiration", 1], ["aqua-affinity", 2]),
+        boots: enchantments(["feather-falling", 2]),
+      },
+    ),
+    lapis: pieceEnchantments(
+      enchantments(["protection", 1], ["projectile-protection", 1]),
+      { helmet: enchantments(["respiration", 1], ["aqua-affinity", 1]) },
+    ),
+    peacock: pieceEnchantments(
+      [],
+      { boots: enchantments(["feather-falling", 10]) },
+    ),
+  };
+
   const armorPieces = (
     setId,
     qualifierPt,
@@ -53,7 +181,8 @@
     basePath,
     files,
     defense,
-  ) => ["helmet", "chestplate", "leggings", "boots"].map((slot, index) =>
+    enchantmentsBySlot = {},
+  ) => armorSlots.map((slot, index) =>
     item(
       `${setId}-${slot}`,
       `${pieceLabels[slot].pt} ${qualifierPt}`,
@@ -61,6 +190,7 @@
       `${basePath}/${files[index]}`,
       "armor",
       { defense: defense[index], slot },
+      { enchantments: [...(enchantmentsBySlot[slot] ?? [])] },
     ),
   );
 
@@ -84,11 +214,12 @@
   );
 
   const set = (definition) => ({
-    enchantments: [],
+    enchantmentState: "pending",
     recipes: [],
     relations: emptyRelations(),
     conceptFallback: false,
     ...definition,
+    enchantments: definition.pieces.flatMap((pieceEntry) => pieceEntry.enchantments),
     totalDefense: definition.pieces.reduce(
       (total, pieceEntry) => total + pieceEntry.stats.defense,
       0,
@@ -183,6 +314,7 @@
         local("Gera experiência quando usada junto da Espada de Experiência.", "Generates experience when worn with the Experience Sword."),
         local("A Espada de Veneno pertence a esta família no catálogo WarSpawn.", "The Poison Sword belongs to this family in the WarSpawn catalog."),
       ],
+      enchantmentState: "verified",
       pieces: armorPieces(
         "experience",
         "de Experiência",
@@ -190,6 +322,7 @@
         "assets/armors/items/experience",
         ["experience_helmet.png", "experience_chest.png", "experience_leggings.png", "experience_boots.png"],
         [5, 9, 7, 4],
+        armorEnchantments.experience,
       ),
       relatedItems: [
         equipment("experience", "sword", "Espada de Experiência", "Experience Sword", "experiencesword.png", "sword", { attack: "10+" }),
@@ -249,6 +382,7 @@
         local("Proteções amplas no conjunto histórico.", "Broad protections on the historical set."),
         local("A vara de pesca funciona na lava; o arco dispara rapidamente e usa fogo.", "The fishing rod works in lava; the bow fires rapidly and uses flames."),
       ],
+      enchantmentState: "verified",
       pieces: armorPieces(
         "ultimate",
         "Ultimate",
@@ -256,6 +390,7 @@
         "assets/armors/items/ultimate",
         ["ultimate_helmet.png", "ultimate_chest.png", "ultimate_leggings.png", "ultimate_boots.png"],
         [6, 12, 10, 6],
+        armorEnchantments.ultimate,
       ),
       relatedItems: [
         equipment("ultimate", "sword", "Espada Ultimate", "Ultimate Sword", "ultimatesword.png", "sword", { attack: 40 }),
@@ -282,6 +417,7 @@
       ),
       acquisition: local("Fabricada com Escamas de Mobzilla.", "Crafted with Mobzilla Scales."),
       abilities: [local("Proteção X no conjunto histórico.", "Protection X on the historical set.")],
+      enchantmentState: "verified",
       pieces: armorPieces(
         "mobzilla",
         "de Mobzilla",
@@ -289,6 +425,7 @@
         "assets/armors/items/mobzilla",
         ["mobzilla_helmet.png", "mobzilla_chest.png", "mobzilla_leggings.png", "mobzilla_boots.png"],
         [7, 13, 11, 7],
+        armorEnchantments.mobzilla,
       ),
       relatedItems: [],
       source: "https://shrekleaker.github.io/orespawn.com/mobzilla-armor.html",
@@ -310,6 +447,7 @@
         "Obtained by defeating The King or in the Level 6 Challenge Dungeon.",
       ),
       abilities: [local("As botas permitem planar.", "The boots grant gliding.")],
+      enchantmentState: "verified",
       pieces: armorPieces(
         "royal-guardian",
         "do Guardião Real",
@@ -317,6 +455,7 @@
         "assets/armors/items/royal-guardian",
         ["royal_helmet.png", "royal_chest.png", "royal_leggings.png", "royal_boots.png"],
         [8, 14, 12, 8],
+        armorEnchantments["royal-guardian"],
       ),
       relatedItems: [
         equipment("royal-guardian", "sword", "Espada do Guardião Real", "Royal Guardian Sword", "royalsmall.png", "sword", { attack: 750 }),
@@ -339,6 +478,7 @@
       abilities: [
         local("O conjunto original vem sem encantamentos: sua defesa base já é excepcional.", "The original set comes without enchantments: its base defense is already exceptional."),
       ],
+      enchantmentState: "none",
       pieces: armorPieces(
         "queen-scale",
         "da Rainha",
@@ -368,6 +508,7 @@
       abilities: [
         local("Proteção, proteção contra explosões, resistência ao fogo e queda suave na referência original.", "Protection, Blast Protection, Fire Resistance and Feather Falling in the original reference."),
       ],
+      enchantmentState: "verified",
       pieces: armorPieces(
         "moth-scale",
         "de Mothra",
@@ -375,6 +516,7 @@
         "assets/armors/items/moth-scale",
         ["mothscale_helmet.png", "mothscale_chest.png", "mothscale_leggings.png", "mothscale_boots.png"],
         [2, 7, 5, 2],
+        armorEnchantments["moth-scale"],
       ),
       relatedItems: [],
       source: "https://shrekleaker.github.io/orespawn.com/moth-scale-armor.html",
@@ -398,6 +540,7 @@
       abilities: [
         local("Proteções contra fogo e explosões, respiração, afinidade aquática e queda suave na referência original.", "Fire and blast protections, Respiration, Aqua Affinity and Feather Falling in the original reference."),
       ],
+      enchantmentState: "verified",
       pieces: armorPieces(
         "lava-eel",
         "de Enguia de Lava",
@@ -405,6 +548,7 @@
         "assets/armors/items/lava-eel",
         ["lavaeel_helmet.png", "lavaeel_chest.png", "lavaeel_leggings.png", "lavaeel_boots.png"],
         [2, 7, 5, 2],
+        armorEnchantments["lava-eel"],
       ),
       relatedItems: [],
       source: "https://shrekleaker.github.io/orespawn.com/lava-eel-armor.html",
@@ -423,6 +567,7 @@
       ),
       acquisition: local("Fabricada com blocos de lápis-lazúli.", "Crafted with lapis lazuli blocks."),
       abilities: [local("Proteção equilibrada para uso geral.", "Balanced protection for general use.")],
+      enchantmentState: "verified",
       pieces: armorPieces(
         "lapis",
         "de Lápis-Lazúli",
@@ -430,6 +575,7 @@
         "assets/armors/items/lapis",
         ["lapis_helmet.png", "lapis_chest.png", "lapis_leggings.png", "lapis_boots.png"],
         [2, 7, 5, 2],
+        armorEnchantments.lapis,
       ),
       relatedItems: [],
       source: "https://shrekleaker.github.io/orespawn.com/lapis-armor.html",
@@ -448,6 +594,7 @@
       ),
       acquisition: local("Fabricada com penas deixadas por pavões.", "Crafted with feathers dropped by peacocks."),
       abilities: [local("As botas oferecem queda suave e planeio.", "The boots provide Feather Falling and gliding.")],
+      enchantmentState: "verified",
       pieces: armorPieces(
         "peacock",
         "de Pavão",
@@ -455,6 +602,7 @@
         "assets/armors/items/peacock",
         ["peacock_helmet.png", "peacock_chest.png", "peacock_leggings.png", "peacock_boots.png"],
         [2, 5, 4, 2],
+        armorEnchantments.peacock,
       ),
       relatedItems: [
         equipment("peacock", "skate-bow", "Arco Skate", "Skate Bow", "skatebow.png", "bow", { attack: 100 }),
@@ -538,8 +686,9 @@
   const recipes = [];
 
   window.WarSpawnArmorCatalog = Object.freeze({
-    version: 1,
+    version: 2,
     order: sets.map((armorSet) => armorSet.id),
+    enchantments: Object.values(enchantmentCatalog),
     sets,
     items,
     recipes,
