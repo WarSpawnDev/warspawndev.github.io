@@ -115,8 +115,15 @@
       attack: "Ataque",
       utility: "Uso",
       enchantments: "Encantamentos",
-      enchantmentsFuture:
-        "Estrutura pronta para receber ícones, níveis e descrições dos encantamentos da versão WarSpawn.",
+      enchantmentsKicker: "ENCANTAMENTOS POR PEÇA",
+      enchantmentApplications: (count) => `${count} ${count === 1 ? "aplicação" : "aplicações"}`,
+      enchantmentCount: (count) => `${count} ${count === 1 ? "encantamento" : "encantamentos"}`,
+      enchantmentLevel: (level) => `Nível ${level}`,
+      noPieceEnchantments: "Sem encantamentos registrados nesta peça.",
+      enchantmentsPending:
+        "Ainda não há capturas de encantamentos enviadas para este conjunto.",
+      noSetEnchantments:
+        "O conjunto original não possui encantamentos nativos registrados.",
       recipes: "Receitas",
       recipesFuture:
         "O sistema já aceita grades, ingredientes, estações e resultados. As receitas serão conectadas nesta área.",
@@ -175,8 +182,15 @@
       attack: "Attack",
       utility: "Use",
       enchantments: "Enchantments",
-      enchantmentsFuture:
-        "Ready to receive icons, levels and descriptions for the WarSpawn version's enchantments.",
+      enchantmentsKicker: "ENCHANTMENTS BY PIECE",
+      enchantmentApplications: (count) => `${count} ${count === 1 ? "application" : "applications"}`,
+      enchantmentCount: (count) => `${count} ${count === 1 ? "enchantment" : "enchantments"}`,
+      enchantmentLevel: (level) => `Level ${level}`,
+      noPieceEnchantments: "No enchantments recorded for this piece.",
+      enchantmentsPending:
+        "No enchantment screenshots have been provided for this set yet.",
+      noSetEnchantments:
+        "The original set has no native enchantments recorded.",
       recipes: "Recipes",
       recipesFuture:
         "The system already supports grids, ingredients, stations and results. Recipes will be connected here.",
@@ -879,6 +893,69 @@
     `;
   }
 
+  function romanLevel(level) {
+    const numerals = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+    return numerals[level] ?? String(level);
+  }
+
+  function enchantmentMarkup(enchantment) {
+    const name = local(enchantment.name);
+    const level = romanLevel(enchantment.level);
+    return `
+      <li class="armor-enchantment-entry">
+        <img
+          src="${escapeHtml(enchantment.image)}"
+          alt="${escapeHtml(name)}"
+          loading="lazy"
+          decoding="async"
+        >
+        <span class="armor-enchantment-copy">
+          <strong>${escapeHtml(name)}</strong>
+          <small>${escapeHtml(t().enchantmentLevel(level))}</small>
+        </span>
+      </li>
+    `;
+  }
+
+  function pieceEnchantmentsMarkup(piece) {
+    const entries = piece.enchantments ?? [];
+    const list = entries.length
+      ? `<ul class="armor-enchantment-list">${entries.map(enchantmentMarkup).join("")}</ul>`
+      : `<p class="armor-piece-enchantment-empty">${escapeHtml(t().noPieceEnchantments)}</p>`;
+
+    return `
+      <article class="armor-enchantment-piece" data-armor-enchantment-piece="${escapeHtml(piece.stats.slot)}">
+        <header class="armor-enchantment-piece-head">
+          <img
+            src="${escapeHtml(piece.image)}"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          >
+          <span>
+            <strong>${escapeHtml(local(piece.name))}</strong>
+            <small>${escapeHtml(t().enchantmentCount(entries.length))}</small>
+          </span>
+        </header>
+        ${list}
+      </article>
+    `;
+  }
+
+  function enchantmentsMarkup(armorSet) {
+    if (armorSet.enchantmentState === "none") {
+      return `<p class="armor-empty-enchantments">${escapeHtml(t().noSetEnchantments)}</p>`;
+    }
+    if (armorSet.enchantmentState !== "verified") {
+      return `<p class="armor-empty-enchantments">${escapeHtml(t().enchantmentsPending)}</p>`;
+    }
+    return `
+      <div class="armor-enchantment-groups">
+        ${armorSet.pieces.map(pieceEnchantmentsMarkup).join("")}
+      </div>
+    `;
+  }
+
   function renderDetail() {
     const armorSet = selectedSet();
     const name = local(armorSet.fullName);
@@ -896,6 +973,10 @@
     const related = armorSet.relatedItems.length
       ? `<div class="armor-related-grid">${armorSet.relatedItems.map(relatedMarkup).join("")}</div>`
       : `<p class="armor-empty-related">${escapeHtml(t().noRelated)}</p>`;
+
+    const enchantmentSummary = armorSet.enchantmentState === "verified"
+      ? `<span>${escapeHtml(t().enchantmentApplications(armorSet.enchantments.length))}</span>`
+      : "";
 
     detailContent.innerHTML = `
       <section class="armor-detail-hero">
@@ -943,6 +1024,17 @@
       <section class="armor-detail-block">
         <header class="armor-block-head">
           <div>
+            <span class="kicker">${escapeHtml(t().enchantmentsKicker)}</span>
+            <h3>${escapeHtml(t().enchantments)}</h3>
+          </div>
+          ${enchantmentSummary}
+        </header>
+        ${enchantmentsMarkup(armorSet)}
+      </section>
+
+      <section class="armor-detail-block">
+        <header class="armor-block-head">
+          <div>
             <span class="kicker">${escapeHtml(t().abilitiesKicker)}</span>
             <h3>${escapeHtml(t().abilities)}</h3>
           </div>
@@ -965,20 +1057,10 @@
         <header class="armor-block-head">
           <div>
             <span class="kicker">${escapeHtml(t().futureKicker)}</span>
-            <h3>${escapeHtml(t().enchantments)} &amp; ${escapeHtml(t().recipes)}</h3>
+            <h3>${escapeHtml(t().recipes)}</h3>
           </div>
         </header>
-        <div class="armor-future-grid">
-          <article class="armor-future-panel">
-            <h4>${escapeHtml(t().enchantments)}</h4>
-            <p>${escapeHtml(t().enchantmentsFuture)}</p>
-            <div class="armor-enchantment-slots" aria-hidden="true">
-              <span class="armor-enchantment-slot">✦</span>
-              <span class="armor-enchantment-slot">◇</span>
-              <span class="armor-enchantment-slot">✧</span>
-              <span class="armor-enchantment-slot">✦</span>
-            </div>
-          </article>
+        <div class="armor-future-grid armor-future-grid-single">
           <article class="armor-future-panel">
             <h4>${escapeHtml(t().recipes)}</h4>
             <p>${escapeHtml(t().recipesFuture)}</p>

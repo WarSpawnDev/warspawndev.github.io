@@ -1111,10 +1111,132 @@ body.armor-explorer-open {
   text-align: center;
 }
 
+.armor-enchantment-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.armor-enchantment-piece {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--armor-accent) 7%, transparent), transparent 48%),
+    rgba(4, 5, 8, 0.55);
+}
+
+.armor-enchantment-piece-head {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.armor-enchantment-piece-head > img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 7px 7px rgba(0, 0, 0, 0.58));
+}
+
+.armor-enchantment-piece-head > span,
+.armor-enchantment-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.armor-enchantment-piece-head strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.armor-enchantment-piece-head small,
+.armor-enchantment-copy small {
+  color: color-mix(in srgb, var(--armor-accent) 72%, white 22%);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.armor-enchantment-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 7px;
+  margin: 13px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.armor-enchantment-entry {
+  min-width: 0;
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  background: rgba(255, 255, 255, 0.022);
+}
+
+.armor-enchantment-entry > img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 5px 7px rgba(0, 0, 0, 0.66));
+}
+
+.armor-enchantment-copy strong {
+  overflow-wrap: anywhere;
+  color: #d8dbe2;
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.armor-piece-enchantment-empty {
+  min-height: 62px;
+  display: grid;
+  place-items: center;
+  margin: 13px 0 0;
+  padding: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  color: #747c89;
+  font-size: 10px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.armor-empty-enchantments {
+  min-height: 116px;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.014);
+  color: #888f9c;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+
 .armor-future-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.armor-future-grid-single {
+  grid-template-columns: 1fr;
 }
 
 .armor-future-panel {
@@ -1136,24 +1258,6 @@ body.armor-explorer-open {
   color: #858c99;
   font-size: 12px;
   line-height: 1.6;
-}
-
-.armor-enchantment-slots {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.armor-enchantment-slot {
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.025);
-  color: color-mix(in srgb, var(--armor-accent) 55%, #555 45%);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 22px;
 }
 
 .armor-recipe-placeholder {
@@ -1400,6 +1504,7 @@ body.armor-explorer-open {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .armor-enchantment-groups,
   .armor-ability-list,
   .armor-future-grid {
     grid-template-columns: 1fr;
@@ -1546,6 +1651,24 @@ body.armor-explorer-open {
   .armor-piece-card {
     min-height: 166px;
     padding: 14px;
+  }
+
+  .armor-enchantment-piece {
+    padding: 12px;
+  }
+
+  .armor-enchantment-piece-head strong {
+    white-space: normal;
+  }
+
+  .armor-enchantment-entry {
+    grid-template-columns: 38px minmax(0, 1fr);
+    padding: 8px;
+  }
+
+  .armor-enchantment-entry > img {
+    width: 36px;
+    height: 36px;
   }
 
   .armor-related-card {
