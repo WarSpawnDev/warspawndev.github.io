@@ -923,11 +923,420 @@ body.armor-explorer-open {
   line-height: 1.65;
 }
 
+.armor-experience-hero {
+  grid-template-columns: minmax(280px, 0.9fr) minmax(210px, 0.5fr) minmax(0, 1fr);
+}
+
+.armor-experience-piece-panel {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 10px;
+  padding: 12px 8px 12px 0;
+  border-right: 1px solid var(--armor-line);
+  background:
+    linear-gradient(90deg, rgba(4, 5, 8, 0.84), rgba(4, 5, 8, 0.3)),
+    color-mix(in srgb, var(--armor-accent) 5%, transparent);
+}
+
+.armor-experience-piece-list {
+  display: grid;
+  gap: 8px;
+}
+
+.armor-piece-summary-card {
+  position: relative;
+  min-width: 0;
+  min-height: 122px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 9px 12px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background:
+    radial-gradient(circle at 34% 35%, color-mix(in srgb, var(--armor-accent) 14%, transparent), transparent 58%),
+    rgba(6, 9, 11, 0.72);
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.armor-piece-summary-card:hover,
+.armor-piece-summary-card:focus-visible,
+.armor-piece-summary-card.is-touch-preview {
+  z-index: 12;
+  border-color: var(--armor-accent);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--armor-accent) 58%, transparent),
+    0 0 26px color-mix(in srgb, var(--armor-accent) 28%, transparent);
+  outline: 0;
+  transform: translateX(2px);
+}
+
+.armor-piece-summary-main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: end;
+  gap: 10px;
+}
+
+.armor-piece-summary-main > img {
+  width: 58px;
+  height: 58px;
+  align-self: center;
+  justify-self: center;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 9px 10px rgba(0, 0, 0, 0.65));
+}
+
+.armor-piece-summary-copy {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.armor-piece-summary-copy strong {
+  overflow: hidden;
+  color: #f5f7f1;
+  font-size: 11px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.armor-piece-summary-copy small {
+  color: color-mix(in srgb, var(--armor-accent) 76%, white 18%);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.armor-piece-enchant-icons {
+  display: grid;
+  gap: 5px;
+  justify-items: center;
+}
+
+.armor-piece-enchant-icons img {
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.66));
+}
+
+.armor-piece-enchant-icons span {
+  writing-mode: vertical-rl;
+  color: #78808d;
+  font-size: 8px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.armor-piece-hover-panel {
+  position: absolute;
+  left: calc(100% - 1px);
+  top: -3px;
+  width: min(410px, 52vw);
+  min-height: calc(100% + 6px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  gap: 13px;
+  padding: 13px;
+  border: 2px solid var(--armor-accent);
+  background:
+    linear-gradient(120deg, rgba(9, 16, 12, 0.97), rgba(5, 7, 9, 0.94)),
+    color-mix(in srgb, var(--armor-accent) 8%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--armor-accent) 35%, transparent),
+    0 0 34px color-mix(in srgb, var(--armor-accent) 35%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transform: scaleX(0.2);
+  transform-origin: left center;
+  transition: opacity 160ms ease, transform 210ms ease;
+}
+
+.armor-piece-summary-card:hover .armor-piece-hover-panel,
+.armor-piece-summary-card:focus-visible .armor-piece-hover-panel,
+.armor-piece-summary-card.is-touch-preview .armor-piece-hover-panel {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.armor-piece-hover-list {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.armor-piece-hover-list li {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  color: #e4e8ef;
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.armor-piece-hover-list img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.armor-piece-hover-list strong {
+  color: color-mix(in srgb, var(--armor-accent) 70%, white 24%);
+}
+
+.armor-piece-hover-recipe {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.armor-piece-hover-recipe small {
+  color: color-mix(in srgb, var(--armor-accent) 70%, white 18%);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.armor-piece-hover-recipe strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.armor-piece-hover-recipe em {
+  color: #8a92a0;
+  font-size: 9px;
+  font-style: normal;
+  line-height: 1.4;
+}
+
+.armor-piece-hover-recipe .armor-recipe-placeholder {
+  height: 62px;
+  grid-template-columns: repeat(3, 18px);
+  grid-template-rows: repeat(3, 18px);
+  gap: 3px;
+  margin-top: 5px;
+}
+
+.armor-experience-total {
+  display: grid;
+  gap: 4px;
+  padding: 12px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.armor-experience-total small {
+  color: #858d99;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.armor-experience-total strong {
+  color: color-mix(in srgb, var(--armor-accent) 72%, white 25%);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 26px;
+  font-weight: 500;
+}
+
+.armor-experience-copy {
+  justify-content: center;
+  padding-inline: clamp(28px, 4vw, 52px);
+}
+
+.armor-piece-detail-view {
+  min-height: min(680px, calc(100svh - 150px));
+  display: grid;
+  grid-template-columns: minmax(220px, 0.75fr) minmax(260px, 1fr) minmax(220px, 0.78fr);
+  gap: 18px;
+  align-items: stretch;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid var(--armor-line);
+  border-radius: 4px;
+  background:
+    radial-gradient(circle at 22% 58%, color-mix(in srgb, var(--armor-accent) 20%, transparent), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.44);
+}
+
+.armor-piece-detail-back {
+  grid-column: 1 / -1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.025);
+  color: #dfe4ea;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.armor-piece-detail-back:hover {
+  border-color: var(--armor-accent);
+  color: #fff;
+}
+
+.armor-piece-detail-art,
+.armor-piece-detail-copy,
+.armor-piece-detail-recipe {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(4, 5, 8, 0.48);
+}
+
+.armor-piece-detail-art {
+  display: grid;
+  place-items: center;
+  padding: 26px;
+  background:
+    radial-gradient(circle at 50% 56%, color-mix(in srgb, var(--armor-accent) 20%, transparent), transparent 54%),
+    rgba(4, 5, 8, 0.58);
+}
+
+.armor-piece-detail-art img {
+  width: min(78%, 230px);
+  max-height: 320px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.72));
+}
+
+.armor-piece-detail-copy,
+.armor-piece-detail-recipe {
+  display: grid;
+  align-content: center;
+  gap: 18px;
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.armor-piece-detail-copy h2,
+.armor-piece-detail-recipe h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.armor-piece-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.armor-piece-detail-stats span {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.armor-piece-detail-stats small,
+.armor-piece-detail-enchantment small {
+  color: #848c99;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.armor-piece-detail-stats strong {
+  color: color-mix(in srgb, var(--armor-accent) 72%, white 25%);
+  font-size: 26px;
+}
+
+.armor-piece-detail-enchantments {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.armor-piece-detail-enchantment {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.armor-piece-detail-enchantment img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.armor-piece-detail-enchantment span {
+  display: grid;
+  gap: 4px;
+}
+
+.armor-piece-detail-enchantment strong {
+  color: #e7eaf0;
+  font-size: 13px;
+}
+
+.armor-piece-detail-recipe p {
+  margin: 0;
+  color: #8a92a0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .armor-detail-block {
   padding: clamp(22px, 3vw, 34px);
   border: 1px solid var(--armor-line);
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.022);
+}
+
+.armor-overview-copy {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #b6b7bd;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.armor-overview-copy p {
+  margin: 0;
+}
+
+.armor-overview-copy strong {
+  color: color-mix(in srgb, var(--armor-accent) 70%, white 22%);
 }
 
 .armor-block-head {
@@ -1269,9 +1678,16 @@ body.armor-explorer-open {
   margin-top: 19px;
 }
 
-.armor-recipe-placeholder i {
+.armor-recipe-placeholder i,
+.armor-recipe-slot {
   border: 1px solid rgba(255, 255, 255, 0.11);
   background: rgba(255, 255, 255, 0.028);
+}
+
+.armor-recipe-slot {
+  width: 100%;
+  height: 100%;
+  padding: 0;
 }
 
 .armor-concept-note {
@@ -1489,6 +1905,10 @@ body.armor-explorer-open {
     grid-template-columns: 1fr;
   }
 
+  .armor-experience-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .armor-game-art {
     min-height: 480px;
     border-right: 0;
@@ -1497,6 +1917,39 @@ body.armor-explorer-open {
 
   .armor-game-art img {
     height: 410px;
+  }
+
+  .armor-experience-piece-panel {
+    order: 2;
+    padding: 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--armor-line);
+  }
+
+  .armor-experience-piece-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .armor-piece-hover-panel {
+    left: 0;
+    top: calc(100% - 2px);
+    width: min(100%, 480px);
+    min-height: 128px;
+    grid-template-columns: minmax(0, 1fr) 118px;
+  }
+
+  .armor-experience-copy {
+    order: 3;
+  }
+
+  .armor-piece-detail-view {
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .armor-piece-detail-art img {
+    width: min(58%, 210px);
+    max-height: 230px;
   }
 
   .armor-piece-grid,
@@ -1621,6 +2074,28 @@ body.armor-explorer-open {
     height: 330px;
   }
 
+  .armor-experience-piece-list {
+    grid-template-columns: 1fr;
+  }
+
+  .armor-piece-summary-card {
+    min-height: 108px;
+  }
+
+  .armor-piece-hover-panel {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .armor-piece-hover-recipe {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .armor-experience-total strong {
+    font-size: 24px;
+  }
+
   .armor-detail-copy {
     padding: 28px 22px 34px;
   }
@@ -1684,6 +2159,19 @@ body.armor-explorer-open {
 
   .armor-related-copy strong {
     white-space: normal;
+  }
+
+  .armor-piece-detail-view {
+    padding: 14px;
+  }
+
+  .armor-piece-detail-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .armor-piece-detail-copy,
+  .armor-piece-detail-recipe {
+    padding: 18px;
   }
 }
 

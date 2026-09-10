@@ -105,8 +105,16 @@
       acquisition: "Obtenção",
       armorPieces: "Peças da armadura",
       historicStats: "ESTATÍSTICAS DE REFERÊNCIA",
-      historicalSource: "Abrir fonte histórica ↗",
       defense: "Defesa",
+      defenseShare: "do conjunto",
+      pieceDetail: "Detalhes da peça",
+      pieceRecipe: "Receita da peça",
+      recipePrepared: "RECEITA PREPARADA",
+      recipePending: "Receita será conectada aqui.",
+      recipeEmptySlot: "Espaço vazio",
+      backToSet: "Voltar ao conjunto",
+      openPiece: (name) => `Abrir detalhes de ${name}`,
+      setOverview: "Resumo do conjunto",
       abilities: "Características do conjunto",
       abilitiesKicker: "IDENTIDADE E HABILIDADES",
       related: "Itens e ferramentas relacionados",
@@ -129,6 +137,13 @@
         "O sistema já aceita grades, ingredientes, estações e resultados. As receitas serão conectadas nesta área.",
       futureKicker: "EXTENSÕES PREPARADAS",
       detailLabel: (name) => `Ficha completa de ${name}`,
+      pieceDetailLabel: (piece, setName) => `${piece} de ${setName}`,
+      slotNames: {
+        helmet: "Capacete",
+        chestplate: "Peitoral",
+        leggings: "Calça",
+        boots: "Botas",
+      },
       category: {
         sword: "Espada",
         axe: "Machado",
@@ -172,8 +187,16 @@
       acquisition: "Acquisition",
       armorPieces: "Armor pieces",
       historicStats: "REFERENCE STATISTICS",
-      historicalSource: "Open historical source ↗",
       defense: "Defense",
+      defenseShare: "of set",
+      pieceDetail: "Piece details",
+      pieceRecipe: "Piece recipe",
+      recipePrepared: "RECIPE READY",
+      recipePending: "Recipe will be connected here.",
+      recipeEmptySlot: "Empty slot",
+      backToSet: "Back to set",
+      openPiece: (name) => `Open ${name} details`,
+      setOverview: "Set overview",
       abilities: "Set characteristics",
       abilitiesKicker: "IDENTITY AND ABILITIES",
       related: "Related items and tools",
@@ -196,6 +219,13 @@
         "The system already supports grids, ingredients, stations and results. Recipes will be connected here.",
       futureKicker: "EXTENSIONS READY",
       detailLabel: (name) => `Full dossier for ${name}`,
+      pieceDetailLabel: (piece, setName) => `${piece} of ${setName}`,
+      slotNames: {
+        helmet: "Helmet",
+        chestplate: "Chestplate",
+        leggings: "Leggings",
+        boots: "Boots",
+      },
       category: {
         sword: "Sword",
         axe: "Axe",
@@ -218,6 +248,7 @@
     targetPosition: 0,
     open: false,
     view: "selector",
+    pieceDetailId: null,
     optionElements: [],
     geometryFrame: 0,
     geometryMetrics: null,
@@ -854,6 +885,35 @@
     return t().category[itemEntry.category] ?? itemEntry.category;
   }
 
+  function pieceDefenseShare(armorSet, piece) {
+    if (!armorSet.totalDefense) return 0;
+    return Math.round(piece.stats.defense / armorSet.totalDefense * 100);
+  }
+
+  function enchantmentIconMarkup(enchantment) {
+    const name = local(enchantment.name);
+    const level = romanLevel(enchantment.level);
+    return `
+      <img
+        src="${escapeHtml(enchantment.image)}"
+        alt="${escapeHtml(`${name} ${level}`)}"
+        title="${escapeHtml(`${name} ${level}`)}"
+        loading="lazy"
+        decoding="async"
+      >
+    `;
+  }
+
+  function recipeGridMarkup({ interactive = false } = {}) {
+    const slots = Array.from({ length: 9 }, (_, index) => {
+      const label = `${t().recipeEmptySlot} ${index + 1}`;
+      return interactive
+        ? `<button class="armor-recipe-slot" type="button" disabled aria-label="${escapeHtml(label)}"></button>`
+        : `<i class="armor-recipe-slot" aria-hidden="true"></i>`;
+    }).join("");
+    return `<span class="armor-recipe-placeholder" aria-label="${escapeHtml(t().pieceRecipe)}">${slots}</span>`;
+  }
+
   function pieceMarkup(piece) {
     const defense = piece.stats.defense;
     const width = Math.min(100, defense / 16 * 100);
@@ -872,6 +932,63 @@
             <i style="--defense-width: ${width}%"></i>
           </span>
         </div>
+      </article>
+    `;
+  }
+
+  function experiencePieceSummaryMarkup(armorSet, piece) {
+    const defense = piece.stats.defense;
+    const share = pieceDefenseShare(armorSet, piece);
+    const width = Math.min(100, defense / armorSet.totalDefense * 100);
+    const enchantments = piece.enchantments ?? [];
+    const enchantmentIcons = enchantments.length
+      ? enchantments.map(enchantmentIconMarkup).join("")
+      : `<span>${escapeHtml(t().noPieceEnchantments)}</span>`;
+    const enchantmentList = enchantments.length
+      ? enchantments.map((enchantment) => `
+          <li>
+            <img src="${escapeHtml(enchantment.image)}" alt="" loading="lazy" decoding="async">
+            <span>${escapeHtml(local(enchantment.name))} <strong>${escapeHtml(romanLevel(enchantment.level))}</strong></span>
+          </li>
+        `).join("")
+      : `<li><span>${escapeHtml(t().noPieceEnchantments)}</span></li>`;
+
+    return `
+      <article
+        class="armor-piece-summary-card"
+        tabindex="0"
+        role="button"
+        data-armor-piece-open="${escapeHtml(piece.id)}"
+        aria-label="${escapeHtml(t().openPiece(local(piece.name)))}"
+      >
+        <span class="armor-piece-summary-main">
+          <img
+            src="${escapeHtml(piece.image)}"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          >
+          <span class="armor-piece-summary-copy">
+            <strong title="${escapeHtml(local(piece.name))}">${escapeHtml(local(piece.name))}</strong>
+            <small>${escapeHtml(t().defense)}: ${defense}</small>
+            <small>${share}% ${escapeHtml(t().defenseShare)}</small>
+            <span class="armor-defense-track" aria-hidden="true">
+              <i style="--defense-width: ${width}%"></i>
+            </span>
+          </span>
+        </span>
+        <span class="armor-piece-enchant-icons" aria-hidden="true">
+          ${enchantmentIcons}
+        </span>
+        <span class="armor-piece-hover-panel" aria-hidden="true">
+          <ul class="armor-piece-hover-list">${enchantmentList}</ul>
+          <span class="armor-piece-hover-recipe">
+            <small>${escapeHtml(t().recipePrepared)}</small>
+            <strong>${escapeHtml(t().recipes)}</strong>
+            <em>${escapeHtml(t().recipePending)}</em>
+            ${recipeGridMarkup()}
+          </span>
+        </span>
       </article>
     `;
   }
@@ -898,6 +1015,20 @@
     return numerals[level] ?? String(level);
   }
 
+  function enchantmentInlineMarkup(enchantment) {
+    const name = local(enchantment.name);
+    const level = romanLevel(enchantment.level);
+    return `
+      <li class="armor-piece-detail-enchantment">
+        <img src="${escapeHtml(enchantment.image)}" alt="" loading="lazy" decoding="async">
+        <span>
+          <strong>${escapeHtml(name)} ${escapeHtml(level)}</strong>
+          <small>${escapeHtml(t().enchantmentLevel(level))}</small>
+        </span>
+      </li>
+    `;
+  }
+
   function enchantmentMarkup(enchantment) {
     const name = local(enchantment.name);
     const level = romanLevel(enchantment.level);
@@ -914,6 +1045,125 @@
           <small>${escapeHtml(t().enchantmentLevel(level))}</small>
         </span>
       </li>
+    `;
+  }
+
+  function experienceDetailMarkup(armorSet) {
+    const name = local(armorSet.fullName);
+    const abilities = armorSet.abilities.map((ability) => `
+      <li>
+        <i aria-hidden="true">✦</i>
+        <span>${escapeHtml(local(ability))}</span>
+      </li>
+    `).join("");
+    const related = armorSet.relatedItems.length
+      ? `<div class="armor-related-grid">${armorSet.relatedItems.map(relatedMarkup).join("")}</div>`
+      : `<p class="armor-empty-related">${escapeHtml(t().noRelated)}</p>`;
+
+    return `
+      <section class="armor-detail-hero armor-experience-hero">
+        <figure class="armor-game-art">
+          <img
+            src="${escapeHtml(armorSet.game)}"
+            alt="${escapeHtml(t().gameAlt(name))}"
+            decoding="async"
+          >
+          <figcaption>${escapeHtml(t().gameVersion)}</figcaption>
+        </figure>
+        <div class="armor-experience-piece-panel">
+          <div class="armor-experience-piece-list">
+            ${armorSet.pieces.map((piece) => experiencePieceSummaryMarkup(armorSet, piece)).join("")}
+          </div>
+          <div class="armor-experience-total">
+            <small>${escapeHtml(t().totalDefense)}</small>
+            <strong>${escapeHtml(t().defensePoints(armorSet.totalDefense))}</strong>
+          </div>
+        </div>
+        <div class="armor-detail-copy armor-experience-copy">
+          <span class="kicker">${escapeHtml(local(armorSet.name))} • WARSPAWN</span>
+          <h2>${escapeHtml(name)}</h2>
+          <p class="armor-detail-description">${escapeHtml(local(armorSet.description))}</p>
+          <p class="armor-acquisition"><strong>${escapeHtml(t().acquisition)}:</strong> ${escapeHtml(local(armorSet.acquisition))}</p>
+        </div>
+      </section>
+
+      <section class="armor-detail-block">
+        <header class="armor-block-head">
+          <div>
+            <span class="kicker">${escapeHtml(t().abilitiesKicker)}</span>
+            <h3>${escapeHtml(t().setOverview)}</h3>
+          </div>
+        </header>
+        <div class="armor-overview-copy">
+          <p>${escapeHtml(local(armorSet.description))}</p>
+          <p><strong>${escapeHtml(t().acquisition)}:</strong> ${escapeHtml(local(armorSet.acquisition))}</p>
+        </div>
+        <ul class="armor-ability-list">${abilities}</ul>
+      </section>
+
+      <section class="armor-detail-block">
+        <header class="armor-block-head">
+          <div>
+            <span class="kicker">${escapeHtml(t().relatedKicker)}</span>
+            <h3>${escapeHtml(t().related)}</h3>
+          </div>
+          <span>${armorSet.relatedItems.length}</span>
+        </header>
+        ${related}
+      </section>
+    `;
+  }
+
+  function renderPieceDetail() {
+    const armorSet = selectedSet();
+    const piece = armorSet.pieces.find((pieceEntry) => pieceEntry.id === state.pieceDetailId)
+      ?? armorSet.pieces[0];
+    state.pieceDetailId = piece.id;
+    const setName = local(armorSet.fullName);
+    const pieceName = local(piece.name);
+    const share = pieceDefenseShare(armorSet, piece);
+    const enchantments = piece.enchantments ?? [];
+    const enchantmentContent = enchantments.length
+      ? `<ul class="armor-piece-detail-enchantments">${enchantments.map(enchantmentInlineMarkup).join("")}</ul>`
+      : `<p class="armor-piece-enchantment-empty">${escapeHtml(t().noPieceEnchantments)}</p>`;
+
+    detailIndex.textContent = t().pieceDetailLabel(t().slotNames[piece.stats.slot] ?? pieceName, setName);
+    detailContent.setAttribute("aria-label", t().pieceDetailLabel(pieceName, setName));
+    detailContent.innerHTML = `
+      <section class="armor-piece-detail-view">
+        <button class="armor-piece-detail-back" type="button" data-armor-piece-back>
+          <i aria-hidden="true">‹</i>
+          <span>${escapeHtml(t().backToSet)}</span>
+        </button>
+        <div class="armor-piece-detail-art">
+          <img
+            src="${escapeHtml(piece.image)}"
+            alt="${escapeHtml(pieceName)}"
+            decoding="async"
+          >
+        </div>
+        <div class="armor-piece-detail-copy">
+          <span class="kicker">${escapeHtml(t().pieceDetail)}</span>
+          <h2>${escapeHtml(pieceName)}</h2>
+          <div class="armor-piece-detail-stats">
+            <span>
+              <small>${escapeHtml(t().defense)}</small>
+              <strong>${piece.stats.defense}</strong>
+            </span>
+            <span>
+              <small>${escapeHtml(t().defenseShare)}</small>
+              <strong>${share}%</strong>
+            </span>
+          </div>
+          ${enchantmentContent}
+        </div>
+        <div class="armor-piece-detail-recipe">
+          <span class="kicker">${escapeHtml(t().recipePrepared)}</span>
+          <h3>${escapeHtml(t().pieceRecipe)}</h3>
+          <p>${escapeHtml(t().recipesFuture)}</p>
+          ${recipeGridMarkup({ interactive: true })}
+        </div>
+      </section>
     `;
   }
 
@@ -962,6 +1212,16 @@
     setAccent(armorSet);
     detailIndex.textContent = t().setIndex(armorSet.order, allSets.length);
     detailContent.setAttribute("aria-label", t().detailLabel(name));
+
+    if (state.view === "piece") {
+      renderPieceDetail();
+      return;
+    }
+
+    if (armorSet.id === "experience") {
+      detailContent.innerHTML = experienceDetailMarkup(armorSet);
+      return;
+    }
 
     const abilities = armorSet.abilities.map((ability) => `
       <li>
@@ -1012,9 +1272,6 @@
             <span class="kicker">${escapeHtml(t().historicStats)}</span>
             <h3>${escapeHtml(t().armorPieces)}</h3>
           </div>
-          <a href="${escapeHtml(armorSet.source)}" target="_blank" rel="noopener noreferrer">
-            ${escapeHtml(t().historicalSource)}
-          </a>
         </header>
         <div class="armor-piece-grid">
           ${armorSet.pieces.map(pieceMarkup).join("")}
@@ -1114,6 +1371,7 @@
         kind: "armor",
         view,
         id: selectedSet().id,
+        pieceId: view === "piece" ? state.pieceDetailId : null,
         query: state.query,
         sortMode: state.sortMode,
       },
@@ -1127,6 +1385,7 @@
   function showSelector({ focus = true, armorId = null } = {}) {
     if (armorId) restoreSelection(armorId);
     state.view = "selector";
+    state.pieceDetailId = null;
     explorer.dataset.armorView = "selector";
     detailView.hidden = true;
     selectorView.hidden = false;
@@ -1141,8 +1400,28 @@
     if (armorId) restoreSelection(armorId);
     if (pushHistory) replaceSelectorHistoryState({ immediate: true });
     state.view = "detail";
+    state.pieceDetailId = null;
     explorer.dataset.armorView = "detail";
     if (pushHistory) pushArmorHistory("detail");
+    renderDetail();
+    selectorView.hidden = true;
+    detailView.hidden = false;
+    explorer.scrollTo({ top: 0, behavior: "auto" });
+    requestAnimationFrame(() => detailContent.focus({ preventScroll: true }));
+  }
+
+  function showPieceDetail({ pushHistory = false, armorId = null, pieceId = null } = {}) {
+    if (armorId) restoreSelection(armorId);
+    const armorSet = selectedSet();
+    if (armorSet.id !== "experience") {
+      showDetail({ pushHistory, armorId });
+      return;
+    }
+    if (pushHistory && state.view === "selector") replaceSelectorHistoryState({ immediate: true });
+    state.view = "piece";
+    state.pieceDetailId = pieceId || armorSet.pieces[0]?.id || null;
+    explorer.dataset.armorView = "piece";
+    if (pushHistory) pushArmorHistory("piece");
     renderDetail();
     selectorView.hidden = true;
     detailView.hidden = false;
@@ -1154,6 +1433,7 @@
     fromHistory = false,
     armorId = allSets[0].id,
     view = "selector",
+    pieceId = null,
     query = "",
     sortMode = "neutral",
   } = {}) {
@@ -1173,7 +1453,8 @@
     document.body.classList.add("armor-explorer-open");
     updateStaticText();
     if (!fromHistory) pushArmorHistory("selector");
-    if (view === "detail") showDetail({ armorId });
+    if (view === "piece") showPieceDetail({ armorId, pieceId });
+    else if (view === "detail") showDetail({ armorId });
     else showSelector({ armorId });
     preloadConcepts();
   }
@@ -1202,7 +1483,8 @@
       closeExplorer();
       return;
     }
-    history.go(state.view === "detail" ? -2 : -1);
+    const steps = state.view === "piece" ? -3 : state.view === "detail" ? -2 : -1;
+    history.go(steps);
   }
 
   function requestPreviousOverlayView() {
@@ -1211,7 +1493,8 @@
       history.back();
       return;
     }
-    if (state.view === "detail") showSelector();
+    if (state.view === "piece") showDetail();
+    else if (state.view === "detail") showSelector();
     else closeExplorer();
   }
 
@@ -1227,7 +1510,8 @@
       openExplorer({
         fromHistory: true,
         armorId,
-        view: overlay.view === "detail" ? "detail" : "selector",
+        view: overlay.view === "piece" ? "piece" : overlay.view === "detail" ? "detail" : "selector",
+        pieceId: overlay.pieceId || null,
         query: overlay.query || "",
         sortMode: overlay.sortMode || "neutral",
       });
@@ -1248,7 +1532,8 @@
       updateSelectorTools();
     }
 
-    if (overlay.view === "detail") showDetail({ armorId });
+    if (overlay.view === "piece") showPieceDetail({ armorId, pieceId: overlay.pieceId || null });
+    else if (overlay.view === "detail") showDetail({ armorId });
     else showSelector({ armorId });
   }
 
@@ -1444,6 +1729,41 @@
     if (event.target === explorer) requestCloseExplorer();
   });
 
+  detailContent.addEventListener("pointerdown", (event) => {
+    const pieceControl = event.target.closest("[data-armor-piece-open]");
+    if (!pieceControl || event.pointerType !== "touch") return;
+    detailContent.querySelectorAll(".armor-piece-summary-card.is-touch-preview")
+      .forEach((card) => card.classList.remove("is-touch-preview"));
+    pieceControl.classList.add("is-touch-preview");
+  }, { passive: true });
+
+  detailContent.addEventListener("click", (event) => {
+    const backButton = event.target.closest("[data-armor-piece-back]");
+    if (backButton) {
+      event.preventDefault();
+      requestPreviousOverlayView();
+      return;
+    }
+
+    const pieceControl = event.target.closest("[data-armor-piece-open]");
+    if (!pieceControl) return;
+    event.preventDefault();
+    showPieceDetail({
+      pushHistory: true,
+      pieceId: pieceControl.getAttribute("data-armor-piece-open"),
+    });
+  });
+
+  detailContent.addEventListener("keydown", (event) => {
+    const pieceControl = event.target.closest("[data-armor-piece-open]");
+    if (!pieceControl || !["Enter", " "].includes(event.key)) return;
+    event.preventDefault();
+    showPieceDetail({
+      pushHistory: true,
+      pieceId: pieceControl.getAttribute("data-armor-piece-open"),
+    });
+  });
+
   explorer.addEventListener("keydown", (event) => {
     trapFocus(event);
     if (event.key === "Escape") {
@@ -1480,7 +1800,7 @@
     state.geometryMetrics = null;
     updateStaticText();
     if (!state.open) return;
-    if (state.view === "detail") renderDetail();
+    if (state.view === "detail" || state.view === "piece") renderDetail();
     else renderSelector();
   });
 

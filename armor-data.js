@@ -261,7 +261,6 @@
         equipment("emerald", "shovel", "Pá de Esmeralda", "Emerald Shovel", "emeraldshovel.png", "shovel", { attack: 7 }),
         equipment("emerald", "hoe", "Enxada de Esmeralda", "Emerald Hoe", "emeraldhoe.png", "hoe", { attack: 1 }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/emerald-armor.html",
     }),
     set({
       id: "amethyst",
@@ -292,7 +291,6 @@
         equipment("amethyst", "shovel", "Pá de Ametista", "Amethyst Shovel", "amethystshovel.png", "shovel", { attack: 12 }),
         equipment("amethyst", "hoe", "Enxada de Ametista", "Amethyst Hoe", "amethysthoe.png", "hoe", { attack: 1 }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/amethyst-armor.html",
     }),
     set({
       id: "experience",
@@ -328,7 +326,6 @@
         equipment("experience", "sword", "Espada de Experiência", "Experience Sword", "experiencesword.png", "sword", { attack: "10+" }),
         equipment("experience", "poison-sword", "Espada de Veneno", "Poison Sword", "poisonsword.png", "sword", { attack: "10 + veneno", attackEn: "10 + poison" }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/experience-armor.html",
     }),
     set({
       id: "ruby",
@@ -360,7 +357,6 @@
         equipment("ruby", "hoe", "Enxada de Rubi", "Ruby Hoe", "rubyhoe.png", "hoe", { attack: 1 }),
         equipment("ruby", "thunder-staff", "Cajado de Raios", "Thunder Staff", "thunderstaff.png", "staff", { attack: "raios", attackEn: "lightning" }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/ruby-armor.html",
     }),
     set({
       id: "ultimate",
@@ -401,7 +397,6 @@
         equipment("ultimate", "bow", "Arco Ultimate", "Ultimate Bow", "ultimatebow.png", "bow", { attack: "rápido + fogo", attackEn: "rapid-fire + flames" }),
         equipment("ultimate", "fishing-rod", "Vara de Pesca Ultimate", "Ultimate Fishing Rod", "ultimatefishingrod.png", "rod", { utility: local("Pesca na lava", "Lava fishing") }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/ultimate-armor.html",
     }),
     set({
       id: "mobzilla",
@@ -428,7 +423,6 @@
         armorEnchantments.mobzilla,
       ),
       relatedItems: [],
-      source: "https://shrekleaker.github.io/orespawn.com/mobzilla-armor.html",
     }),
     set({
       id: "royal-guardian",
@@ -460,7 +454,6 @@
       relatedItems: [
         equipment("royal-guardian", "sword", "Espada do Guardião Real", "Royal Guardian Sword", "royalsmall.png", "sword", { attack: 750 }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/royal-guardian-armor.html",
     }),
     set({
       id: "queen-scale",
@@ -490,7 +483,6 @@
       relatedItems: [
         equipment("queen-scale", "battle-axe", "Machado de Batalha da Rainha", "Queen Scale Battle Axe", "queenbattleaxesmall.png", "axe", { attack: "666+" }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/queen-scale-armor.html",
     }),
     set({
       id: "moth-scale",
@@ -519,7 +511,6 @@
         armorEnchantments["moth-scale"],
       ),
       relatedItems: [],
-      source: "https://shrekleaker.github.io/orespawn.com/moth-scale-armor.html",
     }),
     set({
       id: "lava-eel",
@@ -551,7 +542,6 @@
         armorEnchantments["lava-eel"],
       ),
       relatedItems: [],
-      source: "https://shrekleaker.github.io/orespawn.com/lava-eel-armor.html",
     }),
     set({
       id: "lapis",
@@ -578,7 +568,6 @@
         armorEnchantments.lapis,
       ),
       relatedItems: [],
-      source: "https://shrekleaker.github.io/orespawn.com/lapis-armor.html",
     }),
     set({
       id: "peacock",
@@ -608,7 +597,6 @@
         equipment("peacock", "skate-bow", "Arco Skate", "Skate Bow", "skatebow.png", "bow", { attack: 100 }),
         equipment("peacock", "irukandji-arrow", "Flecha de Irukandji", "Irukandji Arrow", "irukandjiarrow.png", "arrow", { attack: 100 }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/peacock-feather-armor.html",
     }),
     set({
       id: "tourmaline",
@@ -639,7 +627,6 @@
         equipment("tourmaline", "shovel", "Pá de Turmalina", "Pink Tourmaline Shovel", "crystalpinkshovel.png", "shovel", { attack: 8 }),
         equipment("tourmaline", "hoe", "Enxada de Turmalina", "Pink Tourmaline Hoe", "crystalpinkhoe.png", "hoe", { attack: 1 }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/pink-tourmaline-armor.html",
     }),
     set({
       id: "tigers-eye",
@@ -672,7 +659,6 @@
         equipment("tigers-eye", "shovel", "Pá de Olho de Tigre", "Tiger's Eye Shovel", "tigerseye_shovel.png", "shovel", { attack: 9 }),
         equipment("tigers-eye", "hoe", "Enxada de Olho de Tigre", "Tiger's Eye Hoe", "tigerseye_hoe.png", "hoe", { attack: 1 }),
       ],
-      source: "https://shrekleaker.github.io/orespawn.com/tigers-eye-armor.html",
     }),
   ];
 
