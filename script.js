@@ -435,3 +435,117 @@ document.addEventListener("keydown", (event) => {
 
 elements.filterButtons[0].setAttribute("aria-pressed", "true");
 updateLanguage();
+
+(function polishExperienceArmorHover() {
+  const style = document.createElement("style");
+  style.id = "warspawn-experience-armor-hover-polish";
+  style.textContent = `
+    .armor-piece-hover-recipe > small,
+    .armor-piece-hover-recipe > em {
+      display: none !important;
+    }
+
+    @media (min-width: 901px) {
+      .armor-piece-summary-card:hover,
+      .armor-piece-summary-card:focus-visible,
+      .armor-piece-summary-card.is-touch-preview {
+        transform: none;
+        border-right-color: transparent;
+      }
+
+      .armor-piece-hover-panel {
+        left: calc(100% - 1px);
+        top: -1px;
+        bottom: -1px;
+        width: min(380px, 48vw);
+        height: auto;
+        min-height: 0;
+        grid-template-columns: minmax(0, 1fr) 116px;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--armor-accent);
+        border-left: 0;
+        box-sizing: border-box;
+        background:
+          linear-gradient(90deg, rgba(6, 9, 11, 0.98), rgba(5, 8, 9, 0.96)),
+          color-mix(in srgb, var(--armor-accent) 6%, transparent);
+        box-shadow:
+          0 0 0 2px color-mix(in srgb, var(--armor-accent) 58%, transparent),
+          18px 0 26px color-mix(in srgb, var(--armor-accent) 22%, transparent);
+        transform: scaleX(0.03);
+        transform-origin: left center;
+      }
+
+      .armor-piece-summary-card:hover .armor-piece-hover-panel,
+      .armor-piece-summary-card:focus-visible .armor-piece-hover-panel,
+      .armor-piece-summary-card.is-touch-preview .armor-piece-hover-panel {
+        transform: scaleX(1);
+      }
+
+      .armor-piece-hover-list {
+        align-content: center;
+        gap: 5px;
+      }
+
+      .armor-piece-hover-list li {
+        min-height: 27px;
+        display: flex;
+        align-items: center;
+        gap: 0;
+        padding-left: 2px;
+        font-size: 10px;
+      }
+
+      .armor-piece-hover-list img {
+        display: none;
+      }
+
+      .armor-piece-hover-recipe {
+        align-content: center;
+        gap: 6px;
+        padding-left: 10px;
+      }
+
+      .armor-piece-hover-recipe strong {
+        font-size: 16px;
+        line-height: 1;
+      }
+
+      .armor-piece-hover-recipe .armor-recipe-placeholder {
+        height: 56px;
+        grid-template-columns: repeat(3, 16px);
+        grid-template-rows: repeat(3, 16px);
+        gap: 3px;
+        margin-top: 2px;
+      }
+    }
+  `;
+  document.head.append(style);
+
+  function polishRecipeLabels(root = document) {
+    root.querySelectorAll?.(".armor-piece-hover-recipe").forEach((recipe) => {
+      const title = recipe.querySelector("strong");
+      if (!title) return;
+      const isEnglish = document.documentElement.lang.toLowerCase().startsWith("en");
+      title.textContent = isEnglish ? "Recipe" : "Receita";
+    });
+  }
+
+  polishRecipeLabels();
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (!(node instanceof Element)) continue;
+        if (node.matches(".armor-piece-hover-recipe") || node.querySelector(".armor-piece-hover-recipe")) {
+          polishRecipeLabels(node.matches(".armor-piece-hover-recipe") ? node.parentElement : node);
+        }
+      }
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+  document.addEventListener("warspawn:languagechange", () => {
+    requestAnimationFrame(() => polishRecipeLabels());
+  });
+})();
