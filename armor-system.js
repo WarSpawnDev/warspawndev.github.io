@@ -55,6 +55,7 @@
     ["emerald", ["experience"]],
     ["experience", ["emerald"]],
   ]);
+  const featuredArmorSetIds = new Set(["experience", "lapis", "peacock"]);
   const searchAliasOverrides = {
     emerald: ["esmeralda", "emerald"],
     amethyst: ["ametista", "amethyst"],
@@ -1058,7 +1059,7 @@
               ${entries.map(enchantmentInlineMarkup).join("")}
             </ul>
             <em>${escapeHtml(stat)}</em>
-            <p>${escapeHtml(description)}</p>
+            ${itemEntry.id.startsWith("experience-") ? `<p>${escapeHtml(description)}</p>` : ""}
           </span>
           <span class="armor-experience-related-recipe">
             <strong>${escapeHtml(t().recipeTitle)}</strong>
@@ -1117,7 +1118,7 @@
     `).join("");
     const related = armorSet.relatedItems.length
       ? `<div class="armor-experience-related-list">${armorSet.relatedItems.map(experienceRelatedMarkup).join("")}</div>`
-      : `<p class="armor-empty-related">${escapeHtml(t().noRelated)}</p>`;
+      : "";
 
     return `
       <section class="armor-detail-hero armor-experience-hero">
@@ -1304,7 +1305,7 @@
       return;
     }
 
-    if (armorSet.id === "experience") {
+    if (featuredArmorSetIds.has(armorSet.id)) {
       detailContent.innerHTML = experienceDetailMarkup(armorSet);
       return;
     }
@@ -1502,7 +1503,7 @@
   function showPieceDetail({ pushHistory = false, armorId = null, pieceId = null } = {}) {
     if (armorId) restoreSelection(armorId);
     const armorSet = selectedSet();
-    if (armorSet.id !== "experience") {
+    if (!featuredArmorSetIds.has(armorSet.id)) {
       showDetail({ pushHistory, armorId });
       return;
     }
@@ -1522,7 +1523,7 @@
   function showRelatedItemDetail({ pushHistory = false, armorId = null, itemId = null } = {}) {
     if (armorId) restoreSelection(armorId);
     const armorSet = selectedSet();
-    if (armorSet.id !== "experience") {
+    if (!featuredArmorSetIds.has(armorSet.id)) {
       showDetail({ pushHistory, armorId });
       return;
     }
