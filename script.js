@@ -543,12 +543,12 @@ updateLanguage();
       }
 
       .armor-piece-hover-recipe .armor-recipe-placeholder {
-        width: auto !important;
-        height: auto !important;
-        grid-template-columns: repeat(3, 20px) !important;
-        grid-template-rows: repeat(3, 20px) !important;
-        gap: 4px !important;
-        margin: 4px auto 0 !important;
+        width: 60px !important;
+        height: 60px !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+        gap: 3px !important;
+        margin: 0 auto !important;
       }
     }
 
@@ -627,12 +627,12 @@ updateLanguage();
       }
 
       .armor-piece-hover-recipe .armor-recipe-placeholder {
-        width: auto !important;
-        height: auto !important;
-        grid-template-columns: repeat(3, 24px) !important;
-        grid-template-rows: repeat(3, 24px) !important;
-        gap: 4px !important;
-        margin: 8px auto 0 !important;
+        width: 60px !important;
+        height: 60px !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+        gap: 3px !important;
+        margin: 0 auto !important;
       }
     }
 
@@ -671,10 +671,12 @@ updateLanguage();
       }
 
       .armor-piece-hover-recipe .armor-recipe-placeholder {
-        grid-template-columns: repeat(3, 28px) !important;
-        grid-template-rows: repeat(3, 28px) !important;
-        gap: 5px !important;
-        margin-top: 10px !important;
+        width: 60px !important;
+        height: 60px !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+        gap: 3px !important;
+        margin: 0 auto !important;
       }
     }
   `;
