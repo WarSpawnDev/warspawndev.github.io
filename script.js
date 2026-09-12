@@ -450,28 +450,28 @@ updateLanguage();
       .armor-piece-summary-card:focus-visible,
       .armor-piece-summary-card.is-touch-preview {
         transform: none;
+        border-color: var(--armor-accent);
         border-right-color: transparent;
+        box-shadow: 0 0 26px color-mix(in srgb, var(--armor-accent) 28%, transparent);
       }
 
       .armor-piece-hover-panel {
-        left: calc(100% - 1px);
-        top: -1px;
-        bottom: -1px;
-        width: min(380px, 48vw);
-        height: auto;
+        left: calc(100% - 2px);
+        top: 0;
+        bottom: 0;
+        width: min(400px, 50vw);
+        height: 100%;
         min-height: 0;
-        grid-template-columns: minmax(0, 1fr) 116px;
-        gap: 10px;
+        grid-template-columns: minmax(0, 1fr) 140px;
+        gap: 12px;
         padding: 10px 12px;
         border: 1px solid var(--armor-accent);
         border-left: 0;
         box-sizing: border-box;
         background:
-          linear-gradient(90deg, rgba(6, 9, 11, 0.98), rgba(5, 8, 9, 0.96)),
+          linear-gradient(90deg, rgba(6, 9, 11, 0.985), rgba(5, 8, 9, 0.97)),
           color-mix(in srgb, var(--armor-accent) 6%, transparent);
-        box-shadow:
-          0 0 0 2px color-mix(in srgb, var(--armor-accent) 58%, transparent),
-          18px 0 26px color-mix(in srgb, var(--armor-accent) 22%, transparent);
+        box-shadow: 10px 0 28px color-mix(in srgb, var(--armor-accent) 22%, transparent);
         transform: scaleX(0.03);
         transform-origin: left center;
       }
@@ -501,22 +501,29 @@ updateLanguage();
       }
 
       .armor-piece-hover-recipe {
+        display: grid;
+        place-items: center;
         align-content: center;
-        gap: 6px;
-        padding-left: 10px;
+        justify-items: center;
+        gap: 8px;
+        padding-left: 12px;
+        text-align: center;
       }
 
       .armor-piece-hover-recipe strong {
-        font-size: 16px;
+        width: 100%;
+        font-size: 18px;
         line-height: 1;
+        text-align: center;
       }
 
       .armor-piece-hover-recipe .armor-recipe-placeholder {
-        height: 56px;
-        grid-template-columns: repeat(3, 16px);
-        grid-template-rows: repeat(3, 16px);
-        gap: 3px;
-        margin-top: 2px;
+        width: 72px;
+        height: 72px;
+        grid-template-columns: repeat(3, 20px);
+        grid-template-rows: repeat(3, 20px);
+        gap: 4px;
+        margin: 4px auto 0;
       }
     }
   `;
