@@ -936,8 +936,10 @@ body.armor-explorer-open {
   padding: 12px 8px 12px 0;
   border-right: 1px solid var(--armor-line);
   background:
-    linear-gradient(90deg, rgba(4, 5, 8, 0.84), rgba(4, 5, 8, 0.3)),
-    color-mix(in srgb, var(--armor-accent) 5%, transparent);
+    radial-gradient(ellipse 112% 66% at 42% 85%, color-mix(in srgb, var(--armor-accent) 19%, transparent), transparent 69%),
+    radial-gradient(ellipse 86% 54% at 58% 18%, color-mix(in srgb, var(--armor-accent) 8%, transparent), transparent 72%),
+    linear-gradient(180deg, rgba(7, 10, 12, 0.9), rgba(5, 8, 9, 0.84));
+  box-shadow: inset -1px 0 color-mix(in srgb, var(--armor-accent) 8%, transparent);
 }
 
 .armor-experience-piece-list {
@@ -1142,9 +1144,9 @@ body.armor-explorer-open {
 .armor-experience-total {
   display: grid;
   gap: 4px;
-  padding: 12px 9px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.025);
+  padding: 13px 9px 1px;
+  border-top: 1px solid color-mix(in srgb, var(--armor-accent) 22%, rgba(255, 255, 255, 0.11));
+  background: transparent;
 }
 
 .armor-experience-total small {
