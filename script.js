@@ -455,8 +455,6 @@ updateLanguage();
       .armor-piece-summary-card.is-touch-preview {
         transform: none !important;
         border-color: transparent !important;
-        border-left-color: var(--armor-accent) !important;
-        border-right: 0 !important;
         box-shadow: none !important;
         filter: drop-shadow(0 0 10px color-mix(in srgb, var(--armor-accent) 30%, transparent));
         background: color-mix(in srgb, var(--armor-accent) 4%, #050809) !important;
@@ -464,30 +462,24 @@ updateLanguage();
 
       .armor-piece-summary-card:hover::before,
       .armor-piece-summary-card:focus-visible::before,
-      .armor-piece-summary-card.is-touch-preview::before,
-      .armor-piece-summary-card:hover::after,
-      .armor-piece-summary-card:focus-visible::after,
-      .armor-piece-summary-card.is-touch-preview::after {
+      .armor-piece-summary-card.is-touch-preview::before {
         content: "";
         position: absolute;
         z-index: 30;
         left: -1px;
         width: calc(100% + var(--experience-extension-width) + 1px);
-        height: 1px;
+        height: calc(100% + 2px);
+        box-sizing: border-box;
+        border: 1px solid var(--armor-accent);
+        box-shadow: 0 0 12px color-mix(in srgb, var(--armor-accent) 30%, transparent);
         pointer-events: none;
-        background: var(--armor-accent);
-      }
-
-      .armor-piece-summary-card:hover::before,
-      .armor-piece-summary-card:focus-visible::before,
-      .armor-piece-summary-card.is-touch-preview::before {
         top: -1px;
       }
 
       .armor-piece-summary-card:hover::after,
       .armor-piece-summary-card:focus-visible::after,
       .armor-piece-summary-card.is-touch-preview::after {
-        bottom: -1px;
+        content: none;
       }
 
       .armor-piece-hover-panel {
@@ -502,7 +494,6 @@ updateLanguage();
         gap: 12px !important;
         padding: 10px 12px !important;
         border: 0 !important;
-        border-right: 1px solid var(--armor-accent) !important;
         box-sizing: border-box;
         background: color-mix(in srgb, var(--armor-accent) 4%, #050809) !important;
         box-shadow: none !important;
