@@ -991,9 +991,7 @@
         <span class="armor-piece-hover-panel" aria-hidden="true">
           <ul class="armor-piece-hover-list">${enchantmentList}</ul>
           <span class="armor-piece-hover-recipe">
-            <small>${escapeHtml(t().recipePrepared)}</small>
-            <strong>${escapeHtml(t().recipes)}</strong>
-            <em>${escapeHtml(t().recipePending)}</em>
+            <strong>${escapeHtml(t().recipeTitle)}</strong>
             ${recipeGridMarkup()}
           </span>
         </span>
@@ -1063,8 +1061,7 @@
             <p>${escapeHtml(description)}</p>
           </span>
           <span class="armor-experience-related-recipe">
-            <small>${escapeHtml(t().recipePrepared)}</small>
-            <strong>${escapeHtml(t().recipes)}</strong>
+            <strong>${escapeHtml(t().recipeTitle)}</strong>
             ${recipeGridMarkup()}
           </span>
         </span>
