@@ -253,7 +253,7 @@ const translations = {
     openTikTok: "Open WarSpawn's TikTok profile",
     openReddit: "Open the WarSpawn Reddit community",
     openDiscord: "Join the WarSpawn Discord server",
-    openFacebook: "Open WarSpawn's Facebook page",
+    openFacebook: "Open the WarSpawn Facebook page",
     openX: "Open WarSpawn's X profile",
     openInstagramQr: "Open WarSpawn's Instagram through the QR code",
     footerSocialsLabel: "WarSpawn's main social networks",
@@ -446,32 +446,65 @@ updateLanguage();
     }
 
     @media (min-width: 901px) {
+      .armor-piece-summary-card {
+        --experience-extension-width: min(400px, 50vw);
+      }
+
       .armor-piece-summary-card:hover,
       .armor-piece-summary-card:focus-visible,
       .armor-piece-summary-card.is-touch-preview {
         transform: none !important;
-        border-color: var(--armor-accent) !important;
-        border-right-color: transparent !important;
+        border-color: transparent !important;
+        border-left-color: var(--armor-accent) !important;
+        border-right: 0 !important;
         box-shadow: none !important;
         filter: drop-shadow(0 0 10px color-mix(in srgb, var(--armor-accent) 30%, transparent));
-        background: linear-gradient(90deg, rgba(7, 12, 10, 0.985), rgba(5, 8, 9, 0.975)) !important;
+        background: color-mix(in srgb, var(--armor-accent) 4%, #050809) !important;
+      }
+
+      .armor-piece-summary-card:hover::before,
+      .armor-piece-summary-card:focus-visible::before,
+      .armor-piece-summary-card.is-touch-preview::before,
+      .armor-piece-summary-card:hover::after,
+      .armor-piece-summary-card:focus-visible::after,
+      .armor-piece-summary-card.is-touch-preview::after {
+        content: "";
+        position: absolute;
+        z-index: 30;
+        left: -1px;
+        width: calc(100% + var(--experience-extension-width) + 1px);
+        height: 1px;
+        pointer-events: none;
+        background: var(--armor-accent);
+      }
+
+      .armor-piece-summary-card:hover::before,
+      .armor-piece-summary-card:focus-visible::before,
+      .armor-piece-summary-card.is-touch-preview::before {
+        top: -1px;
+      }
+
+      .armor-piece-summary-card:hover::after,
+      .armor-piece-summary-card:focus-visible::after,
+      .armor-piece-summary-card.is-touch-preview::after {
+        bottom: -1px;
       }
 
       .armor-piece-hover-panel {
         left: 100% !important;
-        top: 0 !important;
+        top: -1px !important;
         bottom: auto !important;
-        width: min(400px, 50vw) !important;
-        height: 100% !important;
+        width: var(--experience-extension-width) !important;
+        height: calc(100% + 2px) !important;
         min-height: 0 !important;
         grid-template-columns: minmax(0, 1fr) 140px !important;
         align-items: center;
         gap: 12px !important;
         padding: 10px 12px !important;
-        border: 1px solid var(--armor-accent) !important;
-        border-left: 0 !important;
+        border: 0 !important;
+        border-right: 1px solid var(--armor-accent) !important;
         box-sizing: border-box;
-        background: linear-gradient(90deg, rgba(7, 12, 10, 0.985), rgba(5, 8, 9, 0.975)) !important;
+        background: color-mix(in srgb, var(--armor-accent) 4%, #050809) !important;
         box-shadow: none !important;
         transform: scaleX(0.03) !important;
         transform-origin: left center !important;
@@ -534,9 +567,8 @@ updateLanguage();
       .armor-piece-summary-card.is-touch-preview {
         transform: none !important;
         border-color: var(--armor-accent) !important;
-        border-bottom-color: var(--armor-accent) !important;
         box-shadow: none !important;
-        background: linear-gradient(180deg, rgba(7, 12, 10, 0.985), rgba(5, 8, 9, 0.975)) !important;
+        background: color-mix(in srgb, var(--armor-accent) 4%, #050809) !important;
       }
 
       .armor-piece-summary-card:hover .armor-piece-enchant-icons,
@@ -547,15 +579,25 @@ updateLanguage();
       }
 
       .armor-piece-hover-panel {
-        left: 0 !important;
-        top: 100% !important;
-        width: 100% !important;
+        left: -1px !important;
+        top: calc(100% + 1px) !important;
+        width: calc(100% + 2px) !important;
         box-sizing: border-box;
-        border: 1px solid var(--armor-accent) !important;
-        border-top: 0 !important;
+        border: 0 !important;
+        border-left: 1px solid var(--armor-accent) !important;
+        border-right: 1px solid var(--armor-accent) !important;
+        border-bottom: 1px solid var(--armor-accent) !important;
         box-shadow: 0 12px 28px color-mix(in srgb, var(--armor-accent) 18%, transparent) !important;
-        background: linear-gradient(180deg, rgba(5, 8, 9, 0.975), rgba(4, 7, 8, 0.985)) !important;
+        background: color-mix(in srgb, var(--armor-accent) 4%, #050809) !important;
         padding: 14px !important;
+        transform: scaleY(0.06) !important;
+        transform-origin: top center !important;
+      }
+
+      .armor-piece-summary-card:hover .armor-piece-hover-panel,
+      .armor-piece-summary-card:focus-visible .armor-piece-hover-panel,
+      .armor-piece-summary-card.is-touch-preview .armor-piece-hover-panel {
+        transform: scaleY(1) !important;
       }
 
       .armor-piece-hover-list {
