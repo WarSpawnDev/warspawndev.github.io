@@ -109,11 +109,13 @@
       defenseShare: "do conjunto",
       pieceDetail: "Detalhes da peça",
       pieceRecipe: "Receita da peça",
+      itemDetail: "Detalhes do item",
       recipePrepared: "RECEITA PREPARADA",
       recipePending: "Receita será conectada aqui.",
       recipeEmptySlot: "Espaço vazio",
       backToSet: "Voltar ao conjunto",
       openPiece: (name) => `Abrir detalhes de ${name}`,
+      openItem: (name) => `Abrir detalhes de ${name}`,
       setOverview: "Resumo do conjunto",
       abilities: "Características do conjunto",
       abilitiesKicker: "IDENTIDADE E HABILIDADES",
@@ -191,11 +193,13 @@
       defenseShare: "of set",
       pieceDetail: "Piece details",
       pieceRecipe: "Piece recipe",
+      itemDetail: "Item details",
       recipePrepared: "RECIPE READY",
       recipePending: "Recipe will be connected here.",
       recipeEmptySlot: "Empty slot",
       backToSet: "Back to set",
       openPiece: (name) => `Open ${name} details`,
+      openItem: (name) => `Open ${name} details`,
       setOverview: "Set overview",
       abilities: "Set characteristics",
       abilitiesKicker: "IDENTITY AND ABILITIES",
@@ -1010,6 +1014,53 @@
     `;
   }
 
+  function experienceRelatedMarkup(itemEntry) {
+    const name = local(itemEntry.name);
+    const stat = itemStat(itemEntry);
+    const description = itemEntry.id === "experience-poison-sword"
+      ? local(
+        "Espada da mesma família, voltada ao combate com veneno.",
+        "A sword from the same family, focused on poison combat.",
+      )
+      : local(
+        "Espada que acompanha a armadura e sustenta sua progressão por experiência.",
+        "A sword that accompanies the armor and supports its experience progression.",
+      );
+    return `
+      <article
+        class="armor-experience-related-card"
+        tabindex="0"
+        role="button"
+        data-armor-related-open="${escapeHtml(itemEntry.id)}"
+        aria-label="${escapeHtml(t().openItem(name))}"
+      >
+        <img
+          src="${escapeHtml(itemEntry.image)}"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        >
+        <span class="armor-experience-related-copy">
+          <strong title="${escapeHtml(name)}">${escapeHtml(name)}</strong>
+          <small>${escapeHtml(stat)}</small>
+        </span>
+        <span class="armor-experience-related-preview" aria-hidden="true">
+          <span class="armor-experience-related-preview-copy">
+            <small>${escapeHtml(t().itemDetail)}</small>
+            <strong>${escapeHtml(name)}</strong>
+            <p>${escapeHtml(description)}</p>
+            <em>${escapeHtml(stat)}</em>
+          </span>
+          <span class="armor-experience-related-recipe">
+            <small>${escapeHtml(t().recipePrepared)}</small>
+            <strong>${escapeHtml(t().recipes)}</strong>
+            ${recipeGridMarkup()}
+          </span>
+        </span>
+      </article>
+    `;
+  }
+
   function romanLevel(level) {
     const numerals = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
     return numerals[level] ?? String(level);
@@ -1057,7 +1108,7 @@
       </li>
     `).join("");
     const related = armorSet.relatedItems.length
-      ? `<div class="armor-related-grid">${armorSet.relatedItems.map(relatedMarkup).join("")}</div>`
+      ? `<div class="armor-experience-related-list">${armorSet.relatedItems.map(experienceRelatedMarkup).join("")}</div>`
       : `<p class="armor-empty-related">${escapeHtml(t().noRelated)}</p>`;
 
     return `
@@ -1082,34 +1133,13 @@
         <div class="armor-detail-copy armor-experience-copy">
           <span class="kicker">${escapeHtml(local(armorSet.name))} • WARSPAWN</span>
           <h2>${escapeHtml(name)}</h2>
-          <p class="armor-detail-description">${escapeHtml(local(armorSet.description))}</p>
-          <p class="armor-acquisition"><strong>${escapeHtml(t().acquisition)}:</strong> ${escapeHtml(local(armorSet.acquisition))}</p>
-        </div>
-      </section>
-
-      <section class="armor-detail-block">
-        <header class="armor-block-head">
-          <div>
-            <span class="kicker">${escapeHtml(t().abilitiesKicker)}</span>
-            <h3>${escapeHtml(t().setOverview)}</h3>
+          ${related}
+          <div class="armor-experience-summary">
+            <p>${escapeHtml(local(armorSet.description))}</p>
+            <ul>${abilities}</ul>
+            <p class="armor-acquisition"><strong>${escapeHtml(t().acquisition)}:</strong> ${escapeHtml(local(armorSet.acquisition))}</p>
           </div>
-        </header>
-        <div class="armor-overview-copy">
-          <p>${escapeHtml(local(armorSet.description))}</p>
-          <p><strong>${escapeHtml(t().acquisition)}:</strong> ${escapeHtml(local(armorSet.acquisition))}</p>
         </div>
-        <ul class="armor-ability-list">${abilities}</ul>
-      </section>
-
-      <section class="armor-detail-block">
-        <header class="armor-block-head">
-          <div>
-            <span class="kicker">${escapeHtml(t().relatedKicker)}</span>
-            <h3>${escapeHtml(t().related)}</h3>
-          </div>
-          <span>${armorSet.relatedItems.length}</span>
-        </header>
-        ${related}
       </section>
     `;
   }
@@ -1731,10 +1761,12 @@
 
   detailContent.addEventListener("pointerdown", (event) => {
     const pieceControl = event.target.closest("[data-armor-piece-open]");
-    if (!pieceControl || event.pointerType !== "touch") return;
-    detailContent.querySelectorAll(".armor-piece-summary-card.is-touch-preview")
+    const relatedControl = event.target.closest("[data-armor-related-open]");
+    const previewControl = pieceControl || relatedControl;
+    if (!previewControl || event.pointerType !== "touch") return;
+    detailContent.querySelectorAll(".armor-piece-summary-card.is-touch-preview, .armor-experience-related-card.is-touch-preview")
       .forEach((card) => card.classList.remove("is-touch-preview"));
-    pieceControl.classList.add("is-touch-preview");
+    previewControl.classList.add("is-touch-preview");
   }, { passive: true });
 
   detailContent.addEventListener("click", (event) => {
