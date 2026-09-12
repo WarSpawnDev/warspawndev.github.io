@@ -110,6 +110,7 @@
       pieceDetail: "Detalhes da peça",
       pieceRecipe: "Receita da peça",
       itemDetail: "Detalhes do item",
+      recipeTitle: "Receita",
       recipePrepared: "RECEITA PREPARADA",
       recipePending: "Receita será conectada aqui.",
       recipeEmptySlot: "Espaço vazio",
@@ -194,6 +195,7 @@
       pieceDetail: "Piece details",
       pieceRecipe: "Piece recipe",
       itemDetail: "Item details",
+      recipeTitle: "Recipe",
       recipePrepared: "RECIPE READY",
       recipePending: "Recipe will be connected here.",
       recipeEmptySlot: "Empty slot",
@@ -253,6 +255,7 @@
     open: false,
     view: "selector",
     pieceDetailId: null,
+    itemDetailId: null,
     optionElements: [],
     geometryFrame: 0,
     geometryMetrics: null,
@@ -1018,6 +1021,7 @@
   function experienceRelatedMarkup(itemEntry) {
     const name = local(itemEntry.name);
     const stat = itemStat(itemEntry);
+    const entries = itemEntry.enchantments ?? [];
     const description = itemEntry.id === "experience-poison-sword"
       ? local(
         "Espada da mesma família, voltada ao combate com veneno.",
@@ -1045,12 +1049,18 @@
           <strong title="${escapeHtml(name)}">${escapeHtml(name)}</strong>
           <small>${escapeHtml(stat)}</small>
         </span>
+        <span class="armor-experience-related-icons" aria-hidden="true">
+          ${entries.map(enchantmentIconMarkup).join("")}
+        </span>
         <span class="armor-experience-related-preview" aria-hidden="true">
           <span class="armor-experience-related-preview-copy">
             <small>${escapeHtml(t().itemDetail)}</small>
             <strong>${escapeHtml(name)}</strong>
-            <p>${escapeHtml(description)}</p>
+            <ul class="armor-experience-related-enchantments">
+              ${entries.map(enchantmentInlineMarkup).join("")}
+            </ul>
             <em>${escapeHtml(stat)}</em>
+            <p>${escapeHtml(description)}</p>
           </span>
           <span class="armor-experience-related-recipe">
             <small>${escapeHtml(t().recipePrepared)}</small>
@@ -1198,6 +1208,51 @@
     `;
   }
 
+  function renderRelatedItemDetail() {
+    const armorSet = selectedSet();
+    const itemEntry = armorSet.relatedItems.find((entry) => entry.id === state.itemDetailId)
+      ?? armorSet.relatedItems[0];
+    if (!itemEntry) {
+      showDetail();
+      return;
+    }
+    state.itemDetailId = itemEntry.id;
+    const name = local(itemEntry.name);
+    const entries = itemEntry.enchantments ?? [];
+    const enchantmentContent = entries.length
+      ? `<ul class="armor-piece-detail-enchantments">${entries.map(enchantmentInlineMarkup).join("")}</ul>`
+      : `<p class="armor-piece-enchantment-empty">${escapeHtml(t().noPieceEnchantments)}</p>`;
+
+    detailIndex.textContent = name;
+    detailContent.setAttribute("aria-label", t().openItem(name));
+    detailContent.innerHTML = `
+      <section class="armor-item-detail-view">
+        <button class="armor-piece-detail-back" type="button" data-armor-item-back>
+          <i aria-hidden="true">‹</i>
+          <span>${escapeHtml(t().backToSet)}</span>
+        </button>
+        <div class="armor-item-detail-art">
+          <img src="${escapeHtml(itemEntry.image)}" alt="${escapeHtml(name)}" decoding="async">
+        </div>
+        <div class="armor-item-detail-copy">
+          <span class="kicker">${escapeHtml(t().itemDetail)}</span>
+          <h2>${escapeHtml(name)}</h2>
+          <div class="armor-item-detail-stats">
+            <span>
+              <small>${escapeHtml(t().attack)}</small>
+              <strong>${escapeHtml(itemStat(itemEntry).replace(`${t().attack}: `, ""))}</strong>
+            </span>
+          </div>
+          ${enchantmentContent}
+        </div>
+        <div class="armor-item-detail-recipe">
+          <h3>${escapeHtml(t().recipeTitle)}</h3>
+          ${recipeGridMarkup({ interactive: true })}
+        </div>
+      </section>
+    `;
+  }
+
   function pieceEnchantmentsMarkup(piece) {
     const entries = piece.enchantments ?? [];
     const list = entries.length
@@ -1246,6 +1301,11 @@
 
     if (state.view === "piece") {
       renderPieceDetail();
+      return;
+    }
+
+    if (state.view === "item") {
+      renderRelatedItemDetail();
       return;
     }
 
@@ -1403,6 +1463,7 @@
         view,
         id: selectedSet().id,
         pieceId: view === "piece" ? state.pieceDetailId : null,
+        itemId: view === "item" ? state.itemDetailId : null,
         query: state.query,
         sortMode: state.sortMode,
       },
@@ -1417,6 +1478,7 @@
     if (armorId) restoreSelection(armorId);
     state.view = "selector";
     state.pieceDetailId = null;
+    state.itemDetailId = null;
     explorer.dataset.armorView = "selector";
     detailView.hidden = true;
     selectorView.hidden = false;
@@ -1432,6 +1494,7 @@
     if (pushHistory) replaceSelectorHistoryState({ immediate: true });
     state.view = "detail";
     state.pieceDetailId = null;
+    state.itemDetailId = null;
     explorer.dataset.armorView = "detail";
     if (pushHistory) pushArmorHistory("detail");
     renderDetail();
@@ -1451,8 +1514,34 @@
     if (pushHistory && state.view === "selector") replaceSelectorHistoryState({ immediate: true });
     state.view = "piece";
     state.pieceDetailId = pieceId || armorSet.pieces[0]?.id || null;
+    state.itemDetailId = null;
     explorer.dataset.armorView = "piece";
     if (pushHistory) pushArmorHistory("piece");
+    renderDetail();
+    selectorView.hidden = true;
+    detailView.hidden = false;
+    explorer.scrollTo({ top: 0, behavior: "auto" });
+    requestAnimationFrame(() => detailContent.focus({ preventScroll: true }));
+  }
+
+  function showRelatedItemDetail({ pushHistory = false, armorId = null, itemId = null } = {}) {
+    if (armorId) restoreSelection(armorId);
+    const armorSet = selectedSet();
+    if (armorSet.id !== "experience") {
+      showDetail({ pushHistory, armorId });
+      return;
+    }
+    const itemEntry = armorSet.relatedItems.find((entry) => entry.id === itemId) ?? armorSet.relatedItems[0];
+    if (!itemEntry) {
+      showDetail({ pushHistory, armorId });
+      return;
+    }
+    if (pushHistory && state.view === "selector") replaceSelectorHistoryState({ immediate: true });
+    state.view = "item";
+    state.pieceDetailId = null;
+    state.itemDetailId = itemEntry.id;
+    explorer.dataset.armorView = "item";
+    if (pushHistory) pushArmorHistory("item");
     renderDetail();
     selectorView.hidden = true;
     detailView.hidden = false;
@@ -1465,6 +1554,7 @@
     armorId = allSets[0].id,
     view = "selector",
     pieceId = null,
+    itemId = null,
     query = "",
     sortMode = "neutral",
   } = {}) {
@@ -1485,6 +1575,7 @@
     updateStaticText();
     if (!fromHistory) pushArmorHistory("selector");
     if (view === "piece") showPieceDetail({ armorId, pieceId });
+    else if (view === "item") showRelatedItemDetail({ armorId, itemId });
     else if (view === "detail") showDetail({ armorId });
     else showSelector({ armorId });
     preloadConcepts();
@@ -1514,7 +1605,7 @@
       closeExplorer();
       return;
     }
-    const steps = state.view === "piece" ? -3 : state.view === "detail" ? -2 : -1;
+    const steps = ["piece", "item"].includes(state.view) ? -3 : state.view === "detail" ? -2 : -1;
     history.go(steps);
   }
 
@@ -1524,7 +1615,7 @@
       history.back();
       return;
     }
-    if (state.view === "piece") showDetail();
+    if (["piece", "item"].includes(state.view)) showDetail();
     else if (state.view === "detail") showSelector();
     else closeExplorer();
   }
@@ -1541,8 +1632,9 @@
       openExplorer({
         fromHistory: true,
         armorId,
-        view: overlay.view === "piece" ? "piece" : overlay.view === "detail" ? "detail" : "selector",
+        view: ["piece", "item", "detail"].includes(overlay.view) ? overlay.view : "selector",
         pieceId: overlay.pieceId || null,
+        itemId: overlay.itemId || null,
         query: overlay.query || "",
         sortMode: overlay.sortMode || "neutral",
       });
@@ -1564,6 +1656,7 @@
     }
 
     if (overlay.view === "piece") showPieceDetail({ armorId, pieceId: overlay.pieceId || null });
+    else if (overlay.view === "item") showRelatedItemDetail({ armorId, itemId: overlay.itemId || null });
     else if (overlay.view === "detail") showDetail({ armorId });
     else showSelector({ armorId });
   }
@@ -1771,7 +1864,7 @@
   }, { passive: true });
 
   detailContent.addEventListener("click", (event) => {
-    const backButton = event.target.closest("[data-armor-piece-back]");
+    const backButton = event.target.closest("[data-armor-piece-back], [data-armor-item-back]");
     if (backButton) {
       event.preventDefault();
       requestPreviousOverlayView();
@@ -1779,22 +1872,40 @@
     }
 
     const pieceControl = event.target.closest("[data-armor-piece-open]");
-    if (!pieceControl) return;
+    if (pieceControl) {
+      event.preventDefault();
+      showPieceDetail({
+        pushHistory: true,
+        pieceId: pieceControl.getAttribute("data-armor-piece-open"),
+      });
+      return;
+    }
+    const relatedControl = event.target.closest("[data-armor-related-open]");
+    if (!relatedControl) return;
     event.preventDefault();
-    showPieceDetail({
+    showRelatedItemDetail({
       pushHistory: true,
-      pieceId: pieceControl.getAttribute("data-armor-piece-open"),
+      itemId: relatedControl.getAttribute("data-armor-related-open"),
     });
   });
 
   detailContent.addEventListener("keydown", (event) => {
     const pieceControl = event.target.closest("[data-armor-piece-open]");
-    if (!pieceControl || !["Enter", " "].includes(event.key)) return;
+    const relatedControl = event.target.closest("[data-armor-related-open]");
+    const openControl = pieceControl || relatedControl;
+    if (!openControl || !["Enter", " "].includes(event.key)) return;
     event.preventDefault();
-    showPieceDetail({
-      pushHistory: true,
-      pieceId: pieceControl.getAttribute("data-armor-piece-open"),
-    });
+    if (pieceControl) {
+      showPieceDetail({
+        pushHistory: true,
+        pieceId: pieceControl.getAttribute("data-armor-piece-open"),
+      });
+    } else {
+      showRelatedItemDetail({
+        pushHistory: true,
+        itemId: relatedControl.getAttribute("data-armor-related-open"),
+      });
+    }
   });
 
   explorer.addEventListener("keydown", (event) => {

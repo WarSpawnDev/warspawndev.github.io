@@ -89,6 +89,20 @@
       name: local("Inquebrável", "Unbreaking"),
       image: "assets/armors/enchantments/unbreaking.png",
     },
+    sharpness: {
+      id: "sharpness",
+      name: local("Afiação", "Sharpness"),
+      image: "assets/armors/enchantments/sharpness.png",
+    },
+  });
+
+  const effectCatalog = Object.freeze({
+    poison: {
+      id: "poison",
+      name: local("Veneno", "Poison"),
+      image: "assets/ui/effects/poison.png",
+      type: "effect",
+    },
   });
 
   const enchantments = (...entries) => entries.map(([id, level]) => ({
@@ -323,8 +337,14 @@
         armorEnchantments.experience,
       ),
       relatedItems: [
-        equipment("experience", "sword", "Espada de Experiência", "Experience Sword", "experiencesword.png", "sword", { attack: "10+" }),
-        equipment("experience", "poison-sword", "Espada de Veneno", "Poison Sword", "poisonsword.png", "sword", { attack: "10 + veneno", attackEn: "10 + poison" }),
+        equipment(
+          "experience", "sword", "Espada de Experiência", "Experience Sword", "experiencesword.png", "sword", { attack: "10+" },
+          { enchantments: enchantments(["sharpness", 2], ["unbreaking", 3]) },
+        ),
+        equipment(
+          "experience", "poison-sword", "Espada de Veneno", "Poison Sword", "poisonsword.png", "sword", { attack: "10 + veneno", attackEn: "10 + poison" },
+          { enchantments: [{ ...effectCatalog.poison, level: 1 }] },
+        ),
       ],
     }),
     set({

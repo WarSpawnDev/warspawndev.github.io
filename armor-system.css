@@ -782,6 +782,15 @@ body.armor-explorer-open {
   transform: translateX(-2px);
 }
 
+.armor-back > span {
+  display: grid;
+  width: 1em;
+  height: 1em;
+  place-items: center;
+  line-height: 1;
+  transform: translate(-0.5px, -1px);
+}
+
 .armor-detail-index {
   color: #8f96a5;
   font-size: 10px;
@@ -1213,7 +1222,7 @@ body.armor-explorer-open {
   min-width: 0;
   min-height: 72px;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
   padding: 8px;
@@ -1256,6 +1265,22 @@ body.armor-explorer-open {
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.armor-experience-related-icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  min-width: 0;
+  transition: opacity 140ms ease, visibility 140ms ease;
+}
+
+.armor-experience-related-icons img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
 .armor-experience-related-preview {
@@ -1303,6 +1328,34 @@ body.armor-explorer-open {
   line-height: 1.35;
 }
 
+.armor-experience-related-enchantments {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.armor-experience-related-enchantments .armor-piece-detail-enchantment {
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 6px;
+  padding: 0;
+  border: 0;
+}
+
+.armor-experience-related-enchantments .armor-piece-detail-enchantment img {
+  width: 22px;
+  height: 22px;
+}
+
+.armor-experience-related-enchantments .armor-piece-detail-enchantment strong {
+  font-size: 9px;
+}
+
+.armor-experience-related-enchantments .armor-piece-detail-enchantment small {
+  font-size: 7px;
+}
+
 .armor-experience-related-preview-copy em {
   color: #b3bac2;
   font-size: 9px;
@@ -1339,6 +1392,13 @@ body.armor-explorer-open {
 .armor-experience-related-card.is-touch-preview .armor-experience-related-preview {
   opacity: 1;
   transform: scaleY(1);
+}
+
+.armor-experience-related-card:hover .armor-experience-related-icons,
+.armor-experience-related-card:focus-visible .armor-experience-related-icons,
+.armor-experience-related-card.is-touch-preview .armor-experience-related-icons {
+  visibility: hidden;
+  opacity: 0;
 }
 
 .armor-experience-summary {
@@ -1525,6 +1585,110 @@ body.armor-explorer-open {
   color: #8a92a0;
   font-size: 12px;
   line-height: 1.6;
+}
+
+.armor-item-detail-view {
+  min-height: min(680px, calc(100svh - 150px));
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid var(--armor-line);
+  border-radius: 4px;
+  background:
+    radial-gradient(circle at 22% 58%, color-mix(in srgb, var(--armor-accent) 20%, transparent), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.44);
+}
+
+.armor-item-detail-art,
+.armor-item-detail-copy,
+.armor-item-detail-recipe {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(4, 5, 8, 0.48);
+}
+
+.armor-item-detail-art {
+  display: grid;
+  place-items: center;
+  padding: 26px;
+  background:
+    radial-gradient(circle at 50% 56%, color-mix(in srgb, var(--armor-accent) 20%, transparent), transparent 54%),
+    rgba(4, 5, 8, 0.58);
+}
+
+.armor-item-detail-art img {
+  width: min(82%, 260px);
+  max-height: 320px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.72));
+}
+
+.armor-item-detail-copy {
+  display: grid;
+  align-content: center;
+  gap: 18px;
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.armor-item-detail-copy h2,
+.armor-item-detail-recipe h3 {
+  margin: 0;
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.armor-item-detail-stats span {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.armor-item-detail-stats small {
+  color: #848c99;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.armor-item-detail-stats strong {
+  color: color-mix(in srgb, var(--armor-accent) 72%, white 25%);
+  font-size: 26px;
+}
+
+.armor-item-detail-recipe {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 26px;
+  padding: clamp(28px, 4vw, 42px) clamp(20px, 3vw, 30px);
+}
+
+.armor-item-detail-recipe h3 {
+  width: 100%;
+  text-align: center;
+}
+
+.armor-item-detail-recipe .armor-recipe-placeholder {
+  width: 154px;
+  height: 154px;
+  grid-template-columns: repeat(3, 46px);
+  grid-template-rows: repeat(3, 46px);
+  gap: 6px;
+}
+
+.armor-item-detail-recipe .armor-recipe-slot {
+  width: 46px;
+  height: 46px;
 }
 
 .armor-detail-block {
@@ -2199,7 +2363,17 @@ body.armor-explorer-open {
     grid-template-columns: 1fr;
   }
 
+  .armor-item-detail-view {
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
   .armor-piece-detail-art img {
+    width: min(58%, 210px);
+    max-height: 230px;
+  }
+
+  .armor-item-detail-art img {
     width: min(58%, 210px);
     max-height: 230px;
   }
@@ -2425,12 +2599,21 @@ body.armor-explorer-open {
     padding: 14px;
   }
 
+  .armor-item-detail-view {
+    padding: 14px;
+  }
+
   .armor-piece-detail-stats {
     grid-template-columns: 1fr;
   }
 
   .armor-piece-detail-copy,
   .armor-piece-detail-recipe {
+    padding: 18px;
+  }
+
+  .armor-item-detail-copy,
+  .armor-item-detail-recipe {
     padding: 18px;
   }
 }
