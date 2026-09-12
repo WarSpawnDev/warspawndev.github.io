@@ -924,7 +924,22 @@ body.armor-explorer-open {
 }
 
 .armor-experience-hero {
+  position: relative;
+  isolation: isolate;
   grid-template-columns: minmax(280px, 0.9fr) minmax(210px, 0.5fr) minmax(0, 1fr);
+  background:
+    radial-gradient(ellipse 58% 110% at 14% 76%, color-mix(in srgb, var(--armor-accent) 19%, transparent), transparent 72%),
+    radial-gradient(ellipse 66% 94% at 54% 42%, color-mix(in srgb, var(--armor-accent) 9%, transparent), transparent 76%),
+    radial-gradient(ellipse 48% 86% at 92% 24%, color-mix(in srgb, var(--armor-accent) 7%, transparent), transparent 78%),
+    linear-gradient(118deg, rgba(5, 8, 9, 0.98), rgba(8, 12, 11, 0.93) 50%, rgba(5, 7, 9, 0.97));
+}
+
+.armor-experience-hero .armor-game-art {
+  background:
+    radial-gradient(circle at 50% 58%, color-mix(in srgb, var(--armor-accent) 13%, transparent), transparent 46%),
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
 }
 
 .armor-experience-piece-panel {
@@ -935,11 +950,8 @@ body.armor-explorer-open {
   gap: 10px;
   padding: 12px 8px 12px 0;
   border-right: 1px solid var(--armor-line);
-  background:
-    radial-gradient(ellipse 112% 66% at 42% 85%, color-mix(in srgb, var(--armor-accent) 19%, transparent), transparent 69%),
-    radial-gradient(ellipse 86% 54% at 58% 18%, color-mix(in srgb, var(--armor-accent) 8%, transparent), transparent 72%),
-    linear-gradient(180deg, rgba(7, 10, 12, 0.9), rgba(5, 8, 9, 0.84));
-  box-shadow: inset -1px 0 color-mix(in srgb, var(--armor-accent) 8%, transparent);
+  background: transparent;
+  box-shadow: none;
 }
 
 .armor-experience-piece-list {
@@ -1167,6 +1179,7 @@ body.armor-explorer-open {
 .armor-experience-copy {
   justify-content: center;
   padding-inline: clamp(28px, 4vw, 52px);
+  background: transparent;
 }
 
 .armor-piece-detail-view {
