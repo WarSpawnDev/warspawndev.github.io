@@ -1199,9 +1199,7 @@
           ${enchantmentContent}
         </div>
         <div class="armor-piece-detail-recipe">
-          <span class="kicker">${escapeHtml(t().recipePrepared)}</span>
-          <h3>${escapeHtml(t().pieceRecipe)}</h3>
-          <p>${escapeHtml(t().recipesFuture)}</p>
+          <h3>${escapeHtml(t().recipeTitle)}</h3>
           ${recipeGridMarkup({ interactive: true })}
         </div>
       </section>

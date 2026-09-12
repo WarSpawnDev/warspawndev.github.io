@@ -100,7 +100,7 @@
     poison: {
       id: "poison",
       name: local("Veneno", "Poison"),
-      image: "assets/ui/effects/poison.png",
+      image: "assets/ui/effects/poison.png?v=20260912-sprite-26",
       type: "effect",
     },
   });
