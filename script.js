@@ -445,59 +445,65 @@ updateLanguage();
       display: none !important;
     }
 
+    .armor-piece-hover-list img {
+      display: none !important;
+    }
+
+    .armor-piece-hover-list li {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+
     @media (min-width: 901px) {
       .armor-piece-summary-card:hover,
       .armor-piece-summary-card:focus-visible,
       .armor-piece-summary-card.is-touch-preview {
-        transform: none;
-        border-color: var(--armor-accent);
-        border-right-color: transparent;
-        box-shadow: 0 0 26px color-mix(in srgb, var(--armor-accent) 28%, transparent);
+        transform: none !important;
+        border-color: var(--armor-accent) !important;
+        border-right-color: transparent !important;
+        box-shadow: none !important;
+        filter: drop-shadow(0 0 10px color-mix(in srgb, var(--armor-accent) 30%, transparent));
       }
 
       .armor-piece-hover-panel {
-        left: calc(100% - 2px);
-        top: 0;
-        bottom: 0;
-        width: min(400px, 50vw);
-        height: 100%;
-        min-height: 0;
-        grid-template-columns: minmax(0, 1fr) 140px;
-        gap: 12px;
-        padding: 10px 12px;
-        border: 1px solid var(--armor-accent);
-        border-left: 0;
+        left: 100% !important;
+        top: -1px !important;
+        bottom: auto !important;
+        width: min(400px, 50vw) !important;
+        height: calc(100% + 2px) !important;
+        min-height: 0 !important;
+        grid-template-columns: minmax(0, 1fr) 140px !important;
+        align-items: center;
+        gap: 12px !important;
+        padding: 10px 12px !important;
+        border: 1px solid var(--armor-accent) !important;
+        border-left: 0 !important;
         box-sizing: border-box;
         background:
           linear-gradient(90deg, rgba(6, 9, 11, 0.985), rgba(5, 8, 9, 0.97)),
-          color-mix(in srgb, var(--armor-accent) 6%, transparent);
-        box-shadow: 10px 0 28px color-mix(in srgb, var(--armor-accent) 22%, transparent);
-        transform: scaleX(0.03);
-        transform-origin: left center;
+          color-mix(in srgb, var(--armor-accent) 6%, transparent) !important;
+        box-shadow: none !important;
+        transform: scaleX(0.03) !important;
+        transform-origin: left center !important;
       }
 
       .armor-piece-summary-card:hover .armor-piece-hover-panel,
       .armor-piece-summary-card:focus-visible .armor-piece-hover-panel,
       .armor-piece-summary-card.is-touch-preview .armor-piece-hover-panel {
-        transform: scaleX(1);
+        transform: scaleX(1) !important;
       }
 
       .armor-piece-hover-list {
         align-content: center;
-        gap: 5px;
+        gap: 5px !important;
       }
 
       .armor-piece-hover-list li {
         min-height: 27px;
-        display: flex;
+        display: flex !important;
         align-items: center;
-        gap: 0;
+        gap: 0 !important;
         padding-left: 2px;
         font-size: 10px;
-      }
-
-      .armor-piece-hover-list img {
-        display: none;
       }
 
       .armor-piece-hover-recipe {
@@ -505,25 +511,117 @@ updateLanguage();
         place-items: center;
         align-content: center;
         justify-items: center;
-        gap: 8px;
-        padding-left: 12px;
+        gap: 8px !important;
+        padding-left: 12px !important;
         text-align: center;
       }
 
       .armor-piece-hover-recipe strong {
         width: 100%;
-        font-size: 18px;
+        font-size: 18px !important;
         line-height: 1;
         text-align: center;
       }
 
       .armor-piece-hover-recipe .armor-recipe-placeholder {
-        width: 72px;
-        height: 72px;
-        grid-template-columns: repeat(3, 20px);
-        grid-template-rows: repeat(3, 20px);
-        gap: 4px;
-        margin: 4px auto 0;
+        width: auto !important;
+        height: auto !important;
+        grid-template-columns: repeat(3, 20px) !important;
+        grid-template-rows: repeat(3, 20px) !important;
+        gap: 4px !important;
+        margin: 4px auto 0 !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .armor-piece-summary-card:hover,
+      .armor-piece-summary-card:focus-visible,
+      .armor-piece-summary-card.is-touch-preview {
+        transform: none !important;
+      }
+
+      .armor-piece-hover-panel {
+        left: -1px !important;
+        top: calc(100% - 1px) !important;
+        width: calc(100% + 2px) !important;
+        box-sizing: border-box;
+        border: 1px solid var(--armor-accent) !important;
+        box-shadow:
+          0 0 0 2px color-mix(in srgb, var(--armor-accent) 45%, transparent),
+          0 12px 28px color-mix(in srgb, var(--armor-accent) 22%, transparent) !important;
+        padding: 14px !important;
+      }
+
+      .armor-piece-hover-list {
+        align-content: center;
+        gap: 7px !important;
+      }
+
+      .armor-piece-hover-list li {
+        min-height: 26px;
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0 2px;
+        font-size: 11px;
+      }
+
+      .armor-piece-hover-recipe {
+        align-content: center;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .armor-piece-hover-recipe strong {
+        font-size: 21px !important;
+        line-height: 1;
+      }
+
+      .armor-piece-hover-recipe .armor-recipe-placeholder {
+        width: auto !important;
+        height: auto !important;
+        grid-template-columns: repeat(3, 24px) !important;
+        grid-template-rows: repeat(3, 24px) !important;
+        gap: 4px !important;
+        margin: 8px auto 0 !important;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .armor-piece-hover-panel {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+        min-height: 238px !important;
+        padding: 16px 18px 18px !important;
+      }
+
+      .armor-piece-hover-list {
+        justify-items: stretch;
+        gap: 8px !important;
+      }
+
+      .armor-piece-hover-list li {
+        justify-content: flex-start;
+        min-height: 28px;
+        font-size: 12px;
+      }
+
+      .armor-piece-hover-recipe {
+        width: 100%;
+        padding: 14px 0 0 !important;
+        border-left: 0 !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .armor-piece-hover-recipe strong {
+        font-size: 24px !important;
+      }
+
+      .armor-piece-hover-recipe .armor-recipe-placeholder {
+        grid-template-columns: repeat(3, 28px) !important;
+        grid-template-rows: repeat(3, 28px) !important;
+        gap: 5px !important;
+        margin-top: 10px !important;
       }
     }
   `;
