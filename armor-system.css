@@ -788,7 +788,6 @@ body.armor-explorer-open {
   height: 1em;
   place-items: center;
   line-height: 1;
-  transform: translate(-0.5px, -1px);
 }
 
 .armor-detail-index {
