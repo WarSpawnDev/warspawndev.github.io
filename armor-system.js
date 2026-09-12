@@ -506,6 +506,7 @@
       if (typeof value === "string") element.textContent = value;
     });
     closeButton.setAttribute("aria-label", t().close);
+    detailBackButton.setAttribute("aria-label", t().backToSelector);
     previousButton.setAttribute("aria-label", t().previous);
     nextButton.setAttribute("aria-label", t().next);
     carousel.setAttribute("aria-label", t().carousel);
