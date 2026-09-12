@@ -2047,6 +2047,7 @@ body.armor-explorer-open {
 }
 
 .armor-recipe-placeholder {
+  box-sizing: border-box;
   height: 92px;
   display: grid;
   grid-template-columns: repeat(3, 26px);
@@ -2062,6 +2063,7 @@ body.armor-explorer-open {
 }
 
 .armor-recipe-slot {
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   padding: 0;
