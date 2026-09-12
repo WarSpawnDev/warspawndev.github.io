@@ -445,14 +445,6 @@ updateLanguage();
       display: none !important;
     }
 
-    .armor-piece-hover-list img {
-      display: none !important;
-    }
-
-    .armor-piece-hover-list li {
-      grid-template-columns: minmax(0, 1fr) !important;
-    }
-
     @media (min-width: 901px) {
       .armor-piece-summary-card:hover,
       .armor-piece-summary-card:focus-visible,
@@ -462,14 +454,15 @@ updateLanguage();
         border-right-color: transparent !important;
         box-shadow: none !important;
         filter: drop-shadow(0 0 10px color-mix(in srgb, var(--armor-accent) 30%, transparent));
+        background: linear-gradient(90deg, rgba(7, 12, 10, 0.985), rgba(5, 8, 9, 0.975)) !important;
       }
 
       .armor-piece-hover-panel {
         left: 100% !important;
-        top: -1px !important;
+        top: 0 !important;
         bottom: auto !important;
         width: min(400px, 50vw) !important;
-        height: calc(100% + 2px) !important;
+        height: 100% !important;
         min-height: 0 !important;
         grid-template-columns: minmax(0, 1fr) 140px !important;
         align-items: center;
@@ -478,9 +471,7 @@ updateLanguage();
         border: 1px solid var(--armor-accent) !important;
         border-left: 0 !important;
         box-sizing: border-box;
-        background:
-          linear-gradient(90deg, rgba(6, 9, 11, 0.985), rgba(5, 8, 9, 0.97)),
-          color-mix(in srgb, var(--armor-accent) 6%, transparent) !important;
+        background: linear-gradient(90deg, rgba(7, 12, 10, 0.985), rgba(5, 8, 9, 0.975)) !important;
         box-shadow: none !important;
         transform: scaleX(0.03) !important;
         transform-origin: left center !important;
@@ -504,6 +495,10 @@ updateLanguage();
         gap: 0 !important;
         padding-left: 2px;
         font-size: 10px;
+      }
+
+      .armor-piece-hover-list img {
+        display: none !important;
       }
 
       .armor-piece-hover-recipe {
@@ -538,17 +533,28 @@ updateLanguage();
       .armor-piece-summary-card:focus-visible,
       .armor-piece-summary-card.is-touch-preview {
         transform: none !important;
+        border-color: var(--armor-accent) !important;
+        border-bottom-color: var(--armor-accent) !important;
+        box-shadow: none !important;
+        background: linear-gradient(180deg, rgba(7, 12, 10, 0.985), rgba(5, 8, 9, 0.975)) !important;
+      }
+
+      .armor-piece-summary-card:hover .armor-piece-enchant-icons,
+      .armor-piece-summary-card:focus-visible .armor-piece-enchant-icons,
+      .armor-piece-summary-card.is-touch-preview .armor-piece-enchant-icons {
+        opacity: 0 !important;
+        visibility: hidden !important;
       }
 
       .armor-piece-hover-panel {
-        left: -1px !important;
-        top: calc(100% - 1px) !important;
-        width: calc(100% + 2px) !important;
+        left: 0 !important;
+        top: 100% !important;
+        width: 100% !important;
         box-sizing: border-box;
         border: 1px solid var(--armor-accent) !important;
-        box-shadow:
-          0 0 0 2px color-mix(in srgb, var(--armor-accent) 45%, transparent),
-          0 12px 28px color-mix(in srgb, var(--armor-accent) 22%, transparent) !important;
+        border-top: 0 !important;
+        box-shadow: 0 12px 28px color-mix(in srgb, var(--armor-accent) 18%, transparent) !important;
+        background: linear-gradient(180deg, rgba(5, 8, 9, 0.975), rgba(4, 7, 8, 0.985)) !important;
         padding: 14px !important;
       }
 
@@ -558,12 +564,22 @@ updateLanguage();
       }
 
       .armor-piece-hover-list li {
-        min-height: 26px;
-        display: flex !important;
+        min-height: 34px;
+        display: grid !important;
+        grid-template-columns: 32px minmax(0, 1fr) !important;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: stretch;
+        gap: 9px !important;
         padding: 0 2px;
         font-size: 11px;
+      }
+
+      .armor-piece-hover-list img {
+        display: block !important;
+        width: 30px !important;
+        height: 30px !important;
+        object-fit: contain;
+        image-rendering: pixelated;
       }
 
       .armor-piece-hover-recipe {
@@ -591,7 +607,7 @@ updateLanguage();
       .armor-piece-hover-panel {
         grid-template-columns: 1fr !important;
         gap: 14px !important;
-        min-height: 238px !important;
+        min-height: 250px !important;
         padding: 16px 18px 18px !important;
       }
 
@@ -601,9 +617,13 @@ updateLanguage();
       }
 
       .armor-piece-hover-list li {
-        justify-content: flex-start;
-        min-height: 28px;
+        min-height: 36px;
         font-size: 12px;
+      }
+
+      .armor-piece-hover-list img {
+        width: 32px !important;
+        height: 32px !important;
       }
 
       .armor-piece-hover-recipe {
