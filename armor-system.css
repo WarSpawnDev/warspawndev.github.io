@@ -935,6 +935,7 @@ body.armor-explorer-open {
 }
 
 .armor-experience-hero .armor-game-art {
+  margin: 0;
   background:
     radial-gradient(circle at 50% 58%, color-mix(in srgb, var(--armor-accent) 13%, transparent), transparent 46%),
     linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
@@ -1967,6 +1968,29 @@ body.armor-explorer-open {
 
   .armor-carousel-arrow {
     top: 55%;
+  }
+
+  .armor-detail-view {
+    padding: 18px 0 10px;
+  }
+
+  .armor-detail-head {
+    margin-bottom: 12px;
+  }
+
+  .armor-experience-copy {
+    gap: 10px;
+    padding-block: 26px;
+  }
+
+  .armor-experience-piece-panel {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .armor-piece-summary-card {
+    min-height: 104px;
+    padding-block: 8px;
   }
 }
 
