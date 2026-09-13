@@ -55,7 +55,14 @@
     ["emerald", ["experience"]],
     ["experience", ["emerald"]],
   ]);
-  const featuredArmorSetIds = new Set(["experience", "lapis", "peacock"]);
+  const featuredArmorSetIds = new Set([
+    "experience",
+    "lapis",
+    "peacock",
+    "lava-eel",
+    "moth-scale",
+    "queen-scale",
+  ]);
   const searchAliasOverrides = {
     emerald: ["esmeralda", "emerald"],
     amethyst: ["ametista", "amethyst"],
@@ -1117,8 +1124,9 @@
         <span>${escapeHtml(local(ability))}</span>
       </li>
     `).join("");
-    const related = armorSet.relatedItems.length
-      ? `<div class="armor-experience-related-list">${armorSet.relatedItems.map(experienceRelatedMarkup).join("")}</div>`
+    const visibleRelatedItems = armorSet.showAdjacentItems === false ? [] : armorSet.relatedItems;
+    const related = visibleRelatedItems.length
+      ? `<div class="armor-experience-related-list">${visibleRelatedItems.map(experienceRelatedMarkup).join("")}</div>`
       : "";
 
     return `
