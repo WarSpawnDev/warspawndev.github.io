@@ -62,6 +62,8 @@
     "lava-eel",
     "moth-scale",
     "queen-scale",
+    "royal-guardian",
+    "mobzilla",
   ]);
   const searchAliasOverrides = {
     emerald: ["esmeralda", "emerald"],
@@ -1036,10 +1038,15 @@
         "Espada da mesma família, voltada ao combate com veneno.",
         "A sword from the same family, focused on poison combat.",
       )
-      : local(
+      : itemEntry.id === "experience-sword"
+        ? local(
         "Espada que acompanha a armadura e sustenta sua progressão por experiência.",
         "A sword that accompanies the armor and supports its experience progression.",
-      );
+        )
+        : local(
+          "Equipamento associado a este conjunto.",
+          "Equipment associated with this set.",
+        );
     return `
       <article
         class="armor-experience-related-card"
@@ -1067,7 +1074,7 @@
             <strong>${escapeHtml(name)}</strong>
             ${enchantmentList}
             <em>${escapeHtml(stat)}</em>
-            ${itemEntry.id.startsWith("experience-") ? `<p>${escapeHtml(description)}</p>` : ""}
+            <p>${escapeHtml(description)}</p>
           </span>
           <span class="armor-experience-related-recipe">
             <strong>${escapeHtml(t().recipeTitle)}</strong>
@@ -1124,9 +1131,8 @@
         <span>${escapeHtml(local(ability))}</span>
       </li>
     `).join("");
-    const visibleRelatedItems = armorSet.showAdjacentItems === false ? [] : armorSet.relatedItems;
-    const related = visibleRelatedItems.length
-      ? `<div class="armor-experience-related-list">${visibleRelatedItems.map(experienceRelatedMarkup).join("")}</div>`
+    const related = armorSet.relatedItems.length
+      ? `<div class="armor-experience-related-list">${armorSet.relatedItems.map(experienceRelatedMarkup).join("")}</div>`
       : "";
 
     return `

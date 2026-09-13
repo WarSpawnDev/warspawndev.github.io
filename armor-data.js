@@ -500,8 +500,6 @@
         ["queen_helmet.png", "queen_chest.png", "queen_leggings.png", "queen_boots.png"],
         [9, 16, 14, 9],
       ),
-      // O machado segue catalogado para uso futuro, mas não compõe a aba principal desta migração.
-      showAdjacentItems: false,
       relatedItems: [
         equipment("queen-scale", "battle-axe", "Machado de Batalha da Rainha", "Queen Scale Battle Axe", "queenbattleaxesmall.png", "axe", { attack: "666+" }),
       ],
