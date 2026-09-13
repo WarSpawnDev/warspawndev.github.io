@@ -972,9 +972,10 @@ body.armor-explorer-open {
 .armor-piece-summary-card {
   position: relative;
   min-width: 0;
+  height: 122px;
   min-height: 122px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 34px;
+  grid-template-columns: minmax(0, 1fr) 48px;
   align-items: center;
   gap: 9px;
   padding: 12px 9px 12px 11px;
@@ -1042,13 +1043,15 @@ body.armor-explorer-open {
 
 .armor-piece-enchant-icons {
   display: grid;
-  gap: 5px;
+  grid-template-columns: repeat(2, 23px);
+  gap: 2px;
+  justify-content: center;
   justify-items: center;
 }
 
 .armor-piece-enchant-icons img {
-  width: 27px;
-  height: 27px;
+  width: 23px;
+  height: 23px;
   object-fit: contain;
   image-rendering: pixelated;
   filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.66));
@@ -1238,6 +1241,7 @@ body.armor-explorer-open {
   position: relative;
   z-index: 1;
   min-width: 0;
+  height: 72px;
   min-height: 72px;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) auto;
@@ -2228,6 +2232,7 @@ body.armor-explorer-open {
   }
 
   .armor-piece-summary-card {
+    height: 104px;
     min-height: 104px;
     padding-block: 8px;
   }
@@ -2570,6 +2575,7 @@ body.armor-explorer-open {
   }
 
   .armor-piece-summary-card {
+    height: 108px;
     min-height: 108px;
   }
 
