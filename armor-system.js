@@ -952,15 +952,15 @@
     const enchantments = piece.enchantments ?? [];
     const enchantmentIcons = enchantments.length
       ? enchantments.map(enchantmentIconMarkup).join("")
-      : `<span>${escapeHtml(t().noPieceEnchantments)}</span>`;
+      : "";
     const enchantmentList = enchantments.length
-      ? enchantments.map((enchantment) => `
+      ? `<ul class="armor-piece-hover-list">${enchantments.map((enchantment) => `
           <li>
             <img src="${escapeHtml(enchantment.image)}" alt="" loading="lazy" decoding="async">
             <span>${escapeHtml(local(enchantment.name))} <strong>${escapeHtml(romanLevel(enchantment.level))}</strong></span>
           </li>
-        `).join("")
-      : `<li><span>${escapeHtml(t().noPieceEnchantments)}</span></li>`;
+        `).join("")}</ul>`
+      : "";
 
     return `
       <article
@@ -990,7 +990,7 @@
           ${enchantmentIcons}
         </span>
         <span class="armor-piece-hover-panel" aria-hidden="true">
-          <ul class="armor-piece-hover-list">${enchantmentList}</ul>
+          ${enchantmentList}
           <span class="armor-piece-hover-recipe">
             <strong>${escapeHtml(t().recipeTitle)}</strong>
             ${recipeGridMarkup()}
@@ -1021,6 +1021,9 @@
     const name = local(itemEntry.name);
     const stat = itemStat(itemEntry);
     const entries = itemEntry.enchantments ?? [];
+    const enchantmentList = entries.length
+      ? `<ul class="armor-experience-related-enchantments">${entries.map(enchantmentInlineMarkup).join("")}</ul>`
+      : "";
     const description = itemEntry.id === "experience-poison-sword"
       ? local(
         "Espada da mesma família, voltada ao combate com veneno.",
@@ -1055,9 +1058,7 @@
           <span class="armor-experience-related-preview-copy">
             <small>${escapeHtml(t().itemDetail)}</small>
             <strong>${escapeHtml(name)}</strong>
-            <ul class="armor-experience-related-enchantments">
-              ${entries.map(enchantmentInlineMarkup).join("")}
-            </ul>
+            ${enchantmentList}
             <em>${escapeHtml(stat)}</em>
             ${itemEntry.id.startsWith("experience-") ? `<p>${escapeHtml(description)}</p>` : ""}
           </span>
@@ -1164,7 +1165,7 @@
     const enchantments = piece.enchantments ?? [];
     const enchantmentContent = enchantments.length
       ? `<ul class="armor-piece-detail-enchantments">${enchantments.map(enchantmentInlineMarkup).join("")}</ul>`
-      : `<p class="armor-piece-enchantment-empty">${escapeHtml(t().noPieceEnchantments)}</p>`;
+      : "";
 
     detailIndex.textContent = t().pieceDetailLabel(t().slotNames[piece.stats.slot] ?? pieceName, setName);
     detailContent.setAttribute("aria-label", t().pieceDetailLabel(pieceName, setName));
@@ -1217,7 +1218,7 @@
     const entries = itemEntry.enchantments ?? [];
     const enchantmentContent = entries.length
       ? `<ul class="armor-piece-detail-enchantments">${entries.map(enchantmentInlineMarkup).join("")}</ul>`
-      : `<p class="armor-piece-enchantment-empty">${escapeHtml(t().noPieceEnchantments)}</p>`;
+      : "";
 
     detailIndex.textContent = name;
     detailContent.setAttribute("aria-label", t().openItem(name));

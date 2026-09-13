@@ -508,21 +508,30 @@ updateLanguage();
       }
 
       .armor-piece-hover-list {
-        align-content: center;
+        align-content: start;
         gap: 5px !important;
+        max-height: 91px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
       }
 
       .armor-piece-hover-list li {
         min-height: 27px;
-        display: flex !important;
+        display: grid !important;
+        grid-template-columns: 26px minmax(0, 1fr) !important;
         align-items: center;
-        gap: 0 !important;
+        gap: 6px !important;
         padding-left: 2px;
         font-size: 10px;
       }
 
       .armor-piece-hover-list img {
-        display: none !important;
+        display: block !important;
+        width: 24px !important;
+        height: 24px !important;
+        object-fit: contain;
+        image-rendering: pixelated;
       }
 
       .armor-piece-hover-recipe {
@@ -573,6 +582,9 @@ updateLanguage();
         left: -1px !important;
         top: calc(100% + 1px) !important;
         width: calc(100% + 2px) !important;
+        height: 140px !important;
+        min-height: 140px !important;
+        max-height: 140px !important;
         box-sizing: border-box;
         border: 0 !important;
         border-left: 1px solid var(--armor-accent) !important;
@@ -592,8 +604,12 @@ updateLanguage();
       }
 
       .armor-piece-hover-list {
-        align-content: center;
+        align-content: start;
         gap: 7px !important;
+        max-height: 108px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
       }
 
       .armor-piece-hover-list li {
@@ -640,13 +656,16 @@ updateLanguage();
       .armor-piece-hover-panel {
         grid-template-columns: 1fr !important;
         gap: 14px !important;
-        min-height: 250px !important;
+        height: 278px !important;
+        min-height: 278px !important;
+        max-height: 278px !important;
         padding: 16px 18px 18px !important;
       }
 
       .armor-piece-hover-list {
         justify-items: stretch;
         gap: 8px !important;
+        max-height: 112px;
       }
 
       .armor-piece-hover-list li {
@@ -660,6 +679,7 @@ updateLanguage();
       }
 
       .armor-piece-hover-recipe {
+        grid-column: 1;
         width: 100%;
         padding: 14px 0 0 !important;
         border-left: 0 !important;
