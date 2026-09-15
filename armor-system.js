@@ -64,6 +64,12 @@
     "queen-scale",
     "royal-guardian",
     "mobzilla",
+    "emerald",
+    "amethyst",
+    "ruby",
+    "ultimate",
+    "tourmaline",
+    "tigers-eye",
   ]);
   const searchAliasOverrides = {
     emerald: ["esmeralda", "emerald"],

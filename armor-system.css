@@ -1047,6 +1047,16 @@ body.armor-explorer-open {
   gap: 2px;
   justify-content: center;
   justify-items: center;
+  transition: opacity 140ms ease, visibility 140ms ease;
+}
+
+/* O card fechado usa somente miniaturas; o painel expandido assume a leitura detalhada. */
+.armor-piece-summary-card:hover .armor-piece-enchant-icons,
+.armor-piece-summary-card:focus-visible .armor-piece-enchant-icons,
+.armor-piece-summary-card.is-touch-preview .armor-piece-enchant-icons {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .armor-piece-enchant-icons img {
