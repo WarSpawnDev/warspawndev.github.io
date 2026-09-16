@@ -94,6 +94,56 @@
       name: local("Afiação", "Sharpness"),
       image: "assets/armors/enchantments/sharpness.png",
     },
+    smite: {
+      id: "smite",
+      name: local("Julgamento", "Smite"),
+      image: "assets/armors/enchantments/smite.png",
+    },
+    "bane-of-arthropods": {
+      id: "bane-of-arthropods",
+      name: local("Ruína dos Artrópodes", "Bane of Arthropods"),
+      image: "assets/armors/enchantments/bane-of-arthropods.png",
+    },
+    "fire-aspect": {
+      id: "fire-aspect",
+      name: local("Aspecto Flamejante", "Fire Aspect"),
+      image: "assets/armors/enchantments/fire-aspect.png",
+    },
+    knockback: {
+      id: "knockback",
+      name: local("Repulsão", "Knockback"),
+      image: "assets/armors/enchantments/knockback.png",
+    },
+    looting: {
+      id: "looting",
+      name: local("Saque", "Looting"),
+      image: "assets/armors/enchantments/looting.png",
+    },
+    efficiency: {
+      id: "efficiency",
+      name: local("Eficiência", "Efficiency"),
+      image: "assets/armors/enchantments/efficiency.png",
+    },
+    fortune: {
+      id: "fortune",
+      name: local("Fortuna", "Fortune"),
+      image: "assets/armors/enchantments/fortune.png",
+    },
+    "silk-touch": {
+      id: "silk-touch",
+      name: local("Toque Suave", "Silk Touch"),
+      image: "assets/armors/enchantments/silk-touch.png",
+    },
+    "luck-of-the-sea": {
+      id: "luck-of-the-sea",
+      name: local("Sorte do Mar", "Luck of the Sea"),
+      image: "assets/armors/enchantments/luck-of-the-sea.png",
+    },
+    lure: {
+      id: "lure",
+      name: local("Isca", "Lure"),
+      image: "assets/armors/enchantments/lure.png",
+    },
   });
 
   const effectCatalog = Object.freeze({
@@ -271,7 +321,9 @@
       relatedItems: [
         equipment("emerald", "sword", "Espada de Esmeralda", "Emerald Sword", "emeraldsword.png", "sword", { attack: 10 }),
         equipment("emerald", "axe", "Machado de Esmeralda", "Emerald Axe", "emeraldaxe.png", "axe", { attack: 9 }),
-        equipment("emerald", "pickaxe", "Picareta de Esmeralda", "Emerald Pickaxe", "emeraldpickaxe.png", "pickaxe", { attack: 8 }),
+        equipment("emerald", "pickaxe", "Picareta de Esmeralda", "Emerald Pickaxe", "emeraldpickaxe.png", "pickaxe", { attack: 8 }, {
+          enchantments: enchantments(["silk-touch", 1]),
+        }),
         equipment("emerald", "shovel", "Pá de Esmeralda", "Emerald Shovel", "emeraldshovel.png", "shovel", { attack: 7 }),
         equipment("emerald", "hoe", "Enxada de Esmeralda", "Emerald Hoe", "emeraldhoe.png", "hoe", { attack: 1 }),
       ],
@@ -409,13 +461,31 @@
         armorEnchantments.ultimate,
       ),
       relatedItems: [
-        equipment("ultimate", "sword", "Espada Ultimate", "Ultimate Sword", "ultimatesword.png", "sword", { attack: 40 }),
-        equipment("ultimate", "axe", "Machado Ultimate", "Ultimate Axe", "ultimateaxe.png", "axe", { attack: 39 }),
-        equipment("ultimate", "pickaxe", "Picareta Ultimate", "Ultimate Pickaxe", "ultimatepickaxe.png", "pickaxe", { attack: 38 }),
+        equipment("ultimate", "sword", "Espada Ultimate", "Ultimate Sword", "ultimatesword.png", "sword", { attack: 40 }, {
+          enchantments: enchantments(
+            ["sharpness", 5],
+            ["smite", 5],
+            ["bane-of-arthropods", 5],
+            ["fire-aspect", 2],
+            ["knockback", 3],
+            ["looting", 3],
+            ["unbreaking", 3],
+          ),
+        }),
+        equipment("ultimate", "axe", "Machado Ultimate", "Ultimate Axe", "ultimateaxe.png", "axe", { attack: 39 }, {
+          enchantments: enchantments(["efficiency", 5]),
+        }),
+        equipment("ultimate", "pickaxe", "Picareta Ultimate", "Ultimate Pickaxe", "ultimatepickaxe.png", "pickaxe", { attack: 38 }, {
+          enchantments: enchantments(["fortune", 5], ["efficiency", 5]),
+        }),
         equipment("ultimate", "shovel", "Pá Ultimate", "Ultimate Shovel", "ultimateshovel.png", "shovel", { attack: 37 }),
-        equipment("ultimate", "hoe", "Enxada Ultimate", "Ultimate Hoe", "ultimatehoe.png", "hoe", { attack: 1 }),
+        equipment("ultimate", "hoe", "Enxada Ultimate", "Ultimate Hoe", "ultimatehoe.png", "hoe", { attack: 1 }, {
+          enchantments: enchantments(["efficiency", 2]),
+        }),
         equipment("ultimate", "bow", "Arco Ultimate", "Ultimate Bow", "ultimatebow.png", "bow", { attack: "rápido + fogo", attackEn: "rapid-fire + flames" }),
-        equipment("ultimate", "fishing-rod", "Vara de Pesca Ultimate", "Ultimate Fishing Rod", "ultimatefishingrod.png", "rod", { utility: local("Pesca na lava", "Lava fishing") }),
+        equipment("ultimate", "fishing-rod", "Vara de Pesca Ultimate", "Ultimate Fishing Rod", "ultimatefishingrod.png", "rod", { utility: local("Pesca na lava", "Lava fishing") }, {
+          enchantments: enchantments(["luck-of-the-sea", 3], ["lure", 3], ["unbreaking", 3]),
+        }),
       ],
     }),
     set({
