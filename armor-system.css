@@ -1258,10 +1258,6 @@ body.armor-explorer-open {
   -webkit-overflow-scrolling: touch;
 }
 
-.armor-experience-related-list:has(> :nth-child(9)) {
-  padding-bottom: 168px;
-}
-
 .armor-experience-related-list::-webkit-scrollbar {
   width: 5px;
 }
@@ -1479,6 +1475,64 @@ body.armor-explorer-open {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
+}
+
+.armor-related-overlay-layer {
+  position: fixed;
+  z-index: 18;
+  inset: 0;
+  pointer-events: none;
+}
+
+.armor-related-hover-overlay {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 280px;
+  height: 168px;
+  min-height: 168px;
+  max-height: 168px;
+  border: 1px solid var(--armor-accent);
+  border-top: 0;
+  opacity: 0;
+  pointer-events: auto;
+  transform: scaleY(0.08);
+  transform-origin: top center;
+}
+
+.armor-related-hover-overlay.is-open {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.armor-related-hover-overlay.is-above {
+  border-top: 1px solid var(--armor-accent);
+  border-bottom: 0;
+  transform-origin: bottom center;
+}
+
+.armor-related-hover-overlay.is-detached {
+  border-top: 1px solid var(--armor-accent);
+}
+
+.armor-experience-related-card.is-overlay-source {
+  z-index: 20;
+  border-color: var(--armor-accent);
+  background: color-mix(in srgb, var(--armor-accent) 4%, #050809);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--armor-accent) 38%, transparent), 0 0 18px color-mix(in srgb, var(--armor-accent) 19%, transparent);
+}
+
+.armor-experience-related-card.is-overlay-source .armor-experience-related-icons {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .armor-experience-related-card > .armor-experience-related-preview {
+    display: none;
+  }
 }
 
 .armor-experience-summary {
@@ -2638,10 +2692,6 @@ body.armor-explorer-open {
   .armor-experience-related-list {
     grid-template-columns: 1fr;
     max-height: min(60svh, 360px);
-  }
-
-  .armor-experience-related-list:has(> :nth-child(5)) {
-    padding-bottom: 168px;
   }
 
   .armor-experience-related-preview {

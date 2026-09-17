@@ -51,6 +51,7 @@
   const visibleRadius = 3;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const coarsePointer = window.matchMedia("(pointer: coarse)");
+  const fineHoverPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   const relatedSearchSets = new Map([
     ["emerald", ["experience"]],
     ["experience", ["emerald"]],
@@ -300,6 +301,106 @@
     previousFocus: null,
     preloaded: false,
   };
+
+  const relatedOverlayLayer = document.createElement("div");
+  relatedOverlayLayer.className = "armor-related-overlay-layer";
+  relatedOverlayLayer.setAttribute("aria-live", "off");
+  const relatedOverlay = document.createElement("div");
+  relatedOverlay.className = "armor-experience-related-preview armor-related-hover-overlay";
+  relatedOverlay.hidden = true;
+  relatedOverlayLayer.append(relatedOverlay);
+  explorer.append(relatedOverlayLayer);
+
+  let relatedOverlayCard = null;
+  let relatedOverlayCloseTimer = 0;
+
+  function clearRelatedOverlayCloseTimer() {
+    window.clearTimeout(relatedOverlayCloseTimer);
+    relatedOverlayCloseTimer = 0;
+  }
+
+  function closeRelatedOverlay() {
+    clearRelatedOverlayCloseTimer();
+    relatedOverlayCard?.classList.remove("is-overlay-source");
+    relatedOverlayCard = null;
+    relatedOverlay.classList.remove("is-open", "is-above", "is-detached");
+    relatedOverlay.hidden = true;
+    relatedOverlay.replaceChildren();
+  }
+
+  function scheduleRelatedOverlayClose() {
+    clearRelatedOverlayCloseTimer();
+    relatedOverlayCloseTimer = window.setTimeout(closeRelatedOverlay, 70);
+  }
+
+  function positionRelatedOverlay(card) {
+    const cardRect = card.getBoundingClientRect();
+    const margin = 12;
+    const width = Math.min(cardRect.width + 2, window.innerWidth - margin * 2);
+    const height = 168;
+    let left = cardRect.left - 1;
+    let top = cardRect.bottom;
+    let placement = "below";
+
+    left = clamp(left, margin, window.innerWidth - width - margin);
+
+    if (top + height > window.innerHeight - margin) {
+      const above = cardRect.top - height;
+      if (above >= margin) {
+        top = above;
+        placement = "above";
+      } else {
+        top = clamp(top, margin, window.innerHeight - height - margin);
+        placement = "detached";
+      }
+    }
+
+    relatedOverlay.style.left = `${Math.round(left)}px`;
+    relatedOverlay.style.top = `${Math.round(top)}px`;
+    relatedOverlay.style.width = `${Math.round(width)}px`;
+    relatedOverlay.classList.toggle("is-above", placement === "above");
+    relatedOverlay.classList.toggle("is-detached", placement === "detached");
+  }
+
+  function openRelatedOverlay(card) {
+    if (!fineHoverPointer.matches || !card?.isConnected) return;
+    const preview = card.querySelector(":scope > .armor-experience-related-preview");
+    if (!preview) return;
+
+    clearRelatedOverlayCloseTimer();
+    if (relatedOverlayCard !== card) {
+      relatedOverlayCard?.classList.remove("is-overlay-source");
+      relatedOverlayCard = card;
+      card.classList.add("is-overlay-source");
+      relatedOverlay.replaceChildren(...[...preview.children].map((child) => child.cloneNode(true)));
+      relatedOverlay.dataset.armorRelatedOpen = card.getAttribute("data-armor-related-open") ?? "";
+    }
+
+    relatedOverlay.hidden = false;
+    positionRelatedOverlay(card);
+    relatedOverlay.getBoundingClientRect();
+    relatedOverlay.classList.add("is-open");
+  }
+
+  function normalizedWheelDelta(event, element) {
+    if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) return event.deltaY * 16;
+    if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) return event.deltaY * element.clientHeight;
+    return event.deltaY;
+  }
+
+  function forwardOverlayWheel(event) {
+    const x = event.clientX;
+    const y = event.clientY;
+    const deltaY = normalizedWheelDelta(event, explorer);
+    const deltaX = event.deltaX;
+    relatedOverlay.style.pointerEvents = "none";
+    const underlying = document.elementFromPoint(x, y);
+    closeRelatedOverlay();
+    relatedOverlay.style.pointerEvents = "";
+    const equipmentList = underlying?.closest?.(".armor-experience-related-list");
+    const scrollTarget = equipmentList ?? explorer;
+    scrollTarget.scrollBy({ left: deltaX, top: deltaY, behavior: "auto" });
+  }
 
   function t() {
     return text[state.language];
@@ -1317,6 +1418,7 @@
   }
 
   function renderDetail() {
+    closeRelatedOverlay();
     const armorSet = selectedSet();
     const name = local(armorSet.fullName);
     setAccent(armorSet);
@@ -1499,6 +1601,7 @@
   }
 
   function showSelector({ focus = true, armorId = null } = {}) {
+    closeRelatedOverlay();
     if (armorId) restoreSelection(armorId);
     state.view = "selector";
     state.pieceDetailId = null;
@@ -1607,6 +1710,7 @@
 
   function closeExplorer() {
     if (!state.open) return;
+    closeRelatedOverlay();
     cancelMotion();
     if (state.historyFrame) cancelAnimationFrame(state.historyFrame);
     state.historyFrame = 0;
@@ -1876,6 +1980,68 @@
   explorer.addEventListener("click", (event) => {
     if (event.target === explorer) requestCloseExplorer();
   });
+
+  detailContent.addEventListener("pointerover", (event) => {
+    if (event.pointerType !== "mouse" || !fineHoverPointer.matches) return;
+    const card = event.target.closest?.(".armor-experience-related-card");
+    if (!card || card.contains(event.relatedTarget)) return;
+    openRelatedOverlay(card);
+  });
+
+  detailContent.addEventListener("pointerout", (event) => {
+    if (event.pointerType !== "mouse" || !relatedOverlayCard) return;
+    const card = event.target.closest?.(".armor-experience-related-card");
+    if (card !== relatedOverlayCard || card.contains(event.relatedTarget)) return;
+    if (event.relatedTarget && relatedOverlay.contains(event.relatedTarget)) return;
+    scheduleRelatedOverlayClose();
+  });
+
+  relatedOverlay.addEventListener("pointerenter", () => {
+    clearRelatedOverlayCloseTimer();
+  });
+
+  relatedOverlay.addEventListener("pointerleave", (event) => {
+    if (event.relatedTarget && relatedOverlayCard?.contains(event.relatedTarget)) return;
+    scheduleRelatedOverlayClose();
+  });
+
+  relatedOverlay.addEventListener("click", (event) => {
+    const itemId = relatedOverlay.dataset.armorRelatedOpen;
+    if (!itemId || event.target.closest("button:disabled")) return;
+    event.preventDefault();
+    closeRelatedOverlay();
+    showRelatedItemDetail({ pushHistory: true, itemId });
+  });
+
+  explorer.addEventListener("wheel", (event) => {
+    if (!relatedOverlayCard) return;
+    const enchantmentList = event.target.closest?.(".armor-experience-related-enchantments");
+    if (enchantmentList && relatedOverlay.contains(enchantmentList)) {
+      event.preventDefault();
+      event.stopPropagation();
+      enchantmentList.scrollTop += normalizedWheelDelta(event, enchantmentList);
+      return;
+    }
+    if (relatedOverlay.contains(event.target)) {
+      event.preventDefault();
+      event.stopPropagation();
+      forwardOverlayWheel(event);
+      return;
+    }
+    closeRelatedOverlay();
+  }, { capture: true, passive: false });
+
+  detailContent.addEventListener("scroll", (event) => {
+    if (event.target.closest?.(".armor-experience-related-enchantments")) return;
+    if (event.target.matches?.(".armor-experience-related-list")) closeRelatedOverlay();
+  }, true);
+
+  explorer.addEventListener("scroll", (event) => {
+    if (event.target === explorer) closeRelatedOverlay();
+  }, { passive: true });
+
+  window.addEventListener("scroll", closeRelatedOverlay, { passive: true });
+  window.addEventListener("resize", closeRelatedOverlay, { passive: true });
 
   detailContent.addEventListener("pointerdown", (event) => {
     const pieceControl = event.target.closest("[data-armor-piece-open]");
