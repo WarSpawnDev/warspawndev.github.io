@@ -1245,6 +1245,34 @@ body.armor-explorer-open {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+  max-height: clamp(280px, calc(100svh - 300px), 352px);
+  min-height: 0;
+  padding-right: 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: color-mix(in srgb, var(--armor-accent) 58%, #68717d) rgba(255, 255, 255, 0.035);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.armor-experience-related-list:has(> :nth-child(9)) {
+  padding-bottom: 168px;
+}
+
+.armor-experience-related-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.armor-experience-related-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.armor-experience-related-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--armor-accent) 58%, #68717d);
 }
 
 .armor-experience-related-card {
@@ -1363,6 +1391,7 @@ body.armor-explorer-open {
 }
 
 .armor-experience-related-enchantments {
+  height: 52px;
   min-height: 0;
   max-height: 52px;
   display: grid;
@@ -1448,6 +1477,7 @@ body.armor-explorer-open {
 .armor-experience-related-card.is-touch-preview .armor-experience-related-icons {
   visibility: hidden;
   opacity: 0;
+  pointer-events: none;
 }
 
 .armor-experience-summary {
@@ -2436,6 +2466,7 @@ body.armor-explorer-open {
 
   .armor-experience-related-list {
     max-width: 620px;
+    max-height: min(52svh, 352px);
   }
 
   .armor-piece-detail-view {
@@ -2605,6 +2636,11 @@ body.armor-explorer-open {
 
   .armor-experience-related-list {
     grid-template-columns: 1fr;
+    max-height: min(60svh, 360px);
+  }
+
+  .armor-experience-related-list:has(> :nth-child(5)) {
+    padding-bottom: 168px;
   }
 
   .armor-experience-related-preview {

@@ -622,7 +622,18 @@
         [9, 16, 14, 9],
       ),
       relatedItems: [
-        equipment("queen-scale", "battle-axe", "Machado de Batalha da Rainha", "Queen Scale Battle Axe", "queenbattleaxesmall.png", "axe", { attack: "666+" }),
+        equipment("queen-scale", "battle-axe", "Machado de Batalha da The Queen", "The Queen Battle Axe", "queenbattleaxesmall.png", "axe", { attack: 666 }, {
+          detailImage: "assets/armors/items/queen-scale/giants/queen-battle-axe.png",
+          enchantments: enchantments(
+            ["sharpness", 5],
+            ["smite", 5],
+            ["bane-of-arthropods", 5],
+            ["fire-aspect", 2],
+            ["knockback", 3],
+            ["looting", 3],
+            ["unbreaking", 3],
+          ),
+        }),
       ],
     }),
     set({
