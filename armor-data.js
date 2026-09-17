@@ -144,6 +144,26 @@
       name: local("Isca", "Lure"),
       image: "assets/armors/enchantments/lure.png",
     },
+    power: {
+      id: "power",
+      name: local("Força", "Power"),
+      image: "assets/armors/enchantments/power.png",
+    },
+    flame: {
+      id: "flame",
+      name: local("Chama", "Flame"),
+      image: "assets/armors/enchantments/flame.png",
+    },
+    punch: {
+      id: "punch",
+      name: local("Impacto", "Punch"),
+      image: "assets/armors/enchantments/punch.png",
+    },
+    infinity: {
+      id: "infinity",
+      name: local("Infinidade", "Infinity"),
+      image: "assets/armors/enchantments/infinity.png",
+    },
   });
 
   const effectCatalog = Object.freeze({
@@ -482,9 +502,28 @@
         equipment("ultimate", "hoe", "Enxada Ultimate", "Ultimate Hoe", "ultimatehoe.png", "hoe", { attack: 1 }, {
           enchantments: enchantments(["efficiency", 2]),
         }),
-        equipment("ultimate", "bow", "Arco Ultimate", "Ultimate Bow", "ultimatebow.png", "bow", { attack: "rápido + fogo", attackEn: "rapid-fire + flames" }),
+        equipment("ultimate", "bow", "Arco Ultimate", "Ultimate Bow", "ultimatebow.png", "bow", { attack: "rápido + fogo", attackEn: "rapid-fire + flames" }, {
+          enchantments: enchantments(["power", 5], ["flame", 3], ["punch", 2], ["infinity", 1]),
+        }),
         equipment("ultimate", "fishing-rod", "Vara de Pesca Ultimate", "Ultimate Fishing Rod", "ultimatefishingrod.png", "rod", { utility: local("Pesca na lava", "Lava fishing") }, {
           enchantments: enchantments(["luck-of-the-sea", 3], ["lure", 3], ["unbreaking", 3]),
+        }),
+        equipment("ultimate", "battle-axe", "Machado de Batalha", "Battle Axe", "battle-axe.png", "axe", { attack: 50 }, {
+          detailImage: "assets/armors/items/ultimate/giants/battle-axe.png",
+          enchantments: enchantments(["looting", 3], ["unbreaking", 3]),
+        }),
+        equipment("ultimate", "battle-axe-og", "Machado de Batalha OG", "Battle Axe OG", "battle-axe-og.png", "axe", { attack: 75 }, {
+          detailImage: "assets/armors/items/ultimate/giants/battle-axe-og.png",
+          enchantments: enchantments(["looting", 3], ["unbreaking", 3]),
+        }),
+        equipment("ultimate", "attitude-adjuster", "Attitude Adjuster", "Attitude Adjuster", "attitude-adjuster.png", "weapon", {}, {
+          detailImage: "assets/armors/items/ultimate/giants/attitude-adjuster.png",
+        }),
+        equipment("ultimate", "attitude-adjuster-og", "Attitude Adjuster OG", "Attitude Adjuster OG", "attitude-adjuster-og.png", "weapon", {}, {
+          detailImage: "assets/armors/items/ultimate/giants/attitude-adjuster-og.png",
+        }),
+        equipment("ultimate", "chainsawn", "Chainsawn", "Chainsawn", "chainsawn.png", "weapon", {}, {
+          detailImage: "assets/armors/items/ultimate/giants/chainsawn.png",
         }),
       ],
     }),
@@ -512,7 +551,16 @@
         [7, 13, 11, 7],
         armorEnchantments.mobzilla,
       ),
-      relatedItems: [],
+      relatedItems: [
+        equipment("mobzilla", "big-bertha", "Big Bertha", "Big Bertha", "big-bertha.png", "sword", { attack: 500 }, {
+          detailImage: "assets/armors/items/mobzilla/giants/big-bertha.png",
+          enchantments: enchantments(["bane-of-arthropods", 1], ["fire-aspect", 1], ["knockback", 5]),
+        }),
+        equipment("mobzilla", "slice", "Slice", "Slice", "slice.png", "sword", { attack: 500 }, {
+          detailImage: "assets/armors/items/mobzilla/giants/slice.png",
+          enchantments: enchantments(["bane-of-arthropods", 1], ["fire-aspect", 1], ["knockback", 5]),
+        }),
+      ],
     }),
     set({
       id: "royal-guardian",
@@ -542,7 +590,10 @@
         armorEnchantments["royal-guardian"],
       ),
       relatedItems: [
-        equipment("royal-guardian", "sword", "Espada do Guardião Real", "Royal Guardian Sword", "royalsmall.png", "sword", { attack: 750 }),
+        equipment("royal-guardian", "sword", "Espada do Guardião Real", "Royal Guardian Sword", "royalsmall.png", "sword", { attack: 750 }, {
+          detailImage: "assets/armors/items/royal-guardian/giants/royal-guardian-sword.png",
+          enchantments: enchantments(["unbreaking", 5]),
+        }),
       ],
     }),
     set({

@@ -906,7 +906,7 @@
     if (itemEntry.stats.utility) {
       return `${t().utility}: ${local(itemEntry.stats.utility)}`;
     }
-    return t().category[itemEntry.category] ?? itemEntry.category;
+    return "";
   }
 
   function pieceDefenseShare(armorSet, piece) {
@@ -1036,6 +1036,8 @@
     const name = local(itemEntry.name);
     const stat = itemStat(itemEntry);
     const entries = itemEntry.enchantments ?? [];
+    const statMarkup = stat ? `<small>${escapeHtml(stat)}</small>` : "";
+    const previewStatMarkup = stat ? `<em>${escapeHtml(stat)}</em>` : "";
     const enchantmentList = entries.length
       ? `<ul class="armor-experience-related-enchantments">${entries.map(enchantmentInlineMarkup).join("")}</ul>`
       : "";
@@ -1069,7 +1071,7 @@
         >
         <span class="armor-experience-related-copy">
           <strong title="${escapeHtml(name)}">${escapeHtml(name)}</strong>
-          <small>${escapeHtml(stat)}</small>
+          ${statMarkup}
         </span>
         <span class="armor-experience-related-icons" aria-hidden="true">
           ${entries.map(enchantmentIconMarkup).join("")}
@@ -1079,7 +1081,7 @@
             <small>${escapeHtml(t().itemDetail)}</small>
             <strong>${escapeHtml(name)}</strong>
             ${enchantmentList}
-            <em>${escapeHtml(stat)}</em>
+            ${previewStatMarkup}
             <p>${escapeHtml(description)}</p>
           </span>
           <span class="armor-experience-related-recipe">
@@ -1236,6 +1238,16 @@
     state.itemDetailId = itemEntry.id;
     const name = local(itemEntry.name);
     const entries = itemEntry.enchantments ?? [];
+    const stat = itemStat(itemEntry);
+    const statLabel = Object.hasOwn(itemEntry.stats, "attack") ? t().attack : t().utility;
+    const statMarkup = stat
+      ? `<div class="armor-item-detail-stats">
+            <span>
+              <small>${escapeHtml(statLabel)}</small>
+              <strong>${escapeHtml(stat.replace(`${statLabel}: `, ""))}</strong>
+            </span>
+          </div>`
+      : "";
     const enchantmentContent = entries.length
       ? `<ul class="armor-piece-detail-enchantments">${entries.map(enchantmentInlineMarkup).join("")}</ul>`
       : "";
@@ -1249,17 +1261,12 @@
           <span>${escapeHtml(t().backToSet)}</span>
         </button>
         <div class="armor-item-detail-art">
-          <img src="${escapeHtml(itemEntry.image)}" alt="${escapeHtml(name)}" decoding="async">
+          <img src="${escapeHtml(itemEntry.detailImage ?? itemEntry.image)}" alt="${escapeHtml(name)}" decoding="async">
         </div>
         <div class="armor-item-detail-copy">
           <span class="kicker">${escapeHtml(t().itemDetail)}</span>
           <h2>${escapeHtml(name)}</h2>
-          <div class="armor-item-detail-stats">
-            <span>
-              <small>${escapeHtml(t().attack)}</small>
-              <strong>${escapeHtml(itemStat(itemEntry).replace(`${t().attack}: `, ""))}</strong>
-            </span>
-          </div>
+          ${statMarkup}
           ${enchantmentContent}
         </div>
         <div class="armor-item-detail-recipe">
