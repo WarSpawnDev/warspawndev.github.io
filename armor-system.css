@@ -1409,6 +1409,7 @@ body.armor-explorer-open {
 }
 
 .armor-experience-related-enchantments .armor-piece-detail-enchantment {
+  min-height: 26px;
   grid-template-columns: 24px minmax(0, 1fr);
   gap: 6px;
   padding: 0;
