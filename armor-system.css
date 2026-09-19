@@ -2222,12 +2222,210 @@ body.armor-explorer-open {
 }
 
 .armor-recipe-slot {
+  position: relative;
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
   width: 100%;
   height: 100%;
   padding: 0;
+  display: grid;
+  place-items: center;
+  color: inherit;
+  font: inherit;
+}
+
+.armor-recipe-slot.is-filled {
+  background:
+    radial-gradient(circle at 50% 52%, color-mix(in srgb, var(--armor-accent) 10%, transparent), transparent 72%),
+    rgba(255, 255, 255, 0.045);
+}
+
+.armor-recipe-slot img {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+button.armor-recipe-slot.is-navigable {
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+button.armor-recipe-slot.is-navigable:hover,
+button.armor-recipe-slot.is-navigable:focus-visible {
+  z-index: 2;
+  border-color: color-mix(in srgb, var(--armor-accent) 80%, white 12%);
+  outline: 0;
+  background: color-mix(in srgb, var(--armor-accent) 13%, rgba(8, 10, 13, 0.96));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--armor-accent) 32%, transparent);
+  transform: translateY(-1px);
+}
+
+.armor-recipe-quantity {
+  position: absolute;
+  right: 2px;
+  bottom: 1px;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 2px #000, 0 0 3px #000;
+}
+
+.armor-crafting-detail-view {
+  display: grid;
+  gap: 18px;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid var(--armor-line);
+  border-radius: 4px;
+  background:
+    radial-gradient(circle at 20% 18%, color-mix(in srgb, var(--armor-accent) 17%, transparent), transparent 33%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.44);
+}
+
+.armor-crafting-detail-head {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.34fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(20px, 4vw, 52px);
+  min-height: 210px;
+  padding: clamp(18px, 3vw, 32px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(4, 5, 8, 0.48);
+}
+
+.armor-crafting-detail-art {
+  min-height: 168px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: radial-gradient(circle, color-mix(in srgb, var(--armor-accent) 18%, transparent), transparent 68%);
+}
+
+.armor-crafting-detail-art img {
+  width: min(62%, 150px);
+  max-height: 150px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.72));
+}
+
+.armor-crafting-detail-head h2 {
+  margin: 9px 0 12px;
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(34px, 5vw, 62px);
+  font-weight: 500;
+  line-height: 0.98;
+}
+
+.armor-crafting-detail-head p,
+.armor-crafting-empty {
+  margin: 0;
+  color: #9da5b1;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.armor-crafting-detail-section {
+  display: grid;
+  gap: 14px;
+  padding: clamp(18px, 2.5vw, 28px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(4, 5, 8, 0.42);
+}
+
+.armor-crafting-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.armor-crafting-section-title > span {
+  color: var(--armor-accent);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+.armor-crafting-section-title h3 {
+  margin: 0;
+  color: #f3f2ec;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(25px, 3vw, 36px);
+  font-weight: 500;
+}
+
+.armor-crafting-recipe-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+  gap: 12px;
+}
+
+.armor-crafting-recipe-card {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.armor-crafting-recipe-card > header {
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.armor-crafting-recipe-card > header strong {
+  overflow: hidden;
+  color: #e7eaf0;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.armor-crafting-variant {
+  color: color-mix(in srgb, var(--armor-accent) 76%, white 18%);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.armor-crafting-recipe-layout {
+  display: grid;
+  grid-template-columns: 92px 22px 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.armor-crafting-recipe-layout .armor-recipe-placeholder {
+  width: 92px;
+  height: 92px;
+  grid-template-columns: repeat(3, 28px);
+  grid-template-rows: repeat(3, 28px);
+  gap: 4px;
+  margin: 0;
+}
+
+.armor-crafting-arrow {
+  color: color-mix(in srgb, var(--armor-accent) 70%, white 22%);
+  font-size: 20px;
+  font-style: normal;
+  text-align: center;
+}
+
+.armor-crafting-result {
+  width: 36px;
+  height: 36px;
 }
 
 .armor-concept-note {
@@ -2554,9 +2752,58 @@ body.armor-explorer-open {
   .armor-future-grid {
     grid-template-columns: 1fr;
   }
+
+  .armor-crafting-detail-view {
+    padding: 14px;
+  }
+
+  .armor-crafting-detail-head {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    min-height: 0;
+    text-align: center;
+  }
+
+  .armor-crafting-detail-art {
+    min-height: 138px;
+  }
+
+  .armor-crafting-detail-art img {
+    max-height: 118px;
+  }
+
+  .armor-crafting-detail-section {
+    padding: 14px;
+  }
 }
 
 @media (max-width: 520px) {
+  .armor-crafting-recipe-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .armor-crafting-recipe-card {
+    padding: 11px;
+  }
+
+  .armor-crafting-recipe-layout {
+    grid-template-columns: 82px 18px 34px;
+    gap: 7px;
+  }
+
+  .armor-crafting-recipe-layout .armor-recipe-placeholder {
+    width: 82px;
+    height: 82px;
+    grid-template-columns: repeat(3, 25px);
+    grid-template-rows: repeat(3, 25px);
+    gap: 3px;
+  }
+
+  .armor-crafting-result {
+    width: 34px;
+    height: 34px;
+  }
+
   .armor-showcase-footer {
     min-height: 78px;
     padding: 15px 17px;

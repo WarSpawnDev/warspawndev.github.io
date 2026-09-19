@@ -224,12 +224,18 @@
   };
 
   const itemById = new Map(catalog.items.map((entry) => [entry.id, entry]));
+  const recipeRegistry = window.WarSpawnCraftingCore?.createRegistry({
+    items: catalog.items,
+    recipes: catalog.recipes,
+    roots: catalog.items.filter((entry) => entry.catalog).map((entry) => entry.id),
+  });
   const creativeRank = new Map(
     (catalog.creativeOrder || []).map((itemId, index) => [itemId, index]),
   );
   const publicItems = catalog.items.filter((entry) => entry.catalog);
   const craftableItemIds = new Set(
-    catalog.recipes.map((recipe) => recipe.result.item),
+    recipeRegistry?.recipesByResult.keys()
+      ?? catalog.recipes.map((recipe) => recipe.result.item),
   );
   const savedItem = localStorage.getItem("warspawn-selected-food");
   const state = {
@@ -329,9 +335,10 @@
   }
 
   function ingredientIds(recipe) {
-    return recipe.station === "furnace"
-      ? [recipe.ingredient]
-      : recipe.grid.filter(Boolean);
+    return recipeRegistry?.ingredientIds(recipe)
+      ?? (recipe.station === "furnace"
+        ? [recipe.ingredient]
+        : recipe.grid.filter(Boolean));
   }
 
   function effectiveSaturation(foodData) {
@@ -771,12 +778,10 @@
   function renderDetail() {
     const entry = itemById.get(state.selected) || publicItems[0];
     state.selected = entry.id;
-    const obtaining = catalog.recipes.filter(
-      (recipe) => recipe.result.item === entry.id,
-    );
-    const uses = catalog.recipes.filter((recipe) =>
-      ingredientIds(recipe).includes(entry.id),
-    );
+    const obtaining = recipeRegistry?.getRecipesForResult(entry.id)
+      ?? catalog.recipes.filter((recipe) => recipe.result.item === entry.id);
+    const uses = recipeRegistry?.getRecipesUsingIngredient(entry.id)
+      ?? catalog.recipes.filter((recipe) => ingredientIds(recipe).includes(entry.id));
     const sourceLabel =
       entry.source === "minecraft" ? t().sourceMinecraft : t().sourceWarspawn;
 

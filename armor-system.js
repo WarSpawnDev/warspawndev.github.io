@@ -2,6 +2,8 @@
 
 (function initializeArmorSystem() {
   const catalog = window.WarSpawnArmorCatalog;
+  const craftingCatalog = window.WarSpawnCraftingCatalog;
+  const craftingRegistry = craftingCatalog?.registry;
   const explorer = document.querySelector("#armor-explorer");
   const openButton = document.querySelector("#armor-explorer-open");
   const closeButton = document.querySelector("#armor-explorer-close");
@@ -47,6 +49,17 @@
 
   const setsById = new Map(catalog.sets.map((armorSet) => [armorSet.id, armorSet]));
   const allSets = catalog.order.map((id) => setsById.get(id)).filter(Boolean);
+  const armorContextByItemId = new Map();
+  allSets.forEach((armorSet) => {
+    armorSet.pieces.forEach((entry) => armorContextByItemId.set(entry.id, {
+      armorId: armorSet.id,
+      kind: "piece",
+    }));
+    armorSet.relatedItems.forEach((entry) => armorContextByItemId.set(entry.id, {
+      armorId: armorSet.id,
+      kind: "item",
+    }));
+  });
   let sets = [...allSets];
   const visibleRadius = 3;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -131,6 +144,15 @@
       recipePrepared: "RECEITA PREPARADA",
       recipePending: "Receita será conectada aqui.",
       recipeEmptySlot: "Espaço vazio",
+      recipeUnavailable: "Receita não encontrada nas referências fornecidas.",
+      craftingMaterial: "Material de crafting",
+      craftingComponent: "Componente de crafting",
+      howToCraft: "Como é feito",
+      usedIn: "Usado em",
+      noKnownUses: "Nenhum outro craft público usa este item.",
+      recipeVariant: (current, total) => `Variação ${current} de ${total}`,
+      sourceMinecraft: "Minecraft base",
+      sourceWarspawn: "WarSpawn / OreSpawn",
       backToSet: "Voltar ao conjunto",
       openPiece: (name) => `Abrir detalhes de ${name}`,
       openItem: (name) => `Abrir detalhes de ${name}`,
@@ -216,6 +238,15 @@
       recipePrepared: "RECIPE READY",
       recipePending: "Recipe will be connected here.",
       recipeEmptySlot: "Empty slot",
+      recipeUnavailable: "No recipe was found in the supplied references.",
+      craftingMaterial: "Crafting material",
+      craftingComponent: "Crafting component",
+      howToCraft: "How it is made",
+      usedIn: "Used in",
+      noKnownUses: "No other public craft uses this item.",
+      recipeVariant: (current, total) => `Variant ${current} of ${total}`,
+      sourceMinecraft: "Base Minecraft",
+      sourceWarspawn: "WarSpawn / OreSpawn",
       backToSet: "Back to set",
       openPiece: (name) => `Open ${name} details`,
       openItem: (name) => `Open ${name} details`,
@@ -273,6 +304,7 @@
     view: "selector",
     pieceDetailId: null,
     itemDetailId: null,
+    craftItemId: null,
     optionElements: [],
     geometryFrame: 0,
     geometryMetrics: null,
@@ -814,6 +846,7 @@
           id: selectedSet().id,
           query: state.query,
           sortMode: state.sortMode,
+          depth: overlay.depth || 1,
         },
       },
       "",
@@ -1029,14 +1062,113 @@
     `;
   }
 
-  function recipeGridMarkup({ interactive = false } = {}) {
-    const slots = Array.from({ length: 9 }, (_, index) => {
-      const label = `${t().recipeEmptySlot} ${index + 1}`;
-      return interactive
-        ? `<button class="armor-recipe-slot" type="button" disabled aria-label="${escapeHtml(label)}"></button>`
-        : `<i class="armor-recipe-slot" aria-hidden="true"></i>`;
-    }).join("");
+  function craftingItemName(itemEntry) {
+    return itemEntry ? local(itemEntry.name) : "";
+  }
+
+  function craftingItemCanNavigate(itemId) {
+    const itemEntry = craftingRegistry?.getItem(itemId);
+    return Boolean(
+      itemEntry
+      && craftingRegistry.isReachable(itemId)
+      && (itemEntry.source !== "minecraft" || armorContextByItemId.has(itemId)),
+    );
+  }
+
+  function craftingSlotMarkup(itemId, {
+    interactive = false,
+    count = 1,
+    context = "ingredient",
+  } = {}) {
+    if (!itemId) {
+      return `<i class="armor-recipe-slot" aria-hidden="true"></i>`;
+    }
+    const itemEntry = craftingRegistry?.getItem(itemId);
+    if (!itemEntry) {
+      return `<i class="armor-recipe-slot" aria-hidden="true"></i>`;
+    }
+    const name = craftingItemName(itemEntry);
+    const canNavigate = interactive
+      && itemId !== state.craftItemId
+      && craftingItemCanNavigate(itemId);
+    const image = itemEntry.image
+      ? `<img src="${escapeHtml(itemEntry.image)}" alt="" loading="lazy" decoding="async">`
+      : "";
+    const quantity = count > 1
+      ? `<small class="armor-recipe-quantity" aria-label="${count}">×${count}</small>`
+      : "";
+    const labelPrefix = context === "result" ? t().recipeTitle : t().craftingMaterial;
+    if (canNavigate) {
+      return `
+        <button
+          class="armor-recipe-slot is-filled is-navigable"
+          type="button"
+          data-crafting-open="${escapeHtml(itemId)}"
+          aria-label="${escapeHtml(`${labelPrefix}: ${name}`)}"
+          title="${escapeHtml(name)}"
+        >${image}${quantity}</button>
+      `;
+    }
+    return `
+      <span
+        class="armor-recipe-slot is-filled"
+        role="img"
+        aria-label="${escapeHtml(name)}"
+        title="${escapeHtml(name)}"
+      >${image}${quantity}</span>
+    `;
+  }
+
+  function recipeSlotsMarkup(recipe, { interactive = false } = {}) {
+    const grid = recipe?.grid ?? Array(9).fill(null);
+    const slots = Array.from({ length: 9 }, (_, index) =>
+      craftingSlotMarkup(grid[index] ?? null, { interactive }),
+    ).join("");
     return `<span class="armor-recipe-placeholder" aria-label="${escapeHtml(t().pieceRecipe)}">${slots}</span>`;
+  }
+
+  function recipeGridMarkup(itemId, { interactive = false } = {}) {
+    const recipe = craftingRegistry?.getRecipesForResult(itemId)?.[0] ?? null;
+    return recipeSlotsMarkup(recipe, { interactive });
+  }
+
+  function craftingRecipeCardMarkup(recipe, index, total) {
+    const result = craftingRegistry?.getItem(recipe.result.item);
+    const variation = total > 1
+      ? `<small class="armor-crafting-variant">${escapeHtml(t().recipeVariant(index + 1, total))}</small>`
+      : "";
+    return `
+      <article class="armor-crafting-recipe-card">
+        <header>
+          <strong>${escapeHtml(craftingItemName(result))}</strong>
+          ${variation}
+        </header>
+        <div class="armor-crafting-recipe-layout">
+          ${recipeSlotsMarkup(recipe, { interactive: true })}
+          <i class="armor-crafting-arrow" aria-hidden="true">→</i>
+          <span class="armor-crafting-result">
+            ${craftingSlotMarkup(recipe.result.item, {
+              interactive: recipe.result.item !== state.craftItemId,
+              count: recipe.result.count,
+              context: "result",
+            })}
+          </span>
+        </div>
+      </article>
+    `;
+  }
+
+  function craftingRecipeCollectionMarkup(recipes) {
+    const totals = recipes.reduce((counts, recipe) => {
+      counts.set(recipe.result.item, (counts.get(recipe.result.item) ?? 0) + 1);
+      return counts;
+    }, new Map());
+    const seen = new Map();
+    return recipes.map((recipe) => {
+      const index = seen.get(recipe.result.item) ?? 0;
+      seen.set(recipe.result.item, index + 1);
+      return craftingRecipeCardMarkup(recipe, index, totals.get(recipe.result.item));
+    }).join("");
   }
 
   function pieceMarkup(piece) {
@@ -1109,7 +1241,7 @@
           ${enchantmentList}
           <span class="armor-piece-hover-recipe">
             <strong>${escapeHtml(t().recipeTitle)}</strong>
-            ${recipeGridMarkup()}
+            ${recipeGridMarkup(piece.id)}
           </span>
         </span>
       </article>
@@ -1187,7 +1319,7 @@
           </span>
           <span class="armor-experience-related-recipe">
             <strong>${escapeHtml(t().recipeTitle)}</strong>
-            ${recipeGridMarkup()}
+            ${recipeGridMarkup(itemEntry.id)}
           </span>
         </span>
       </article>
@@ -1322,7 +1454,7 @@
         </div>
         <div class="armor-piece-detail-recipe">
           <h3>${escapeHtml(t().recipeTitle)}</h3>
-          ${recipeGridMarkup({ interactive: true })}
+          ${recipeGridMarkup(piece.id, { interactive: true })}
         </div>
       </section>
     `;
@@ -1372,8 +1504,70 @@
         </div>
         <div class="armor-item-detail-recipe">
           <h3>${escapeHtml(t().recipeTitle)}</h3>
-          ${recipeGridMarkup({ interactive: true })}
+          ${recipeGridMarkup(itemEntry.id, { interactive: true })}
         </div>
+      </section>
+    `;
+  }
+
+  function renderCraftingItemDetail() {
+    const itemEntry = craftingRegistry?.getItem(state.craftItemId);
+    if (!itemEntry || !craftingRegistry.isReachable(itemEntry.id)) {
+      showDetail();
+      return;
+    }
+    const name = craftingItemName(itemEntry);
+    const obtaining = craftingRegistry.getRecipesForResult(itemEntry.id);
+    const uses = craftingRegistry.getRecipesUsingIngredient(itemEntry.id)
+      .filter((recipe) => craftingRegistry.isReachable(recipe.result.item));
+    const sourceLabel = itemEntry.source === "minecraft"
+      ? t().sourceMinecraft
+      : t().sourceWarspawn;
+    const typeLabel = itemEntry.category === "component"
+      ? t().craftingComponent
+      : t().craftingMaterial;
+
+    detailIndex.textContent = name;
+    detailContent.setAttribute("aria-label", name);
+    detailContent.innerHTML = `
+      <section class="armor-crafting-detail-view">
+        <button class="armor-piece-detail-back" type="button" data-armor-craft-back>
+          <i aria-hidden="true">‹</i>
+          <span>${escapeHtml(t().backToSet)}</span>
+        </button>
+
+        <header class="armor-crafting-detail-head">
+          <div class="armor-crafting-detail-art">
+            <img src="${escapeHtml(itemEntry.image)}" alt="${escapeHtml(name)}" decoding="async">
+          </div>
+          <div>
+            <span class="kicker">${escapeHtml(typeLabel)} • ${escapeHtml(sourceLabel)}</span>
+            <h2>${escapeHtml(name)}</h2>
+            <p>${escapeHtml(local(
+              { pt: "Node navegável da cadeia de fabricação do Arsenal WarSpawn.", en: "A navigable node in the WarSpawn Arsenal crafting chain." },
+            ))}</p>
+          </div>
+        </header>
+
+        <section class="armor-crafting-detail-section" aria-labelledby="armor-crafting-obtain-title">
+          <div class="armor-crafting-section-title">
+            <span>01</span>
+            <h3 id="armor-crafting-obtain-title">${escapeHtml(t().howToCraft)}</h3>
+          </div>
+          ${obtaining.length
+            ? `<div class="armor-crafting-recipe-list">${craftingRecipeCollectionMarkup(obtaining)}</div>`
+            : `<p class="armor-crafting-empty">${escapeHtml(t().recipeUnavailable)}</p>`}
+        </section>
+
+        <section class="armor-crafting-detail-section" aria-labelledby="armor-crafting-uses-title">
+          <div class="armor-crafting-section-title">
+            <span>02</span>
+            <h3 id="armor-crafting-uses-title">${escapeHtml(t().usedIn)}</h3>
+          </div>
+          ${uses.length
+            ? `<div class="armor-crafting-recipe-list">${craftingRecipeCollectionMarkup(uses)}</div>`
+            : `<p class="armor-crafting-empty">${escapeHtml(t().noKnownUses)}</p>`}
+        </section>
       </section>
     `;
   }
@@ -1424,6 +1618,11 @@
     setAccent(armorSet);
     detailIndex.textContent = t().setIndex(armorSet.order, allSets.length);
     detailContent.setAttribute("aria-label", t().detailLabel(name));
+
+    if (state.view === "craft") {
+      renderCraftingItemDetail();
+      return;
+    }
 
     if (state.view === "piece") {
       renderPieceDetail();
@@ -1582,6 +1781,8 @@
   }
 
   function armorHistoryState(view) {
+    const previousOverlay = history.state?.warspawnOverlay;
+    const previousDepth = previousOverlay?.kind === "armor" ? previousOverlay.depth || 1 : 0;
     return {
       ...(history.state || {}),
       warspawnOverlay: {
@@ -1590,8 +1791,10 @@
         id: selectedSet().id,
         pieceId: view === "piece" ? state.pieceDetailId : null,
         itemId: view === "item" ? state.itemDetailId : null,
+        craftItemId: view === "craft" ? state.craftItemId : null,
         query: state.query,
         sortMode: state.sortMode,
+        depth: previousDepth + 1,
       },
     };
   }
@@ -1606,6 +1809,7 @@
     state.view = "selector";
     state.pieceDetailId = null;
     state.itemDetailId = null;
+    state.craftItemId = null;
     explorer.dataset.armorView = "selector";
     detailView.hidden = true;
     selectorView.hidden = false;
@@ -1622,6 +1826,7 @@
     state.view = "detail";
     state.pieceDetailId = null;
     state.itemDetailId = null;
+    state.craftItemId = null;
     explorer.dataset.armorView = "detail";
     if (pushHistory) pushArmorHistory("detail");
     renderDetail();
@@ -1642,6 +1847,7 @@
     state.view = "piece";
     state.pieceDetailId = pieceId || armorSet.pieces[0]?.id || null;
     state.itemDetailId = null;
+    state.craftItemId = null;
     explorer.dataset.armorView = "piece";
     if (pushHistory) pushArmorHistory("piece");
     renderDetail();
@@ -1667,6 +1873,7 @@
     state.view = "item";
     state.pieceDetailId = null;
     state.itemDetailId = itemEntry.id;
+    state.craftItemId = null;
     explorer.dataset.armorView = "item";
     if (pushHistory) pushArmorHistory("item");
     renderDetail();
@@ -1676,12 +1883,46 @@
     requestAnimationFrame(() => detailContent.focus({ preventScroll: true }));
   }
 
+  function showCraftingItemDetail({ pushHistory = false, armorId = null, itemId = null } = {}) {
+    if (armorId) restoreSelection(armorId);
+    const itemEntry = craftingRegistry?.getItem(itemId);
+    if (!itemEntry || !craftingRegistry.isReachable(itemId) || itemEntry.source === "minecraft") {
+      return;
+    }
+    if (pushHistory && state.view === "selector") replaceSelectorHistoryState({ immediate: true });
+    state.view = "craft";
+    state.pieceDetailId = null;
+    state.itemDetailId = null;
+    state.craftItemId = itemId;
+    explorer.dataset.armorView = "craft";
+    if (pushHistory) pushArmorHistory("craft");
+    renderDetail();
+    selectorView.hidden = true;
+    detailView.hidden = false;
+    explorer.scrollTo({ top: 0, behavior: "auto" });
+    requestAnimationFrame(() => detailContent.focus({ preventScroll: true }));
+  }
+
+  function openCraftingTarget(itemId, { pushHistory = true } = {}) {
+    const context = armorContextByItemId.get(itemId);
+    if (context?.kind === "piece") {
+      showPieceDetail({ pushHistory, armorId: context.armorId, pieceId: itemId });
+      return;
+    }
+    if (context?.kind === "item") {
+      showRelatedItemDetail({ pushHistory, armorId: context.armorId, itemId });
+      return;
+    }
+    showCraftingItemDetail({ pushHistory, itemId });
+  }
+
   function openExplorer({
     fromHistory = false,
     armorId = allSets[0].id,
     view = "selector",
     pieceId = null,
     itemId = null,
+    craftItemId = null,
     query = "",
     sortMode = "neutral",
   } = {}) {
@@ -1703,6 +1944,7 @@
     if (!fromHistory) pushArmorHistory("selector");
     if (view === "piece") showPieceDetail({ armorId, pieceId });
     else if (view === "item") showRelatedItemDetail({ armorId, itemId });
+    else if (view === "craft") showCraftingItemDetail({ armorId, itemId: craftItemId });
     else if (view === "detail") showDetail({ armorId });
     else showSelector({ armorId });
     preloadConcepts();
@@ -1733,8 +1975,7 @@
       closeExplorer();
       return;
     }
-    const steps = ["piece", "item"].includes(state.view) ? -3 : state.view === "detail" ? -2 : -1;
-    history.go(steps);
+    history.go(-(overlay.depth || 1));
   }
 
   function requestPreviousOverlayView() {
@@ -1743,7 +1984,7 @@
       history.back();
       return;
     }
-    if (["piece", "item"].includes(state.view)) showDetail();
+    if (["piece", "item", "craft"].includes(state.view)) showDetail();
     else if (state.view === "detail") showSelector();
     else closeExplorer();
   }
@@ -1760,9 +2001,10 @@
       openExplorer({
         fromHistory: true,
         armorId,
-        view: ["piece", "item", "detail"].includes(overlay.view) ? overlay.view : "selector",
+        view: ["piece", "item", "craft", "detail"].includes(overlay.view) ? overlay.view : "selector",
         pieceId: overlay.pieceId || null,
         itemId: overlay.itemId || null,
+        craftItemId: overlay.craftItemId || null,
         query: overlay.query || "",
         sortMode: overlay.sortMode || "neutral",
       });
@@ -1785,6 +2027,7 @@
 
     if (overlay.view === "piece") showPieceDetail({ armorId, pieceId: overlay.pieceId || null });
     else if (overlay.view === "item") showRelatedItemDetail({ armorId, itemId: overlay.itemId || null });
+    else if (overlay.view === "craft") showCraftingItemDetail({ armorId, itemId: overlay.craftItemId || null });
     else if (overlay.view === "detail") showDetail({ armorId });
     else showSelector({ armorId });
   }
@@ -2054,10 +2297,18 @@
   }, { passive: true });
 
   detailContent.addEventListener("click", (event) => {
-    const backButton = event.target.closest("[data-armor-piece-back], [data-armor-item-back]");
+    const backButton = event.target.closest("[data-armor-piece-back], [data-armor-item-back], [data-armor-craft-back]");
     if (backButton) {
       event.preventDefault();
       requestPreviousOverlayView();
+      return;
+    }
+
+    const craftingControl = event.target.closest("[data-crafting-open]");
+    if (craftingControl) {
+      event.preventDefault();
+      event.stopPropagation();
+      openCraftingTarget(craftingControl.getAttribute("data-crafting-open"));
       return;
     }
 
