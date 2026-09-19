@@ -2340,6 +2340,33 @@ button.armor-recipe-slot.is-navigable:focus-visible {
   background: rgba(4, 5, 8, 0.42);
 }
 
+/* Vanilla nodes are auxiliary links in the WarSpawn graph: keep their page
+   deliberately compact and limited to public WarSpawn uses. */
+.armor-crafting-detail-view.is-vanilla-node {
+  max-width: 940px;
+  margin-inline: auto;
+}
+
+.armor-crafting-detail-view.is-vanilla-node .armor-crafting-detail-head {
+  grid-template-columns: 118px minmax(0, 1fr);
+  min-height: 150px;
+  gap: 24px;
+  padding: 18px 22px;
+}
+
+.armor-crafting-detail-view.is-vanilla-node .armor-crafting-detail-art {
+  min-height: 104px;
+}
+
+.armor-crafting-detail-view.is-vanilla-node .armor-crafting-detail-art img {
+  width: min(52%, 86px);
+  max-height: 86px;
+}
+
+.armor-crafting-detail-view.is-vanilla-node .armor-crafting-detail-head h2 {
+  font-size: clamp(30px, 4vw, 48px);
+}
+
 .armor-crafting-section-title {
   display: flex;
   align-items: baseline;

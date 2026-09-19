@@ -1071,7 +1071,6 @@
     return Boolean(
       itemEntry
       && craftingRegistry.isReachable(itemId)
-      && (itemEntry.source !== "minecraft" || armorContextByItemId.has(itemId)),
     );
   }
 
@@ -1517,9 +1516,14 @@
       return;
     }
     const name = craftingItemName(itemEntry);
+    const isVanilla = itemEntry.source === "minecraft";
     const obtaining = craftingRegistry.getRecipesForResult(itemEntry.id);
     const uses = craftingRegistry.getRecipesUsingIngredient(itemEntry.id)
-      .filter((recipe) => craftingRegistry.isReachable(recipe.result.item));
+      .filter((recipe) => {
+        const result = craftingRegistry.getItem(recipe.result.item);
+        return craftingRegistry.isReachable(recipe.result.item)
+          && (!isVanilla || result?.source === "warspawn");
+      });
     const sourceLabel = itemEntry.source === "minecraft"
       ? t().sourceMinecraft
       : t().sourceWarspawn;
@@ -1530,7 +1534,7 @@
     detailIndex.textContent = name;
     detailContent.setAttribute("aria-label", name);
     detailContent.innerHTML = `
-      <section class="armor-crafting-detail-view">
+      <section class="armor-crafting-detail-view${isVanilla ? " is-vanilla-node" : ""}">
         <button class="armor-piece-detail-back" type="button" data-armor-craft-back>
           <i aria-hidden="true">‹</i>
           <span>${escapeHtml(t().backToSet)}</span>
@@ -1543,13 +1547,14 @@
           <div>
             <span class="kicker">${escapeHtml(typeLabel)} • ${escapeHtml(sourceLabel)}</span>
             <h2>${escapeHtml(name)}</h2>
-            <p>${escapeHtml(local(
-              { pt: "Node navegável da cadeia de fabricação do Arsenal WarSpawn.", en: "A navigable node in the WarSpawn Arsenal crafting chain." },
+            <p>${escapeHtml(local(isVanilla
+              ? { pt: "Ingrediente do Minecraft conectado às receitas públicas do WarSpawn.", en: "A Minecraft ingredient connected to public WarSpawn recipes." }
+              : { pt: "Node navegável da cadeia de fabricação do Arsenal WarSpawn.", en: "A navigable node in the WarSpawn Arsenal crafting chain." },
             ))}</p>
           </div>
         </header>
 
-        <section class="armor-crafting-detail-section" aria-labelledby="armor-crafting-obtain-title">
+        ${!isVanilla ? `<section class="armor-crafting-detail-section" aria-labelledby="armor-crafting-obtain-title">
           <div class="armor-crafting-section-title">
             <span>01</span>
             <h3 id="armor-crafting-obtain-title">${escapeHtml(t().howToCraft)}</h3>
@@ -1557,11 +1562,11 @@
           ${obtaining.length
             ? `<div class="armor-crafting-recipe-list">${craftingRecipeCollectionMarkup(obtaining)}</div>`
             : `<p class="armor-crafting-empty">${escapeHtml(t().recipeUnavailable)}</p>`}
-        </section>
+        </section>` : ""}
 
         <section class="armor-crafting-detail-section" aria-labelledby="armor-crafting-uses-title">
           <div class="armor-crafting-section-title">
-            <span>02</span>
+            <span>${isVanilla ? "01" : "02"}</span>
             <h3 id="armor-crafting-uses-title">${escapeHtml(t().usedIn)}</h3>
           </div>
           ${uses.length
@@ -1886,7 +1891,7 @@
   function showCraftingItemDetail({ pushHistory = false, armorId = null, itemId = null } = {}) {
     if (armorId) restoreSelection(armorId);
     const itemEntry = craftingRegistry?.getItem(itemId);
-    if (!itemEntry || !craftingRegistry.isReachable(itemId) || itemEntry.source === "minecraft") {
+    if (!itemEntry || !craftingRegistry.isReachable(itemId)) {
       return;
     }
     if (pushHistory && state.view === "selector") replaceSelectorHistoryState({ immediate: true });
