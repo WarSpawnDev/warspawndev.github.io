@@ -78,7 +78,28 @@
   to { transform: translate3d(0, 0, 0); }
 }
 
-.almanac-section {
+.almanac-home-section {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(440px, 1.1fr);
+  align-items: center;
+  gap: 34px;
+  overflow: hidden;
+  background: radial-gradient(circle at 12% 14%, #d2202614, transparent 28%), radial-gradient(circle at 88% 82%, #3153bd18, transparent 30%), linear-gradient(155deg, #08090d, #0d0c10 55%, #07080b);
+}
+
+.almanac-home-section .section-head { margin: 0; }
+.almanac-home-cta { grid-column: 1; color: #d5ad62; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+
+.almanac-explorer {
+  position: fixed; z-index: 90; inset: 0; overflow: auto; padding: 82px max(22px, 6vw) 42px;
+  background: #05060af5; backdrop-filter: blur(18px);
+}
+.almanac-explorer-shell { position: relative; max-width: 1440px; margin: auto; }
+.almanac-explorer-close { position: sticky; z-index: 2; top: 0; margin-left: auto; width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid #ffffff24; border-radius: 50%; background: #08090de8; color: #fff; font-size: 25px; cursor: pointer; }
+body.almanac-explorer-open { overflow: hidden; }
+
+.almanac-explorer .section-head {
+  overflow: hidden;
   overflow: hidden;
   background:
     radial-gradient(circle at 12% 14%, #d2202614, transparent 28%),
@@ -472,9 +493,10 @@ button.almanac-recipe-slot {
 }
 
 @media (max-width: 760px) {
-  .hero-mark {
-    width: 100%;
-  }
+  .almanac-home-section { display: block; }
+  .almanac-home-section .hero-almanac-showcase { margin-top: 28px; }
+  .almanac-home-cta { display: block; margin-top: 18px; text-align: center; }
+  .almanac-explorer { padding: 62px 12px 28px; }
 
   .hero-almanac-showcase {
     width: min(100%, 520px);

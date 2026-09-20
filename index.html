@@ -34,7 +34,7 @@
     <link rel="stylesheet" href="dimension-system.css?v=20260802-ui" />
     <link rel="stylesheet" href="food-system.css" />
     <link rel="stylesheet" href="armor-system.css?v=20260919-vanilla-nodes" />
-    <link rel="stylesheet" href="almanac-system.css?v=20260920-responsive-qa" />
+    <link rel="stylesheet" href="almanac-system.css?v=20260920-home-showcase" />
     <link rel="stylesheet" href="ui-sound-system.css?v=20260819-arsenal-polish" />
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
@@ -144,12 +144,7 @@
           </div>
         </div>
         <div class="hero-mark">
-          <a
-            class="hero-almanac-showcase"
-            id="hero-almanac-showcase"
-            href="#itens-blocos"
-            aria-label="Abrir o Almanaque de Itens e Blocos"
-          ></a>
+          <img src="assets/emblem-cosmic.png" alt="Símbolo WarSpawn com três dragões" fetchpriority="high" />
         </div>
         <a class="scroll-cue" href="#bestiario" aria-label="Rolar para o bestiário">
           SCROLL <span aria-hidden="true">↓</span>
@@ -389,7 +384,21 @@
         </div>
       </section>
 
-      <section id="itens-blocos" class="section almanac-section" aria-labelledby="almanac-title">
+      <section id="itens-blocos" class="section almanac-home-section" aria-labelledby="almanac-home-title">
+        <div class="section-head narrow">
+          <div>
+            <span class="kicker" data-almanac-copy="homeKicker">05 — ITENS / BLOCOS</span>
+            <h2 id="almanac-home-title" data-almanac-copy="homeTitle">Explore o Almanaque WarSpawn</h2>
+          </div>
+          <p data-almanac-copy="homeLead">Materiais, equipamentos, comidas e blocos em um índice vivo do projeto.</p>
+        </div>
+        <a class="hero-almanac-showcase" id="hero-almanac-showcase" href="#itens-blocos" aria-label="Abrir o Almanaque de Itens e Blocos"></a>
+        <span class="almanac-home-cta" data-almanac-copy="homeCta">Clique para abrir o Almanaque completo →</span>
+      </section>
+
+      <section id="almanac-explorer" class="almanac-explorer" role="dialog" aria-modal="true" aria-labelledby="almanac-title" hidden>
+        <div class="almanac-explorer-shell">
+        <button class="almanac-explorer-close" type="button" data-almanac-explorer-close aria-label="Fechar Almanaque">×</button>
         <div class="section-head narrow">
           <div>
             <span class="kicker" data-almanac-copy="kicker">05 — ITENS / BLOCOS</span>
@@ -448,6 +457,7 @@
         </div>
         <div class="almanac-grid" id="almanac-grid" aria-live="polite"></div>
         <p class="almanac-empty" id="almanac-empty" hidden></p>
+        </div>
       </section>
 
       <section id="galeria" class="section gallery-section">
@@ -1047,7 +1057,7 @@
     <script src="almanac-data.js?v=20260919-items-blocks" defer></script>
     <script src="food-system.js?v=20260919-items-blocks" defer></script>
     <script src="armor-system.js?v=20260919-items-blocks" defer></script>
-    <script src="almanac-system.js?v=20260919-items-blocks" defer></script>
+    <script src="almanac-system.js?v=20260920-home-showcase" defer></script>
     <script src="ui-sound-system.js?v=20260820-armor-sync" defer></script>
   </body>
 </html>

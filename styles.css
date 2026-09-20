@@ -1347,10 +1347,9 @@ footer .footer-mark {
     width: 100%;
   }
 
-  .bestiary-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
+  .bestiary-grid { display: flex; gap: 12px; overflow-x: auto; margin-inline: -20px; padding: 2px 20px 12px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .bestiary-grid::-webkit-scrollbar { display: none; }
+  .bestiary-grid .mob-card { flex: 0 0 min(76vw, 290px); scroll-snap-align: start; }
 
   .mob-meta {
     display: block;
@@ -1441,9 +1440,6 @@ footer .footer-mark {
 }
 
 @media (max-width: 430px) {
-  .bestiary-grid {
-    grid-template-columns: 1fr;
-  }
 
   .gallery {
     display: block;

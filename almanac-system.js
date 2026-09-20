@@ -4,7 +4,7 @@
   const data = window.WarSpawnAlmanacData;
   const craftingCatalog = window.WarSpawnCraftingCatalog;
   const foodCatalog = window.WarSpawnCatalog;
-  const root = document.querySelector("#itens-blocos");
+  const root = document.querySelector("#almanac-explorer");
   const grid = document.querySelector("#almanac-grid");
   const search = document.querySelector("#almanac-search");
   const typeFilter = document.querySelector("#almanac-type");
@@ -52,6 +52,7 @@
       filtersLabel: "Filtros do Almanaque",
       legendLabel: "Legenda do status de documentação",
       dialogLabel: "Ficha do Almanaque",
+      homeKicker: "05 — ITENS / BLOCOS", homeTitle: "Explore o Almanaque WarSpawn", homeLead: "Materiais, equipamentos, comidas e blocos em um índice vivo do projeto.", homeCta: "Clique para abrir o Almanaque completo →", explorerClose: "Fechar Almanaque",
     },
     en: {
       kicker: "05 — ITEMS / BLOCKS",
@@ -86,6 +87,7 @@
       filtersLabel: "Almanac filters",
       legendLabel: "Documentation status legend",
       dialogLabel: "Almanac item file",
+      homeKicker: "05 — ITEMS / BLOCKS", homeTitle: "Explore the WarSpawn Almanac", homeLead: "Materials, equipment, food and blocks in a living project index.", homeCta: "Click to open the complete Almanac →", explorerClose: "Close Almanac",
     },
   };
   const state = {
@@ -188,7 +190,7 @@
   }
 
   function updateControls() {
-    root.querySelectorAll("[data-almanac-copy]").forEach((element) => {
+    document.querySelectorAll("[data-almanac-copy]").forEach((element) => {
       const key = element.dataset.almanacCopy;
       if (t()[key]) element.textContent = t()[key];
     });
@@ -206,6 +208,7 @@
     familyFilter.value = usedFamilies.some((entry) => entry.id === selected) ? selected : "all";
     state.family = familyFilter.value;
     if (showcase) showcase.setAttribute("aria-label", t().showcase);
+    root.querySelector("[data-almanac-explorer-close]")?.setAttribute("aria-label", t().explorerClose);
     root.querySelector(".almanac-toolbar")?.setAttribute("aria-label", t().filtersLabel);
     root.querySelector(".almanac-legend")?.setAttribute("aria-label", t().legendLabel);
     detail.setAttribute("aria-label", t().dialogLabel);
@@ -299,6 +302,25 @@
     showGenericDetail(itemId);
   }
 
+  function openExplorer({ pushHistory = true } = {}) {
+    if (root.hidden) {
+      state.previousFocus = document.activeElement;
+      root.hidden = false;
+      document.body.classList.add("almanac-explorer-open");
+      if (pushHistory) history.pushState({ kind: "almanac-explorer" }, "", "#itens-blocos");
+      requestAnimationFrame(() => search.focus({ preventScroll: true }));
+    }
+  }
+
+  function closeExplorer({ fromHistory = false } = {}) {
+    if (root.hidden) return;
+    if (!detail.hidden) closeGenericDetail({ fromHistory: true });
+    root.hidden = true;
+    document.body.classList.remove("almanac-explorer-open");
+    state.previousFocus?.focus?.({ preventScroll: true });
+    if (!fromHistory && history.state?.kind === "almanac-explorer") history.back();
+  }
+
   function shuffle(items) {
     const result = [...items];
     for (let index = result.length - 1; index > 0; index -= 1) {
@@ -325,6 +347,9 @@
     const control = event.target.closest("[data-almanac-id]");
     if (control) openItem(control.dataset.almanacId);
   });
+  showcase?.addEventListener("click", (event) => { event.preventDefault(); openExplorer(); });
+  document.querySelector('a[href="#itens-blocos"]:not(#hero-almanac-showcase)')?.addEventListener("click", (event) => { event.preventDefault(); openExplorer(); });
+  root.querySelector("[data-almanac-explorer-close]")?.addEventListener("click", () => closeExplorer());
   root.addEventListener("input", (event) => {
     if (event.target === search) { state.query = search.value; renderGrid(); }
   });
@@ -356,6 +381,8 @@
       return;
     }
     if (!detail.hidden) closeGenericDetail({ fromHistory: true });
+    if (event.state?.kind === "almanac-explorer") { openExplorer({ pushHistory: false }); return; }
+    closeExplorer({ fromHistory: true });
   });
   document.addEventListener("warspawn:languagechange", (event) => {
     state.language = event.detail.language;
@@ -367,5 +394,6 @@
   updateControls();
   renderGrid();
   renderShowcase();
-  window.WarSpawnAlmanacUI = Object.freeze({ openItem, render: renderGrid });
+  if (location.hash === "#itens-blocos") openExplorer({ pushHistory: false });
+  window.WarSpawnAlmanacUI = Object.freeze({ openItem, openExplorer, render: renderGrid });
 })();
