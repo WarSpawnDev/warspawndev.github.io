@@ -318,16 +318,6 @@
     "image": "assets/crafting/warspawn/ws-kyanite.png"
   },
   {
-    "id": "ws:lava-eel",
-    "name": {
-      "pt": "Enguia de Lava",
-      "en": "Lava Eel"
-    },
-    "source": "warspawn",
-    "category": "material",
-    "image": "assets/crafting/warspawn/ws-lava-eel.png"
-  },
-  {
     "id": "ws:mobzilla-scale",
     "name": {
       "pt": "Escama de Mobzilla",
@@ -1832,12 +1822,12 @@
       null,
       null,
       null,
-      "ws:lava-eel",
+      "lava-eel",
       null,
-      "ws:lava-eel",
-      "ws:lava-eel",
+      "lava-eel",
+      "lava-eel",
       null,
-      "ws:lava-eel"
+      "lava-eel"
     ],
     "result": {
       "item": "lava-eel-boots",
@@ -1853,15 +1843,15 @@
     "station": "crafting",
     "type": "shaped",
     "grid": [
-      "ws:lava-eel",
+      "lava-eel",
       null,
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel"
+      "lava-eel",
+      "lava-eel",
+      "lava-eel",
+      "lava-eel",
+      "lava-eel",
+      "lava-eel",
+      "lava-eel"
     ],
     "result": {
       "item": "lava-eel-chestplate",
@@ -1877,15 +1867,15 @@
     "station": "crafting",
     "type": "shaped",
     "grid": [
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel",
+      "lava-eel",
+      "lava-eel",
+      "lava-eel",
+      "lava-eel",
       null,
-      "ws:lava-eel",
-      "ws:lava-eel",
+      "lava-eel",
+      "lava-eel",
       null,
-      "ws:lava-eel"
+      "lava-eel"
     ],
     "result": {
       "item": "lava-eel-leggings",
@@ -3392,12 +3382,12 @@
       null,
       null,
       null,
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel",
-      "ws:lava-eel",
+      "lava-eel",
+      "lava-eel",
+      "lava-eel",
+      "lava-eel",
       null,
-      "ws:lava-eel"
+      "lava-eel"
     ],
     "result": {
       "item": "lava-eel-helmet",
@@ -4634,7 +4624,9 @@
   }
 ];
   const roots = armorCatalog.items.map((entry) => entry.id);
-  const items = [...armorCatalog.items, ...extraItems];
+  const sharedFoodItems = (window.WarSpawnCatalog?.items ?? [])
+    .filter((entry) => entry.id === "lava-eel");
+  const items = [...armorCatalog.items, ...sharedFoodItems, ...extraItems];
   const registry = core.createRegistry({ items, recipes, roots });
 
   window.WarSpawnCraftingCatalog = Object.freeze({

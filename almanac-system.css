@@ -1,0 +1,566 @@
+.hero-almanac-showcase {
+  position: relative;
+  z-index: 2;
+  width: min(610px, 46vw);
+  height: min(72vh, 650px);
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 7px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid #ffffff1c;
+  border-radius: 4px;
+  background:
+    linear-gradient(90deg, transparent, #ffffff05 50%, transparent),
+    radial-gradient(circle at 50% 50%, #b7152520, transparent 58%),
+    #05060aeb;
+  box-shadow: 0 34px 90px #00000099, inset 0 0 50px #00000080;
+  cursor: pointer;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.hero-almanac-showcase:hover,
+.hero-almanac-showcase:focus-visible {
+  outline: none;
+  border-color: #d5ad6270;
+  transform: translateY(-3px);
+  box-shadow: 0 40px 100px #000000aa, 0 0 35px #d2202618, inset 0 0 50px #00000080;
+}
+
+.hero-almanac-column {
+  min-width: 0;
+  overflow: hidden;
+  border-inline: 1px solid #ffffff08;
+}
+
+.hero-almanac-track {
+  display: flex;
+  flex-direction: column;
+  animation: almanac-column-up var(--column-duration) linear var(--column-delay) infinite;
+  will-change: transform;
+}
+
+.hero-almanac-column[data-direction="down"] .hero-almanac-track {
+  animation-name: almanac-column-down;
+}
+
+.hero-almanac-sequence {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-almanac-item {
+  height: 58px;
+  display: grid;
+  flex: 0 0 58px;
+  place-items: center;
+}
+
+.hero-almanac-item img {
+  width: 44px;
+  height: 44px;
+  max-height: none;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 5px 7px #000c);
+  animation: none;
+}
+
+@keyframes almanac-column-up {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -50%, 0); }
+}
+
+@keyframes almanac-column-down {
+  from { transform: translate3d(0, -50%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+.almanac-section {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 14%, #d2202614, transparent 28%),
+    radial-gradient(circle at 88% 82%, #3153bd18, transparent 30%),
+    linear-gradient(155deg, #08090d, #0d0c10 55%, #07080b);
+}
+
+.almanac-toolbar {
+  display: grid;
+  grid-template-columns: minmax(240px, 1.6fr) repeat(4, minmax(130px, 0.65fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.almanac-field {
+  display: grid;
+  gap: 7px;
+  color: #9297a2;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.almanac-field input,
+.almanac-field select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #ffffff16;
+  border-radius: 2px;
+  background: #ffffff08;
+  color: #f1eee7;
+  padding: 0 13px;
+  outline: none;
+}
+
+.almanac-field select option {
+  background: #0b0c10;
+  color: #f1eee7;
+}
+
+.almanac-field input:focus,
+.almanac-field select:focus {
+  border-color: #d5ad6280;
+  box-shadow: 0 0 0 3px #d5ad6210;
+}
+
+.almanac-legend,
+.almanac-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #9297a2;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.almanac-summary {
+  justify-content: space-between;
+  margin: 18px 0;
+}
+
+.almanac-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.almanac-legend i,
+.almanac-card-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--status-color);
+  box-shadow: 0 0 10px var(--status-color);
+}
+
+[data-status="complete"] { --status-color: #55d886; }
+[data-status="partial"] { --status-color: #e8bd52; }
+[data-status="undocumented"] { --status-color: #e15b62; }
+
+.almanac-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.almanac-card {
+  position: relative;
+  min-width: 0;
+  min-height: 158px;
+  display: grid;
+  grid-template-rows: 92px 1fr;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--status-color) 58%, transparent);
+  border-radius: 3px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--status-color) 7%, #101117), #08090d 68%);
+  color: #ece8df;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px #ffffff04;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.almanac-card:hover,
+.almanac-card:focus-visible {
+  z-index: 1;
+  outline: none;
+  transform: translateY(-3px);
+  border-color: var(--status-color);
+  box-shadow: 0 16px 36px #0008, 0 0 22px color-mix(in srgb, var(--status-color) 20%, transparent);
+}
+
+.almanac-card-art {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #ffffff06, transparent);
+}
+
+.almanac-card-art img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 7px 8px #000b);
+}
+
+.almanac-card-copy {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.almanac-card-copy strong {
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+}
+
+.almanac-card-copy small {
+  overflow: hidden;
+  color: #858b97;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.almanac-card-status {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+}
+
+.almanac-empty {
+  padding: 70px 20px;
+  border: 1px dashed #ffffff16;
+  color: #8e939e;
+  text-align: center;
+}
+
+body.almanac-detail-open {
+  overflow: hidden;
+}
+
+.almanac-detail {
+  position: fixed;
+  z-index: 92;
+  inset: 0;
+  overflow: auto;
+  padding: 74px max(22px, 6vw);
+  background: #030407ee;
+  backdrop-filter: blur(18px);
+}
+
+.almanac-detail-shell {
+  position: relative;
+  max-width: 1180px;
+  min-height: 100%;
+  margin: 0 auto;
+}
+
+.almanac-detail-close {
+  position: sticky;
+  z-index: 4;
+  top: 0;
+  left: calc(100% - 46px);
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ffffff24;
+  border-radius: 50%;
+  background: #08090de8;
+  color: #fff;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.almanac-detail-content {
+  display: grid;
+  gap: 18px;
+  margin-top: -46px;
+}
+
+.almanac-detail-hero {
+  min-height: 300px;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.55fr) minmax(0, 1.45fr);
+  align-items: center;
+  gap: 34px;
+  padding: 32px;
+  border: 1px solid color-mix(in srgb, var(--status-color) 60%, transparent);
+  background: radial-gradient(circle at 18% 50%, color-mix(in srgb, var(--status-color) 15%, transparent), transparent 28%), #090a0e;
+}
+
+.almanac-detail-art {
+  min-height: 230px;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid #ffffff12;
+}
+
+.almanac-detail-art img {
+  width: min(190px, 78%);
+  height: 190px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 18px 20px #000c);
+}
+
+.almanac-detail-hero h2 {
+  margin: 10px 0 8px;
+  font-size: clamp(42px, 6vw, 76px);
+  font-weight: 500;
+  line-height: 0.94;
+}
+
+.almanac-detail-hero p {
+  color: #9da2ad;
+}
+
+.almanac-detail-status {
+  display: inline-flex;
+  margin-top: 14px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--status-color) 55%, transparent);
+  color: var(--status-color);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.almanac-detail-section {
+  padding: 28px;
+  border: 1px solid #ffffff12;
+  background: #090a0dcc;
+}
+
+.almanac-detail-section h3 {
+  margin: 0 0 20px;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.almanac-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.almanac-related-grid button {
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid #ffffff12;
+  background: #ffffff05;
+  color: #e8e5df;
+  text-align: left;
+  cursor: pointer;
+}
+
+.almanac-related-grid img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.almanac-recipe-list {
+  display: grid;
+  gap: 10px;
+}
+
+.almanac-recipe-card {
+  display: grid;
+  grid-template-columns: auto 34px minmax(140px, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid #ffffff10;
+  background: #05060a;
+}
+
+.almanac-recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  gap: 3px;
+}
+
+.almanac-recipe-slot {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border: 1px solid #ffffff16;
+  background: #ffffff07;
+}
+
+button.almanac-recipe-slot {
+  cursor: pointer;
+}
+
+.almanac-recipe-slot img,
+.almanac-recipe-output img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.almanac-recipe-arrow {
+  color: #d5ad62;
+  font-size: 24px;
+  text-align: center;
+}
+
+.almanac-recipe-output {
+  min-height: 66px;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #ffffff16;
+  background: #ffffff06;
+  color: #ece8df;
+  text-align: left;
+  cursor: pointer;
+}
+
+.almanac-recipe-output small {
+  color: #d5ad62;
+}
+
+@media (max-width: 1050px) {
+  .almanac-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .almanac-toolbar .almanac-field:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero-mark {
+    width: 100%;
+  }
+
+  .hero-almanac-showcase {
+    width: min(100%, 520px);
+    height: 330px;
+    gap: 3px;
+    padding: 10px 7px;
+  }
+
+  .hero-almanac-item {
+    height: 47px;
+    flex-basis: 47px;
+  }
+
+  .hero-almanac-item img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .almanac-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .almanac-toolbar .almanac-field:first-child {
+    grid-column: auto;
+  }
+
+  .almanac-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .almanac-card {
+    min-height: 142px;
+    grid-template-rows: 80px 1fr;
+    padding: 10px;
+  }
+
+  .almanac-card-art img {
+    width: 62px;
+    height: 62px;
+  }
+
+  .almanac-detail {
+    padding: 62px 12px 28px;
+  }
+
+  .almanac-detail-hero {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 22px;
+    text-align: center;
+  }
+
+  .almanac-detail-art {
+    min-height: 170px;
+    border-right: 0;
+    border-bottom: 1px solid #ffffff12;
+  }
+
+  .almanac-detail-art img {
+    height: 150px;
+  }
+
+  .almanac-detail-section {
+    padding: 20px 14px;
+  }
+
+  .almanac-related-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .almanac-recipe-card {
+    grid-template-columns: auto 24px 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .almanac-recipe-grid {
+    grid-template-columns: repeat(3, 34px);
+  }
+
+  .almanac-recipe-slot {
+    width: 34px;
+    height: 34px;
+    padding: 3px;
+  }
+
+  .almanac-recipe-slot img,
+  .almanac-recipe-output img {
+    width: 27px;
+    height: 27px;
+  }
+
+  .almanac-recipe-output {
+    min-height: 56px;
+    grid-template-columns: 34px 1fr;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-almanac-track {
+    animation-play-state: paused !important;
+  }
+}

@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="dimension-system.css?v=20260802-ui" />
     <link rel="stylesheet" href="food-system.css" />
     <link rel="stylesheet" href="armor-system.css?v=20260919-vanilla-nodes" />
+    <link rel="stylesheet" href="almanac-system.css?v=20260919-items-blocks" />
     <link rel="stylesheet" href="ui-sound-system.css?v=20260819-arsenal-polish" />
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
@@ -49,6 +50,7 @@
         <a href="#dimensoes" data-i18n="navDimensions">Dimensões</a>
         <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
         <a href="#comidas" data-i18n="navFood">Comidas</a>
+        <a href="#itens-blocos" data-i18n="navAlmanac">Itens / Blocos</a>
         <a href="#galeria" data-i18n="navGallery">Galeria</a>
         <a href="#redes" data-i18n="navSocial">Redes sociais</a>
       </nav>
@@ -142,11 +144,12 @@
           </div>
         </div>
         <div class="hero-mark">
-          <img
-            src="assets/emblem-cosmic.png"
-            alt="Símbolo WarSpawn com três dragões"
-            fetchpriority="high"
-          />
+          <a
+            class="hero-almanac-showcase"
+            id="hero-almanac-showcase"
+            href="#itens-blocos"
+            aria-label="Abrir o Almanaque de Itens e Blocos"
+          ></a>
         </div>
         <a class="scroll-cue" href="#bestiario" aria-label="Rolar para o bestiário">
           SCROLL <span aria-hidden="true">↓</span>
@@ -386,10 +389,71 @@
         </div>
       </section>
 
+      <section id="itens-blocos" class="section almanac-section" aria-labelledby="almanac-title">
+        <div class="section-head narrow">
+          <div>
+            <span class="kicker" data-almanac-copy="kicker">05 — ITENS / BLOCOS</span>
+            <h2 id="almanac-title" data-almanac-copy="title">Almanaque geral do WarSpawn</h2>
+          </div>
+          <p data-almanac-copy="lead">
+            Explore equipamentos, materiais, comidas, componentes e blocos conhecidos pelo projeto em um único índice.
+          </p>
+        </div>
+
+        <div class="almanac-toolbar" role="search" aria-label="Filtros do Almanaque">
+          <label class="almanac-field">
+            <span data-almanac-copy="searchLabel">Pesquisar</span>
+            <input id="almanac-search" type="search" autocomplete="off" placeholder="Buscar por nome, ID, família ou tag..." />
+          </label>
+          <label class="almanac-field">
+            <span data-almanac-copy="typeLabel">Tipo</span>
+            <select id="almanac-type">
+              <option value="all">Todos</option>
+              <option value="item">Itens</option>
+              <option value="block">Blocos</option>
+            </select>
+          </label>
+          <label class="almanac-field">
+            <span data-almanac-copy="familyLabel">Família</span>
+            <select id="almanac-family"><option value="all">Todas as famílias</option></select>
+          </label>
+          <label class="almanac-field">
+            <span data-almanac-copy="statusLabel">Status</span>
+            <select id="almanac-status">
+              <option value="all">Todos</option>
+              <option value="complete">Completo</option>
+              <option value="partial">Parcial</option>
+              <option value="undocumented">Sem documentação</option>
+            </select>
+          </label>
+          <label class="almanac-field">
+            <span data-almanac-copy="sortLabel">Ordenar</span>
+            <select id="almanac-sort">
+              <option value="family">Padrão / Famílias</option>
+              <option value="az">A–Z</option>
+              <option value="za">Z–A</option>
+              <option value="complete">Completos primeiro</option>
+              <option value="pending">Pendentes primeiro</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="almanac-summary">
+          <span id="almanac-count">0 entradas</span>
+          <div class="almanac-legend" aria-label="Legenda do status de documentação">
+            <span data-status="complete"><i aria-hidden="true"></i><b data-almanac-copy="legendComplete">Menu e receita</b></span>
+            <span data-status="partial"><i aria-hidden="true"></i><b data-almanac-copy="legendPartial">Documentação parcial</b></span>
+            <span data-status="undocumented"><i aria-hidden="true"></i><b data-almanac-copy="legendUndocumented">Ainda não documentado</b></span>
+          </div>
+        </div>
+        <div class="almanac-grid" id="almanac-grid" aria-live="polite"></div>
+        <p class="almanac-empty" id="almanac-empty" hidden></p>
+      </section>
+
       <section id="galeria" class="section gallery-section">
         <div class="section-head">
           <div>
-            <span class="kicker" data-i18n="galleryKicker">05 — GALERIA</span>
+            <span class="kicker" data-i18n="galleryKicker">06 — GALERIA</span>
             <h2 data-i18n="gallery">Arquivos do WarSpawn</h2>
           </div>
         </div>
@@ -432,7 +496,7 @@
 
         <div class="section-head narrow social-head">
           <div>
-            <span class="kicker" data-i18n="socialKicker">06 — COMUNIDADE</span>
+            <span class="kicker" data-i18n="socialKicker">07 — COMUNIDADE</span>
             <h2 id="social-title" data-i18n="socialTitle">Acompanhe o despertar do WarSpawn.</h2>
           </div>
           <p data-i18n="socialLead">
@@ -691,6 +755,13 @@
         </aside>
       </section>
     </main>
+
+    <section class="almanac-detail" id="almanac-detail" role="dialog" aria-modal="true" aria-label="Ficha do Almanaque" hidden>
+      <div class="almanac-detail-shell">
+        <button class="almanac-detail-close" type="button" data-almanac-close aria-label="Fechar ficha">×</button>
+        <article class="almanac-detail-content" id="almanac-detail-content"></article>
+      </div>
+    </section>
 
     <footer>
       <img class="footer-mark" src="assets/emblem-white.png" alt="" width="112" height="112" loading="lazy" />
@@ -971,10 +1042,12 @@
     <script src="food-assets.js?v=20260819-lettuce" defer></script>
     <script src="crafting-core.js?v=20260919-crafting-graph" defer></script>
     <script src="food-data.js" defer></script>
-    <script src="food-system.js" defer></script>
     <script src="armor-data.js?v=20260917-queen-battle-axe" defer></script>
-    <script src="crafting-data.js?v=20260919-crafting-graph" defer></script>
-    <script src="armor-system.js?v=20260919-vanilla-nodes" defer></script>
+    <script src="crafting-data.js?v=20260919-items-blocks" defer></script>
+    <script src="almanac-data.js?v=20260919-items-blocks" defer></script>
+    <script src="food-system.js?v=20260919-items-blocks" defer></script>
+    <script src="armor-system.js?v=20260919-items-blocks" defer></script>
+    <script src="almanac-system.js?v=20260919-items-blocks" defer></script>
     <script src="ui-sound-system.js?v=20260820-armor-sync" defer></script>
   </body>
 </html>

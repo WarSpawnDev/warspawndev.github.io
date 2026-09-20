@@ -229,6 +229,7 @@
     recipes: catalog.recipes,
     roots: catalog.items.filter((entry) => entry.catalog).map((entry) => entry.id),
   });
+  const arsenalRecipeRegistry = window.WarSpawnCraftingCatalog?.registry;
   const creativeRank = new Map(
     (catalog.creativeOrder || []).map((itemId, index) => [itemId, index]),
   );
@@ -438,7 +439,7 @@
   }
 
   function itemButton(itemId, countValue = 1, context = "ingredient") {
-    const entry = itemById.get(itemId);
+    const entry = itemById.get(itemId) ?? arsenalRecipeRegistry?.getItem(itemId);
     if (!entry) return '<span class="craft-slot craft-slot-empty" aria-hidden="true"></span>';
 
     const name = localName(entry);
@@ -450,7 +451,7 @@
       <button
         class="craft-slot craft-item"
         type="button"
-        data-food-id="${escapeHtml(entry.id)}"
+        ${itemById.has(entry.id) ? `data-food-id="${escapeHtml(entry.id)}"` : `data-almanac-related-id="${escapeHtml(entry.id)}"`}
         aria-label="${escapeHtml(`${t()[context]}: ${name}`)}"
         title="${escapeHtml(name)}"
       >
@@ -478,7 +479,7 @@
   }
 
   function renderRecipe(recipe, variationIndex = 0, variationCount = 1) {
-    const result = itemById.get(recipe.result.item);
+    const result = itemById.get(recipe.result.item) ?? arsenalRecipeRegistry?.getItem(recipe.result.item);
     const label = recipe.station === "furnace" ? t().furnace : t().craftingTable;
     const variation =
       variationCount > 1
@@ -778,12 +779,33 @@
   function renderDetail() {
     const entry = itemById.get(state.selected) || publicItems[0];
     state.selected = entry.id;
-    const obtaining = recipeRegistry?.getRecipesForResult(entry.id)
-      ?? catalog.recipes.filter((recipe) => recipe.result.item === entry.id);
-    const uses = recipeRegistry?.getRecipesUsingIngredient(entry.id)
-      ?? catalog.recipes.filter((recipe) => ingredientIds(recipe).includes(entry.id));
+    const uniqueRecipes = (...groups) => [...new Map(
+      groups.flat().map((recipe) => [recipe.id, recipe]),
+    ).values()];
+    const obtaining = uniqueRecipes(
+      recipeRegistry?.getRecipesForResult(entry.id)
+        ?? catalog.recipes.filter((recipe) => recipe.result.item === entry.id),
+      arsenalRecipeRegistry?.getRecipesForResult(entry.id) ?? [],
+    );
+    const uses = uniqueRecipes(
+      recipeRegistry?.getRecipesUsingIngredient(entry.id)
+        ?? catalog.recipes.filter((recipe) => ingredientIds(recipe).includes(entry.id)),
+      arsenalRecipeRegistry?.getRecipesUsingIngredient(entry.id) ?? [],
+    );
     const sourceLabel =
       entry.source === "minecraft" ? t().sourceMinecraft : t().sourceWarspawn;
+    const relatedItems = window.WarSpawnAlmanacData?.getRelated(entry.id, 8) ?? [];
+    const relatedSection = relatedItems.length
+      ? `<section class="food-detail-section" aria-labelledby="food-related-title">
+          <div class="food-detail-title">
+            <span>03</span>
+            <h4 id="food-related-title">${state.language === "pt" ? "Itens relacionados" : "Related items"}</h4>
+          </div>
+          <div class="food-related-items">
+            ${relatedItems.map((related) => `<button type="button" data-almanac-related-id="${escapeHtml(related.id)}"><img src="${escapeHtml(related.image)}" alt="" loading="lazy" decoding="async"><span>${escapeHtml(localName(related.item))}</span></button>`).join("")}
+          </div>
+        </section>`
+      : "";
 
     detail.innerHTML = `
       <header class="food-dossier-head">
@@ -816,9 +838,11 @@
         ${renderEffects(entry)}
       </section>
 
+      ${relatedSection}
+
       <section class="food-detail-section" aria-labelledby="food-obtain-title">
         <div class="food-detail-title">
-          <span>03</span>
+          <span>${relatedItems.length ? "04" : "03"}</span>
           <h4 id="food-obtain-title">${t().obtain}</h4>
         </div>
         ${
@@ -830,7 +854,7 @@
 
       <section class="food-detail-section" aria-labelledby="food-uses-title">
         <div class="food-detail-title">
-          <span>04</span>
+          <span>${relatedItems.length ? "05" : "04"}</span>
           <h4 id="food-uses-title">${t().usedIn}</h4>
         </div>
         ${
@@ -842,12 +866,13 @@
 
       <section class="food-detail-section" aria-labelledby="food-relations-title">
         <div class="food-detail-title">
-          <span>05</span>
+          <span>${relatedItems.length ? "06" : "05"}</span>
           <h4 id="food-relations-title">${t().relations}</h4>
         </div>
         <p class="relations-lead">${t().relationsLead}</p>
         ${renderRelations(entry)}
       </section>
+
     `;
 
     localStorage.setItem("warspawn-selected-food", entry.id);
@@ -900,6 +925,11 @@
   }
 
   root.addEventListener("click", (event) => {
+    const relatedControl = event.target.closest("[data-almanac-related-id]");
+    if (relatedControl && root.contains(relatedControl)) {
+      window.WarSpawnAlmanacUI?.openItem(relatedControl.dataset.almanacRelatedId);
+      return;
+    }
     const itemControl = event.target.closest("[data-food-id]");
     if (!itemControl || !root.contains(itemControl)) return;
     selectItem(itemControl.dataset.foodId, itemControl);
@@ -949,6 +979,17 @@
     updateControls();
     renderCatalog();
     renderDetail();
+  });
+
+  window.WarSpawnFoodUI = Object.freeze({
+    openItem(itemId) {
+      if (!itemById.has(itemId) || !itemById.get(itemId)?.catalog) return false;
+      selectItem(itemId);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      root.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      requestAnimationFrame(() => detail.focus({ preventScroll: true }));
+      return true;
+    },
   });
 
   updateControls();

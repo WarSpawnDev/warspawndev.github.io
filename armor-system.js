@@ -1530,6 +1530,19 @@
     const typeLabel = itemEntry.category === "component"
       ? t().craftingComponent
       : t().craftingMaterial;
+    const relatedItems = window.WarSpawnAlmanacData?.getRelated(itemEntry.id, 8) ?? [];
+    const relatedMarkup = relatedItems.length
+      ? `<section class="armor-crafting-detail-section" aria-labelledby="armor-crafting-related-title">
+          <div class="armor-crafting-section-title">
+            <span>01</span>
+            <h3 id="armor-crafting-related-title">${escapeHtml(t().related)}</h3>
+          </div>
+          <div class="armor-crafting-related-grid">
+            ${relatedItems.map((entry) => `<button type="button" data-crafting-open="${escapeHtml(entry.id)}"><img src="${escapeHtml(entry.image)}" alt="" loading="lazy" decoding="async"><span>${escapeHtml(craftingItemName(entry.item))}</span></button>`).join("")}
+          </div>
+        </section>`
+      : "";
+    const sectionOffset = relatedItems.length ? 1 : 0;
 
     detailIndex.textContent = name;
     detailContent.setAttribute("aria-label", name);
@@ -1554,9 +1567,11 @@
           </div>
         </header>
 
+        ${relatedMarkup}
+
         ${!isVanilla ? `<section class="armor-crafting-detail-section" aria-labelledby="armor-crafting-obtain-title">
           <div class="armor-crafting-section-title">
-            <span>01</span>
+            <span>${String(1 + sectionOffset).padStart(2, "0")}</span>
             <h3 id="armor-crafting-obtain-title">${escapeHtml(t().howToCraft)}</h3>
           </div>
           ${obtaining.length
@@ -1566,7 +1581,7 @@
 
         <section class="armor-crafting-detail-section" aria-labelledby="armor-crafting-uses-title">
           <div class="armor-crafting-section-title">
-            <span>${isVanilla ? "01" : "02"}</span>
+            <span>${String((isVanilla ? 1 : 2) + sectionOffset).padStart(2, "0")}</span>
             <h3 id="armor-crafting-uses-title">${escapeHtml(t().usedIn)}</h3>
           </div>
           ${uses.length
@@ -2392,6 +2407,35 @@
     if (!state.open) return;
     if (state.view === "detail" || state.view === "piece") renderDetail();
     else renderSelector();
+  });
+
+  window.WarSpawnArmorUI = Object.freeze({
+    openItem(itemId) {
+      const context = armorContextByItemId.get(itemId);
+      if (!context) return false;
+      openExplorer({
+        armorId: context.armorId,
+        view: context.kind === "piece" ? "piece" : "item",
+        pieceId: context.kind === "piece" ? itemId : null,
+        itemId: context.kind === "item" ? itemId : null,
+      });
+      return true;
+    },
+    openCraftItem(itemId) {
+      if (!craftingRegistry?.isReachable(itemId)) return false;
+      const context = armorContextByItemId.get(itemId);
+      if (context) {
+        openExplorer({
+          armorId: context.armorId,
+          view: context.kind === "piece" ? "piece" : "item",
+          pieceId: context.kind === "piece" ? itemId : null,
+          itemId: context.kind === "item" ? itemId : null,
+        });
+        return true;
+      }
+      openExplorer({ view: "craft", craftItemId: itemId });
+      return true;
+    },
   });
 
   updateStaticText();
