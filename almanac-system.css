@@ -455,6 +455,22 @@ button.almanac-recipe-slot {
   }
 }
 
+@media (min-width: 761px) and (max-height: 800px) {
+  .hero-almanac-showcase {
+    padding-block: 12px;
+  }
+
+  .hero-almanac-item {
+    height: 47px;
+    flex-basis: 47px;
+  }
+
+  .hero-almanac-item img {
+    width: 36px;
+    height: 36px;
+  }
+}
+
 @media (max-width: 760px) {
   .hero-mark {
     width: 100%;
