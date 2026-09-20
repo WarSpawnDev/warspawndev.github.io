@@ -305,6 +305,13 @@ body.almanac-detail-open {
   cursor: pointer;
 }
 
+.almanac-detail-back {
+  position: sticky; z-index: 4; top: 0; height: 46px; display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 14px; border: 1px solid #ffffff24; border-radius: 23px; background: #08090de8; color: #f1eee7;
+  font-size: 10px; font-weight: 800; letter-spacing: .12em; cursor: pointer;
+}
+.almanac-detail-back span { font-size: 9px; }
+
 .almanac-detail-content {
   display: grid;
   gap: 18px;
@@ -371,6 +378,10 @@ body.almanac-detail-open {
   font-size: 30px;
   font-weight: 500;
 }
+.almanac-properties dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 0; }
+.almanac-properties dl div { padding: 12px; border: 1px solid #ffffff12; background: #ffffff05; }
+.almanac-properties dt { color: #9297a2; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.almanac-properties dd { margin: 7px 0 0; color: #ece8df; font-size: 13px; }
 
 .almanac-related-grid {
   display: grid;

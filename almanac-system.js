@@ -46,6 +46,7 @@
       recipe: "Receita",
       usedIn: "Usado em",
       close: "Fechar ficha",
+      back: "Voltar",
       source: "Almanaque WarSpawn",
       status: { complete: "Menu e receita disponíveis", partial: "Documentação parcial", undocumented: "Ainda não documentado" },
       showcase: "Abrir o Almanaque de Itens e Blocos",
@@ -81,6 +82,7 @@
       recipe: "Recipe",
       usedIn: "Used in",
       close: "Close file",
+      back: "Back",
       source: "WarSpawn Almanac",
       status: { complete: "Menu and recipe available", partial: "Partial documentation", undocumented: "Not documented yet" },
       showcase: "Open the Items and Blocks Almanac",
@@ -99,6 +101,7 @@
     sort: "family",
     detailItemId: null,
     previousFocus: null,
+    history: [{ view: "catalog", scroll: 0 }],
   };
   const foodById = new Map(foodCatalog.items.map((item) => [item.id, item]));
   const statusRank = { complete: 0, partial: 1, undocumented: 2 };
@@ -213,6 +216,7 @@
     root.querySelector(".almanac-legend")?.setAttribute("aria-label", t().legendLabel);
     detail.setAttribute("aria-label", t().dialogLabel);
     detail.querySelector("[data-almanac-close]")?.setAttribute("aria-label", t().close);
+    detail.querySelector("[data-almanac-back]")?.setAttribute("aria-label", t().back);
   }
 
   function lookupItem(itemId) {
@@ -220,6 +224,17 @@
       || craftingCatalog.registry.getItem(itemId)
       || foodById.get(itemId)
       || null;
+  }
+
+  function itemContext(itemId) {
+    const entry = data.getEntry(itemId);
+    const item = entry?.item || lookupItem(itemId);
+    if (!item) return null;
+    const armorEntry = window.WarSpawnArmorCatalog?.sets
+      .flatMap((set) => [...set.pieces, ...set.relatedItems])
+      .find((candidate) => candidate.id === itemId);
+    const foodEntry = foodById.get(itemId);
+    return { item, entry, armorEntry, foodEntry };
   }
 
   function recipeMarkup(recipe) {
@@ -248,28 +263,50 @@
     return `<section class="almanac-detail-section"><h3>${escapeHtml(title)}</h3><div class="almanac-recipe-list">${recipes.map(recipeMarkup).join("")}</div></section>`;
   }
 
-  function showGenericDetail(itemId, { pushHistory = true } = {}) {
-    const entry = data.getEntry(itemId);
-    if (!entry) return;
-    if (detail.hidden) state.previousFocus = document.activeElement;
+  function propertiesMarkup(context) {
+    const { item, entry, armorEntry, foodEntry } = context;
+    const values = [];
+    if (entry) values.push([t().item, entry.type === "block" ? t().block : t().item]);
+    if (entry?.family) values.push([t().familyLabel, local(family(entry)?.name)]);
+    if (item.description) values.push(["Descrição", local(item.description)]);
+    if (foodEntry?.food) {
+      values.push(["Nutrição", String(foodEntry.food.nutrition)]);
+      if (foodEntry.food.saturationModifier != null) values.push(["Saturação", String(foodEntry.food.saturationModifier)]);
+      (foodEntry.food.effects ?? []).forEach((effect) => values.push(["Efeito", `${effect.id}${effect.level ? ` ${effect.level}` : ""}`]));
+    }
+    (armorEntry?.enchantments ?? []).forEach((effect) => values.push(["Encantamento", `${local(effect.name) || effect.id}${effect.level ? ` ${effect.level}` : ""}`]));
+    if (!values.length) return "";
+    return `<section class="almanac-detail-section almanac-properties"><h3>Identidade / propriedades</h3><dl>${values.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl></section>`;
+  }
+
+  function showAlmanacDetail(itemId, { pushHistory = true } = {}) {
+    const context = itemContext(itemId);
+    if (!context) return;
+    const { item, entry } = context;
+    if (detail.hidden) {
+      state.previousFocus = document.activeElement;
+      state.history[0].scroll = root.scrollTop;
+    }
     state.detailItemId = itemId;
-    const item = entry.item;
     const itemName = local(item.name) || item.id;
-    const related = data.getRelated(itemId, 10);
+    const related = entry ? data.getRelated(itemId, 10) : [];
     const obtaining = data.getRecipesFor(itemId);
     const uses = data.getPublicUses(itemId);
+    const status = entry?.status || "partial";
+    const kind = entry?.type || (item.category === "block" ? "block" : "item");
     detailContent.innerHTML = `
-      <header class="almanac-detail-hero" data-status="${entry.status}">
-        <div class="almanac-detail-art"><img src="${escapeHtml(entry.image)}" alt="${escapeHtml(itemName)}" decoding="async"></div>
-        <div><span class="kicker">${escapeHtml(t().source)} • ${escapeHtml(entry.type === "block" ? t().block : t().item)}</span><h2>${escapeHtml(itemName)}</h2><p>${escapeHtml(local(family(entry)?.name))}</p><span class="almanac-detail-status">${escapeHtml(t().status[entry.status])}</span></div>
+      <header class="almanac-detail-hero" data-status="${status}">
+        <div class="almanac-detail-art"><img src="${escapeHtml(imageFor(item))}" alt="${escapeHtml(itemName)}" decoding="async"></div>
+        <div><span class="kicker">${escapeHtml(t().source)} • ${escapeHtml(kind === "block" ? t().block : t().item)}</span><h2>${escapeHtml(itemName)}</h2><p>${escapeHtml(entry ? local(family(entry)?.name) : item.id)}</p><span class="almanac-detail-status">${escapeHtml(entry ? t().status[status] : t().status.partial)}</span></div>
       </header>
+      ${propertiesMarkup(context)}
       ${relatedMarkup(related)}
       ${recipeSection(t().recipe, obtaining)}
       ${recipeSection(t().usedIn, uses)}
     `;
     detail.hidden = false;
     document.body.classList.add("almanac-detail-open");
-    if (pushHistory) history.pushState({ kind: "almanac-item", itemId }, "", "#itens-blocos");
+    if (pushHistory) state.history.push({ view: "item", itemId });
     requestAnimationFrame(() => detail.querySelector(".almanac-detail-close")?.focus({ preventScroll: true }));
   }
 
@@ -278,28 +315,25 @@
     detail.hidden = true;
     document.body.classList.remove("almanac-detail-open");
     state.detailItemId = null;
+    if (!fromHistory) { state.history = [{ view: "catalog", scroll: root.scrollTop }]; }
     state.previousFocus?.focus?.({ preventScroll: true });
-    if (!fromHistory && history.state?.kind === "almanac-item") history.back();
   }
 
   function openItem(itemId) {
-    const entry = data.getEntry(itemId);
-    if (!entry) {
-      if (craftingCatalog.registry.isReachable(itemId)) window.WarSpawnArmorUI?.openCraftItem(itemId);
-      return;
-    }
-    if (!detail.hidden && entry.pageKind !== "generic") {
+    showAlmanacDetail(itemId);
+  }
+
+  function goBackInAlmanac() {
+    if (state.history.length <= 1) return;
+    state.history.pop();
+    const previous = state.history.at(-1);
+    if (previous.view === "catalog") {
       detail.hidden = true;
       document.body.classList.remove("almanac-detail-open");
-      state.detailItemId = null;
-    }
-    if (entry.pageKind === "armor" && window.WarSpawnArmorUI?.openItem(itemId)) return;
-    if (entry.pageKind === "food" && window.WarSpawnFoodUI?.openItem(itemId)) {
-      history.pushState({ kind: "almanac-food", itemId }, "", "#comidas");
+      requestAnimationFrame(() => { root.scrollTop = previous.scroll || 0; search.focus({ preventScroll: true }); });
       return;
     }
-    if (entry.pageKind === "crafting" && window.WarSpawnArmorUI?.openCraftItem(itemId)) return;
-    showGenericDetail(itemId);
+    showAlmanacDetail(previous.itemId, { pushHistory: false });
   }
 
   function openExplorer({ pushHistory = true } = {}) {
@@ -363,6 +397,7 @@
     });
   });
   detail.addEventListener("click", (event) => {
+    if (event.target.closest("[data-almanac-back]")) { goBackInAlmanac(); return; }
     if (event.target === detail || event.target.closest("[data-almanac-close]")) { closeGenericDetail(); return; }
     const control = event.target.closest("[data-almanac-open]");
     if (control) openItem(control.dataset.almanacOpen);
@@ -370,16 +405,10 @@
   detail.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      closeGenericDetail();
+      goBackInAlmanac();
     }
   });
   window.addEventListener("popstate", (event) => {
-    if (event.state?.kind === "almanac-item") {
-      if (detail.hidden || state.detailItemId !== event.state.itemId) {
-        showGenericDetail(event.state.itemId, { pushHistory: false });
-      }
-      return;
-    }
     if (!detail.hidden) closeGenericDetail({ fromHistory: true });
     if (event.state?.kind === "almanac-explorer") { openExplorer({ pushHistory: false }); return; }
     closeExplorer({ fromHistory: true });
@@ -388,7 +417,7 @@
     state.language = event.detail.language;
     updateControls();
     renderGrid();
-    if (!detail.hidden && state.detailItemId) showGenericDetail(state.detailItemId, { pushHistory: false });
+    if (!detail.hidden && state.detailItemId) showAlmanacDetail(state.detailItemId, { pushHistory: false });
   });
 
   updateControls();
