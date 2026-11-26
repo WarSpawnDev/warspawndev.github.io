@@ -1,0 +1,541 @@
+{
+  "repositorio": "WarSpawnDev/warspawndev.github.io",
+  "release": "warspawn-downloads",
+  "atual": {
+    "arquivo": "warspawn-0.7.4-neoforge-26.1.2.jar",
+    "loaderMinimo": "26.1.2.95"
+  },
+  "fases": [
+    {
+      "id": "alpha-1-12-2",
+      "nome": "Alpha 1.12.2",
+      "minecraft": "1.12.2",
+      "loader": "Forge",
+      "titulo": "O começo no MCreator",
+      "descricao": "A primeira Alpha começou no fim de 2020. Os JARs registram uma sequência rápida de testes até a 0.2.6, com itens, equipamentos e os primeiros experimentos do projeto.",
+      "inicio": "2020-12",
+      "fim": "2021-02",
+      "versoes": [
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.2.6.jar",
+          "versao": "0.2.6",
+          "data": "2021-02-06",
+          "bytes": 1063431,
+          "nota": "O outro JAR 0.2.6 desta fase tem conteúdo idêntico."
+        },
+        {
+          "arquivo": "WarSpawn-alpha-0.2.6-1.12.2-Forge-14.23.5.2768.jar",
+          "versao": "0.2.6",
+          "data": "2021-02-06",
+          "bytes": 1063431,
+          "nota": "O outro JAR 0.2.6 desta fase tem conteúdo idêntico."
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.2.5.jar",
+          "versao": "0.2.5",
+          "data": "2021-02-06",
+          "bytes": 1041174
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.2.4.jar",
+          "versao": "0.2.4",
+          "data": "2021-02-02",
+          "bytes": 1033596
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.2.3.jar",
+          "versao": "0.2.3",
+          "data": "2021-02-02",
+          "bytes": 1011254
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.2.2.jar",
+          "versao": "0.2.2",
+          "data": "2021-02-02",
+          "bytes": 1002194
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.2.1.jar",
+          "versao": "0.2.1",
+          "data": "2021-02-01",
+          "bytes": 978306
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.2.0.jar",
+          "versao": "0.2.0",
+          "data": "2021-01-31",
+          "bytes": 967033
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.9.jar",
+          "versao": "0.1.9",
+          "data": "2021-01-31",
+          "bytes": 964372
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.8.jar",
+          "versao": "0.1.8",
+          "data": "2021-01-26",
+          "bytes": 826863
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.7.jar",
+          "versao": "0.1.7",
+          "data": "2021-01-12",
+          "bytes": 652947
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.6.jar",
+          "versao": "0.1.6",
+          "data": "2021-01-11",
+          "bytes": 540710
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.5.jar",
+          "versao": "0.1.5",
+          "data": "2021-01-11",
+          "bytes": 529285
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.4.jar",
+          "versao": "0.1.4",
+          "data": "2021-01-09",
+          "bytes": 482003
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.3.jar",
+          "versao": "0.1.3",
+          "data": "2021-01-05",
+          "bytes": 477991
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.2.jar",
+          "versao": "0.1.2",
+          "data": "2021-01-05",
+          "bytes": 477092
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.1.jar",
+          "versao": "0.1.1",
+          "data": "2021-01-04",
+          "bytes": 379685
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.1.0.jar",
+          "versao": "0.1.0",
+          "data": "2021-01-04",
+          "bytes": 373214
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.9.jar",
+          "versao": "0.0.9",
+          "data": "2021-01-04",
+          "bytes": 373220
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.8.jar",
+          "versao": "0.0.8",
+          "data": "2021-01-04",
+          "bytes": 366680
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.7.jar",
+          "versao": "0.0.7",
+          "data": "2021-01-04",
+          "bytes": 362649
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.6.jar",
+          "versao": "0.0.6",
+          "data": "2020-12-31",
+          "bytes": 332316
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.5.jar",
+          "versao": "0.0.5",
+          "data": "2020-12-30",
+          "bytes": 215569
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.4.jar",
+          "versao": "0.0.4",
+          "data": "2020-12-30",
+          "bytes": 187300
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.3.jar",
+          "versao": "0.0.3",
+          "data": "2020-12-30",
+          "bytes": 114613
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.2.jar",
+          "versao": "0.0.2",
+          "data": "2020-12-30",
+          "bytes": 100226
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.12.2-0.0.1.jar",
+          "versao": "0.0.1",
+          "data": "2020-12-30",
+          "bytes": 55922
+        }
+      ]
+    },
+    {
+      "id": "alpha-1-16-5",
+      "nome": "Alpha 1.16.5",
+      "minecraft": "1.16.5",
+      "loader": "Forge",
+      "titulo": "A tentativa de migração",
+      "descricao": "O primeiro port registrado para outra versão do Minecraft passou da 0.4.6 à 0.4.9. Os JARs estão datados de outubro. O histórico também registra trabalho em novembro de 2022.",
+      "inicio": "2022-10",
+      "fim": "2022-10",
+      "versoes": [
+        {
+          "arquivo": "WarSpawn-alpha-1.16.5-0.4.9.jar",
+          "versao": "0.4.9",
+          "data": "2022-10-01",
+          "bytes": 5728787
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.16.5-0.4.8.jar",
+          "versao": "0.4.8",
+          "data": "2022-10-15",
+          "bytes": 5260676
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.16.5-0.4.7.jar",
+          "versao": "0.4.7",
+          "data": "2022-10-15",
+          "bytes": 5226649
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.16.5-0.4.6.jar",
+          "versao": "0.4.6",
+          "data": "2022-10-15",
+          "bytes": 5215376
+        }
+      ]
+    },
+    {
+      "id": "beta-1-12-2",
+      "nome": "Beta 1.12.2",
+      "minecraft": "1.12.2",
+      "loader": "Forge",
+      "titulo": "Uma reconstrução do zero",
+      "descricao": "A Beta retomou o desenvolvimento em 2021, com procedimentos no MCreator, itens e criaturas estáticas. Os arquivos preservados vão da 0.2.6 à 0.4.5.",
+      "inicio": "2021-03",
+      "fim": "2021-11",
+      "versoes": [
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.4.5.jar",
+          "versao": "0.4.5",
+          "data": "2021-11-05",
+          "bytes": 3902501
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.4.4.jar",
+          "versao": "0.4.4",
+          "data": "2021-09-05",
+          "bytes": 2686596
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.4.3.jar",
+          "versao": "0.4.3",
+          "data": "2021-06-22",
+          "bytes": 1407336
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.4.2.jar",
+          "versao": "0.4.2",
+          "data": "2021-06-09",
+          "bytes": 1231846
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.4.1.jar",
+          "versao": "0.4.1",
+          "data": "2021-06-09",
+          "bytes": 1168860
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.4.0.jar",
+          "versao": "0.4.0",
+          "data": "2021-05-23",
+          "bytes": 879777
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.9.jar",
+          "versao": "0.3.9",
+          "data": "2021-05-06",
+          "bytes": 539498
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.8.jar",
+          "versao": "0.3.8",
+          "data": "2021-05-06",
+          "bytes": 484634
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.7.jar",
+          "versao": "0.3.7",
+          "data": "2021-05-05",
+          "bytes": 478067
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.6.jar",
+          "versao": "0.3.6",
+          "data": "2021-04-14",
+          "bytes": 462388
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.5.jar",
+          "versao": "0.3.5",
+          "data": "2021-03-27",
+          "bytes": 368593
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.4.jar",
+          "versao": "0.3.4",
+          "data": "2021-03-26",
+          "bytes": 368253
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.3.jar",
+          "versao": "0.3.3",
+          "data": "2021-03-26",
+          "bytes": 316304
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.2.jar",
+          "versao": "0.3.2",
+          "data": "2021-03-25",
+          "bytes": 310831
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.1.jar",
+          "versao": "0.3.1",
+          "data": "2021-03-25",
+          "bytes": 310774
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.3.0.jar",
+          "versao": "0.3.0",
+          "data": "2021-03-25",
+          "bytes": 310821
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.2.9.jar",
+          "versao": "0.2.9",
+          "data": "2021-03-24",
+          "bytes": 300899
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.2.8.jar",
+          "versao": "0.2.8",
+          "data": "2021-03-24",
+          "bytes": 124917
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.2.7.jar",
+          "versao": "0.2.7",
+          "data": "2021-03-24",
+          "bytes": 124539
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.12.2-0.2.6.jar",
+          "versao": "0.2.6",
+          "data": "2021-03-21",
+          "bytes": 92814
+        }
+      ]
+    },
+    {
+      "id": "beta-1-19-2",
+      "nome": "Beta 1.19.2",
+      "minecraft": "1.19.2",
+      "loader": "Forge",
+      "titulo": "As primeiras criaturas com comportamento próprio",
+      "descricao": "A série 0.5 introduziu criaturas com comportamento em jogo. O workspace foi perdido depois de um problema no computador, mas os JARs de março de 2023 ficaram preservados.",
+      "inicio": "2023-03",
+      "fim": "2023-03",
+      "versoes": [
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.9.jar",
+          "versao": "0.5.9",
+          "data": "2023-03-11",
+          "bytes": 4359135
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.8.jar",
+          "versao": "0.5.8",
+          "data": "2023-03-10",
+          "bytes": 4184212
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.7.jar",
+          "versao": "0.5.7",
+          "data": "2023-03-10",
+          "bytes": 4150754
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.6.jar",
+          "versao": "0.5.6",
+          "data": "2023-03-10",
+          "bytes": 3991784
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.5.jar",
+          "versao": "0.5.5",
+          "data": "2023-03-09",
+          "bytes": 4030996
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.4.jar",
+          "versao": "0.5.4",
+          "data": "2023-03-09",
+          "bytes": 4090978
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.3.jar",
+          "versao": "0.5.3",
+          "data": "2023-03-09",
+          "bytes": 4089280
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.2.jar",
+          "versao": "0.5.2",
+          "data": "2023-03-09",
+          "bytes": 4083354
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.1.jar",
+          "versao": "0.5.1",
+          "data": "2023-03-09",
+          "bytes": 4062588
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.19.2-0.5.0.jar",
+          "versao": "0.5.0",
+          "data": "2023-03-08",
+          "bytes": 4009137
+        }
+      ]
+    },
+    {
+      "id": "beta-1-21-4",
+      "nome": "Beta 1.21.4",
+      "minecraft": "1.21.4",
+      "loader": "NeoForge",
+      "titulo": "Reconstrução moderna",
+      "descricao": "O histórico menciona trabalho preparatório em dezembro de 2024 e estudos de modelagem em 2025. A Beta refez itens, armaduras e criaturas com foco na fidelidade ao OreSpawn. Em 2026, o trabalho avançou em IA, montarias, teleporte, The King, The Queen e Mobzilla.",
+      "inicio": "2025-11",
+      "fim": "2026-08",
+      "versoes": [
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.7.2.jar",
+          "versao": "0.7.2",
+          "data": "2026-05-10",
+          "bytes": 14249482
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.7.1.jar",
+          "versao": "0.7.1",
+          "data": "2026-04-26",
+          "bytes": 13372168
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.7.0.jar",
+          "versao": "0.7.0",
+          "data": "2026-04-21",
+          "bytes": 13354960
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.9.jar",
+          "versao": "0.6.9",
+          "data": "2026-04-17",
+          "bytes": 13020542
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.8.jar",
+          "versao": "0.6.8",
+          "data": "2026-04-06",
+          "bytes": 11133017
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.7.jar",
+          "versao": "0.6.7",
+          "data": "2026-03-28",
+          "bytes": 10040427
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.6.jar",
+          "versao": "0.6.6",
+          "data": "2026-02-21",
+          "bytes": 7716521
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.5.jar",
+          "versao": "0.6.5",
+          "data": "2026-02-09",
+          "bytes": 7418593
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.4.jar",
+          "versao": "0.6.4",
+          "data": "2026-01-28",
+          "bytes": 7211097
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.3.jar",
+          "versao": "0.6.3",
+          "data": "2026-01-25",
+          "bytes": 7158263
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.2.jar",
+          "versao": "0.6.2",
+          "data": "2025-12-31",
+          "bytes": 7092095
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.1.jar",
+          "versao": "0.6.1",
+          "data": "2026-08-18",
+          "bytes": 5628484,
+          "nota": "A data deste exemplar é posterior à de builds com numeração mais alta."
+        },
+        {
+          "arquivo": "WarSpawn-beta-1.21.4-0.6.0.jar",
+          "versao": "0.6.0",
+          "data": "2025-11-02",
+          "bytes": 3734103
+        }
+      ]
+    },
+    {
+      "id": "beta-26-1-2",
+      "nome": "Beta 26.1.2",
+      "minecraft": "26.1.2",
+      "loader": "NeoForge",
+      "titulo": "Port para Minecraft 26.1.2",
+      "descricao": "O port levou itens, armaduras, alimentos, plantas, seis dimensões e parte do bestiário ao Minecraft 26.1.2. Os JARs preservados são 0.7.3 e 0.7.4. No mesmo período, o site expandiu a documentação de itens e receitas.",
+      "inicio": "2026-07",
+      "fim": "2026-08",
+      "versoes": [
+        {
+          "arquivo": "warspawn-0.7.4-neoforge-26.1.2.jar",
+          "versao": "0.7.4",
+          "data": "2026-08-17",
+          "bytes": 19380967
+        },
+        {
+          "arquivo": "warspawn-0.7.3-neoforge-26.1.2.jar",
+          "versao": "0.7.3",
+          "data": "2026-07-28",
+          "bytes": 19195017
+        }
+      ]
+    }
+  ]
+}
