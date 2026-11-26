@@ -7,13 +7,17 @@
   <meta name="theme-color" content="#07080b">
   <link rel="canonical" href="https://warspawndev.github.io/downloads/">
   <link rel="icon" href="../favicon-warspawn-v2.ico">
-  <link rel="stylesheet" href="downloads.css">
-  <script src="downloads.js?v=20261126-newest-first" defer></script>
+  <link rel="stylesheet" href="/styles.css?v=20261126-download-text">
+  <link rel="stylesheet" href="downloads.css?v=20261126-history-brand">
+  <script src="downloads.js?v=20261126-history-brand" defer></script>
   <title>Downloads · WarSpawn</title>
 </head>
 <body>
   <header class="topbar">
-    <a href="../" class="home"><img src="../assets/emblem-white.png" alt="" width="38" height="38"> WarSpawn</a>
+    <a class="brand" href="/" aria-label="WarSpawn">
+      <img src="/assets/emblem-white.png" alt="" width="56" height="56" />
+      <span>WARSPAWN</span>
+    </a>
     <a href="../">Voltar ao site</a>
   </header>
   <main>
@@ -45,6 +49,61 @@
       </div>
     </details>
   </main>
-  <footer><a href="../">WarSpawn</a></footer>
+  <footer>
+    <img class="footer-mark" src="/assets/emblem-white.png" alt="" width="112" height="112" loading="lazy" />
+    <div class="footer-copy">
+      <p data-i18n="footer">
+        Projeto comunitário inspirado no OreSpawn original. OreSpawn pertence aos
+        seus respectivos autores, incluindo TheyCallMeDanger.
+      </p>
+      <div
+        class="footer-socials"
+        role="group"
+        data-i18n-aria-label="footerSocialsLabel"
+        aria-label="Principais redes sociais do WarSpawn"
+      >
+        <a
+          href="https://www.youtube.com/@WarSpawn_of"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n-aria-label="openYouTube"
+          aria-label="Abrir o canal do WarSpawn no YouTube"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22.1 7.1a2.8 2.8 0 0 0-2-2C18.3 4.6 12 4.6 12 4.6s-6.3 0-8.1.5a2.8 2.8 0 0 0-2 2A29 29 0 0 0 1.4 12a29 29 0 0 0 .5 4.9 2.8 2.8 0 0 0 2 2c1.8.5 8.1.5 8.1.5s6.3 0 8.1-.5a2.8 2.8 0 0 0 2-2 29 29 0 0 0 .5-4.9 29 29 0 0 0-.5-4.9Z"></path>
+            <path class="cutout" d="m9.8 15.2 5.4-3.2-5.4-3.2Z"></path>
+          </svg>
+        </a>
+        <a
+          href="https://www.tiktok.com/@warspawn_of?is_from_webapp=1&amp;sender_device=pc"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n-aria-label="openTikTok"
+          aria-label="Abrir o perfil do WarSpawn no TikTok"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15.1 3h3.1c.2 2.1 1.4 3.5 3.5 4v3.2a8.6 8.6 0 0 1-3.5-1v6.2a6.2 6.2 0 1 1-5.4-6.1v3.3a2.9 2.9 0 1 0 2.3 2.8Z"></path>
+          </svg>
+        </a>
+        <a
+          href="https://www.instagram.com/warspawn_of?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw=="
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n-aria-label="openInstagram"
+          aria-label="Abrir o perfil do WarSpawn no Instagram"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3.25" y="3.25" width="17.5" height="17.5" rx="5.2"></rect>
+            <circle cx="12" cy="12" r="4.15"></circle>
+            <circle class="solid" cx="17.55" cy="6.55" r="1.05"></circle>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <a class="footer-license" href="/downloads/" aria-current="page">Downloads</a>
+    <a class="footer-license" href="https://github.com/WarSpawnDev/WarSpawn/blob/main/LICENSE.md" rel="license">
+      <span data-i18n="license">Licença</span> ↗
+    </a>
+  </footer>
 </body>
 </html>

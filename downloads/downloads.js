@@ -62,8 +62,17 @@ function renderArchive(catalog, assets) {
     const link = node("a", `Ver arquivos · ${phase.nome}`);
     link.href = `#${phase.id}`;
     link.addEventListener("click", () => { group.open = true; });
-    milestone.append(node("p", period(phase.inicio, phase.fim), "period"), node("h3", phase.titulo), node("p", phase.descricao), link);
-    timeline.append(milestone);
+    const firstVersion = phase.versoes.at(-1).versao;
+    const lastVersion = phase.versoes[0].versao;
+    const range = firstVersion === lastVersion ? `Versão ${firstVersion}` : `De ${firstVersion} a ${lastVersion}`;
+    milestone.append(
+      node("strong", `${phase.nome} · ${range}`, "phase-range"),
+      node("p", period(phase.inicio, phase.fim), "period"),
+      node("h3", phase.titulo),
+      node("p", phase.descricao),
+      link
+    );
+    timeline.prepend(milestone);
   }
 
   const target = document.getElementById(location.hash.slice(1));
