@@ -74,7 +74,7 @@ function renderArchive(catalog, assets) {
 }
 
 async function loadArchive() {
-  const catalog = await readJson("catalogo.json?v=20261126-history-order");
+  const catalog = await readJson("catalogo.json?v=20261126-phase-sequence");
   const expected = new Map(catalog.fases.flatMap((phase) => phase.versoes.map((entry) => [entry.arquivo, entry])));
   const assets = new Map();
   const archiveStatus = element("archive-status");

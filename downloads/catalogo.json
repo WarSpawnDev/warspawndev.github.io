@@ -183,42 +183,6 @@
       ]
     },
     {
-      "id": "alpha-1-16-5",
-      "nome": "Alpha 1.16.5",
-      "minecraft": "1.16.5",
-      "loader": "Forge",
-      "titulo": "A tentativa de migração",
-      "descricao": "Fiz meu primeiro port para outra versão do Minecraft, da 0.4.6 à 0.4.9. Os JARs são de outubro de 2022, e continuei trabalhando em novembro.",
-      "inicio": "2022-10",
-      "fim": "2022-10",
-      "versoes": [
-        {
-          "arquivo": "WarSpawn-alpha-1.16.5-0.4.9.jar",
-          "versao": "0.4.9",
-          "data": "2022-10-01",
-          "bytes": 5728787
-        },
-        {
-          "arquivo": "WarSpawn-alpha-1.16.5-0.4.8.jar",
-          "versao": "0.4.8",
-          "data": "2022-10-15",
-          "bytes": 5260676
-        },
-        {
-          "arquivo": "WarSpawn-alpha-1.16.5-0.4.7.jar",
-          "versao": "0.4.7",
-          "data": "2022-10-15",
-          "bytes": 5226649
-        },
-        {
-          "arquivo": "WarSpawn-alpha-1.16.5-0.4.6.jar",
-          "versao": "0.4.6",
-          "data": "2022-10-15",
-          "bytes": 5215376
-        }
-      ]
-    },
-    {
       "id": "beta-1-12-2",
       "nome": "Beta 1.12.2",
       "minecraft": "1.12.2",
@@ -347,6 +311,42 @@
           "versao": "0.2.6",
           "data": "2021-03-21",
           "bytes": 92814
+        }
+      ]
+    },
+    {
+      "id": "alpha-1-16-5",
+      "nome": "Alpha 1.16.5",
+      "minecraft": "1.16.5",
+      "loader": "Forge",
+      "titulo": "A tentativa de migração",
+      "descricao": "Fiz meu primeiro port para outra versão do Minecraft, da 0.4.6 à 0.4.9. Os JARs são de outubro de 2022, e continuei trabalhando em novembro.",
+      "inicio": "2022-10",
+      "fim": "2022-10",
+      "versoes": [
+        {
+          "arquivo": "WarSpawn-alpha-1.16.5-0.4.9.jar",
+          "versao": "0.4.9",
+          "data": "2022-10-01",
+          "bytes": 5728787
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.16.5-0.4.8.jar",
+          "versao": "0.4.8",
+          "data": "2022-10-15",
+          "bytes": 5260676
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.16.5-0.4.7.jar",
+          "versao": "0.4.7",
+          "data": "2022-10-15",
+          "bytes": 5226649
+        },
+        {
+          "arquivo": "WarSpawn-alpha-1.16.5-0.4.6.jar",
+          "versao": "0.4.6",
+          "data": "2022-10-15",
+          "bytes": 5215376
         }
       ]
     },
