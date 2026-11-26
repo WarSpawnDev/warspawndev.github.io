@@ -37,7 +37,7 @@ function renderArchive(catalog, assets) {
   const versions = element("versions");
   const timeline = element("timeline");
 
-  for (const phase of catalog.fases) {
+  for (const phase of [...catalog.fases].reverse()) {
     const group = node("details", "", "phase");
     group.id = phase.id;
     const summary = node("summary");
@@ -63,7 +63,7 @@ function renderArchive(catalog, assets) {
     link.href = `#${phase.id}`;
     link.addEventListener("click", () => { group.open = true; });
     milestone.append(node("p", period(phase.inicio, phase.fim), "period"), node("h3", phase.titulo), node("p", phase.descricao), link);
-    timeline.prepend(milestone);
+    timeline.append(milestone);
   }
 
   const target = document.getElementById(location.hash.slice(1));
@@ -74,7 +74,7 @@ function renderArchive(catalog, assets) {
 }
 
 async function loadArchive() {
-  const catalog = await readJson("catalogo.json?v=20261126-phase-sequence");
+  const catalog = await readJson("catalogo.json?v=20261126-newest-first");
   const expected = new Map(catalog.fases.flatMap((phase) => phase.versoes.map((entry) => [entry.arquivo, entry])));
   const assets = new Map();
   const archiveStatus = element("archive-status");
