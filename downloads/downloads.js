@@ -63,7 +63,7 @@ function renderArchive(catalog, assets) {
     link.href = `#${phase.id}`;
     link.addEventListener("click", () => { group.open = true; });
     milestone.append(node("p", period(phase.inicio, phase.fim), "period"), node("h3", phase.titulo), node("p", phase.descricao), link);
-    timeline.append(milestone);
+    timeline.prepend(milestone);
   }
 
   const target = document.getElementById(location.hash.slice(1));
@@ -74,7 +74,7 @@ function renderArchive(catalog, assets) {
 }
 
 async function loadArchive() {
-  const catalog = await readJson("catalogo.json");
+  const catalog = await readJson("catalogo.json?v=20261126-history-order");
   const expected = new Map(catalog.fases.flatMap((phase) => phase.versoes.map((entry) => [entry.arquivo, entry])));
   const assets = new Map();
   const archiveStatus = element("archive-status");

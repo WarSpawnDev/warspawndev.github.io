@@ -12,7 +12,7 @@
       "minecraft": "1.12.2",
       "loader": "Forge",
       "titulo": "O começo no MCreator",
-      "descricao": "A primeira Alpha começou no fim de 2020. Os JARs registram uma sequência rápida de testes até a 0.2.6, com itens, equipamentos e os primeiros experimentos do projeto.",
+      "descricao": "Comecei a primeira Alpha no fim de 2020. Até a 0.2.6, testei os primeiros itens e equipamentos no MCreator.",
       "inicio": "2020-12",
       "fim": "2021-02",
       "versoes": [
@@ -188,7 +188,7 @@
       "minecraft": "1.16.5",
       "loader": "Forge",
       "titulo": "A tentativa de migração",
-      "descricao": "O primeiro port registrado para outra versão do Minecraft passou da 0.4.6 à 0.4.9. Os JARs estão datados de outubro. O histórico também registra trabalho em novembro de 2022.",
+      "descricao": "Fiz meu primeiro port para outra versão do Minecraft, da 0.4.6 à 0.4.9. Os JARs são de outubro de 2022, e continuei trabalhando em novembro.",
       "inicio": "2022-10",
       "fim": "2022-10",
       "versoes": [
@@ -224,7 +224,7 @@
       "minecraft": "1.12.2",
       "loader": "Forge",
       "titulo": "Uma reconstrução do zero",
-      "descricao": "A Beta retomou o desenvolvimento em 2021, com procedimentos no MCreator, itens e criaturas estáticas. Os arquivos preservados vão da 0.2.6 à 0.4.5.",
+      "descricao": "Retomei o desenvolvimento do zero em 2021. Criei procedimentos, itens e criaturas estáticas no MCreator. Os JARs vão da 0.2.6 à 0.4.5.",
       "inicio": "2021-03",
       "fim": "2021-11",
       "versoes": [
@@ -356,7 +356,7 @@
       "minecraft": "1.19.2",
       "loader": "Forge",
       "titulo": "As primeiras criaturas com comportamento próprio",
-      "descricao": "A série 0.5 introduziu criaturas com comportamento em jogo. O workspace foi perdido depois de um problema no computador, mas os JARs de março de 2023 ficaram preservados.",
+      "descricao": "Adicionei criaturas com comportamento próprio na série 0.5. Perdi o workspace após um problema no computador, mas os JARs de março de 2023 foram preservados.",
       "inicio": "2023-03",
       "fim": "2023-03",
       "versoes": [
@@ -428,7 +428,7 @@
       "minecraft": "1.21.4",
       "loader": "NeoForge",
       "titulo": "Reconstrução moderna",
-      "descricao": "O histórico menciona trabalho preparatório em dezembro de 2024 e estudos de modelagem em 2025. A Beta refez itens, armaduras e criaturas com foco na fidelidade ao OreSpawn. Em 2026, o trabalho avançou em IA, montarias, teleporte, The King, The Queen e Mobzilla.",
+      "descricao": "Comecei a preparação em dezembro de 2024 e estudei modelagem em 2025. Recriei itens, armaduras e criaturas com foco na fidelidade ao OreSpawn. Em 2026, avancei na IA, nas montarias, no teleporte e nos chefes The King, The Queen e Mobzilla.",
       "inicio": "2025-11",
       "fim": "2026-08",
       "versoes": [
@@ -519,7 +519,7 @@
       "minecraft": "26.1.2",
       "loader": "NeoForge",
       "titulo": "Port para Minecraft 26.1.2",
-      "descricao": "O port levou itens, armaduras, alimentos, plantas, seis dimensões e parte do bestiário ao Minecraft 26.1.2. Os JARs preservados são 0.7.3 e 0.7.4. No mesmo período, o site expandiu a documentação de itens e receitas.",
+      "descricao": "Portei itens, armaduras, alimentos, plantas, seis dimensões e parte do bestiário para o Minecraft 26.1.2. Os JARs são da 0.7.3 e da 0.7.4. Também ampliei a documentação de itens e receitas no site.",
       "inicio": "2026-07",
       "fim": "2026-08",
       "versoes": [

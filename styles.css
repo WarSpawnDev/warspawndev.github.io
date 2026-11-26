@@ -90,15 +90,6 @@ nav a {
   padding: 33px 0;
 }
 
-nav a.nav-downloads {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  min-width: 34px;
-  min-height: 44px;
-  padding: 0;
-}
-
 nav a::after {
   content: "";
   position: absolute;
@@ -1281,7 +1272,10 @@ footer .footer-mark {
   }
 
   .site-header .nav-downloads {
-    min-width: 44px;
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    padding: 0 4px;
   }
 
   .site-header .nav-downloads::after {
