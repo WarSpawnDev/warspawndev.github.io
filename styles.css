@@ -90,6 +90,15 @@ nav a {
   padding: 33px 0;
 }
 
+nav a.nav-downloads {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 34px;
+  min-height: 44px;
+  padding: 0;
+}
+
 nav a::after {
   content: "";
   position: absolute;
@@ -1267,8 +1276,16 @@ footer .footer-mark {
 }
 
 @media (max-width: 1050px) {
-  nav {
+  .site-header nav a:not(.nav-downloads) {
     display: none;
+  }
+
+  .site-header .nav-downloads {
+    min-width: 44px;
+  }
+
+  .site-header .nav-downloads::after {
+    bottom: 5px;
   }
 
   .bestiary-grid {

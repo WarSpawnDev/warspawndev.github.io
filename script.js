@@ -81,6 +81,7 @@ const mobs = [
 const translations = {
   pt: {
     navHome: "Início",
+    navDownloads: "Downloads do WarSpawn",
     navBestiary: "Bestiário",
     navDimensions: "Dimensões",
     navArsenal: "Arsenal",
@@ -177,6 +178,7 @@ const translations = {
   },
   en: {
     navHome: "Home",
+    navDownloads: "WarSpawn downloads",
     navBestiary: "Bestiary",
     navDimensions: "Dimensions",
     navArsenal: "Arsenal",
