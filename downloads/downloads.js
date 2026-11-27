@@ -137,13 +137,14 @@ async function loadArchive() {
   const archiveStatus = element("archive-status");
   const countStatus = element("count-status");
   const releasePage = `https://github.com/${catalog.repositorio}/releases/tag/${encodeURIComponent(catalog.release)}`;
+  const assetUrl = (name) => `https://github.com/${catalog.repositorio}/releases/download/${encodeURIComponent(catalog.release)}/${encodeURIComponent(name)}`;
 
   try {
     const release = await readJson(`https://api.github.com/repos/${catalog.repositorio}/releases/tags/${encodeURIComponent(catalog.release)}`);
     const releaseAssets = await readJson(`https://api.github.com/repos/${catalog.repositorio}/releases/${release.id}/assets?per_page=100`);
     for (const asset of releaseAssets) {
       const entry = expected.get(asset.name) ?? archived.get(asset.name);
-      const url = `https://github.com/${catalog.repositorio}/releases/download/${encodeURIComponent(catalog.release)}/${encodeURIComponent(asset.name)}`;
+      const url = assetUrl(asset.name);
       if (entry && asset.size === entry.bytes && asset.state === "uploaded" && asset.browser_download_url === url) {
         counts.push(asset.download_count);
         if (expected.has(asset.name)) assets.set(asset.name, asset);
@@ -161,7 +162,9 @@ async function loadArchive() {
       archiveStatus.textContent = `${assets.size} de ${expected.size} arquivos disponíveis.`;
     }
   } catch {
-    archiveStatus.append("O GitHub não respondeu com os downloads. ", Object.assign(node("a", "Consultar no GitHub"), { href: releasePage }));
+    for (const name of expected.keys()) assets.set(name, { browser_download_url: assetUrl(name) });
+    archiveStatus.append("Os links do catálogo estão disponíveis. A contagem está temporariamente indisponível. ",
+      Object.assign(node("a", "Ver no GitHub"), { href: releasePage }));
     countStatus.textContent = "Contagem indisponível no momento.";
   }
 
