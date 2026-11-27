@@ -24,6 +24,10 @@
     .replace(/[^a-z0-9]+/g, " ").trim();
   const variants = (value) => typeof value === "string" ? [value] : [value?.pt, value?.en].filter(Boolean);
 
+  function translationsForNavigation(key) {
+    return { pt: translations.pt[key], en: translations.en[key] };
+  }
+
   function buildIndex() {
     const entries = new Map();
     const graph = new Map();
