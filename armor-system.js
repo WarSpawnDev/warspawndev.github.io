@@ -2410,6 +2410,12 @@
   });
 
   window.WarSpawnArmorUI = Object.freeze({
+    editDistance,
+    openSet(armorId) {
+      if (!setsById.has(armorId)) return;
+      openExplorer({ armorId });
+      showDetail({ armorId, pushHistory: true });
+    },
     openItem(itemId) {
       const context = armorContextByItemId.get(itemId);
       if (!context) return false;

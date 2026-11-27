@@ -1267,21 +1267,6 @@ footer .footer-mark {
 }
 
 @media (max-width: 1050px) {
-  .site-header nav a:not(.nav-downloads) {
-    display: none;
-  }
-
-  .site-header .nav-downloads {
-    display: grid;
-    place-items: center;
-    min-height: 44px;
-    padding: 0 4px;
-  }
-
-  .site-header .nav-downloads::after {
-    bottom: 5px;
-  }
-
   .bestiary-grid {
     grid-template-columns: repeat(3, 1fr);
   }

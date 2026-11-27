@@ -81,6 +81,8 @@ const mobs = [
 const translations = {
   pt: {
     navHome: "Início",
+    navGeneral: "Geral",
+    navSearch: "Pesquisar no WarSpawn",
     navDownloads: "Downloads do WarSpawn",
     navBestiary: "Bestiário",
     navDimensions: "Dimensões",
@@ -178,6 +180,8 @@ const translations = {
   },
   en: {
     navHome: "Home",
+    navGeneral: "General",
+    navSearch: "Search WarSpawn",
     navDownloads: "WarSpawn downloads",
     navBestiary: "Bestiary",
     navDimensions: "Dimensions",
@@ -396,6 +400,14 @@ function openDossier(mob, trigger) {
   document.body.classList.add("modal-open");
   elements.modalClose.focus();
 }
+
+window.WarSpawnBestiaryUI = Object.freeze({
+  entries: mobs,
+  open(slug, trigger) {
+    const mob = mobs.find((entry) => entry.slug === slug);
+    if (mob) openDossier(mob, trigger);
+  },
+});
 
 function closeDossier() {
   if (elements.modal.hidden) return;

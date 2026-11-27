@@ -398,6 +398,16 @@
   renderSectors();
   updateLanguage();
 
+  window.WarSpawnDimensionUI = Object.freeze({
+    open(slug) {
+      const entry = registry.bySlug[slug];
+      if (!entry) return;
+      openExplorer();
+      const trigger = state.sectorButtons.find((button) => button.dataset.dimension === slug);
+      openDetail(entry, trigger);
+    },
+  });
+
   elements.showcase.addEventListener("click", () => openExplorer());
   elements.showcase.addEventListener("pointermove", handleShowcasePointer);
   elements.showcase.addEventListener("pointerleave", resetShowcase);

@@ -30,12 +30,13 @@
     <link rel="icon" href="/icons/favicon-warspawn-192-v2.png" type="image/png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="preload" href="assets/emblem-cosmic.png" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20261126-download-text" />
+    <link rel="stylesheet" href="styles.css?v=20261127-site-nav" />
     <link rel="stylesheet" href="dimension-system.css?v=20260802-ui" />
     <link rel="stylesheet" href="food-system.css" />
     <link rel="stylesheet" href="armor-system.css?v=20260919-vanilla-nodes" />
     <link rel="stylesheet" href="almanac-system.css?v=20260920-home-showcase" />
     <link rel="stylesheet" href="ui-sound-system.css?v=20260819-arsenal-polish" />
+    <link rel="stylesheet" href="site-navigation.css?v=20261127">
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
   <body>
@@ -44,16 +45,31 @@
         <img src="assets/emblem-white.png" alt="" width="56" height="56" />
         <span>WARSPAWN</span>
       </a>
-      <nav aria-label="Navegação principal">
+      <div class="site-search-shell">
+        <button class="site-search-toggle" id="site-search-toggle" type="button" aria-label="Pesquisar no WarSpawn" data-i18n-aria-label="navSearch" aria-expanded="false" aria-controls="site-search">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>
+        </button>
+        <div class="site-search-panel" id="site-search" role="search" hidden>
+          <input id="site-search-input" type="search" maxlength="80" autocomplete="off" aria-label="Pesquisar no WarSpawn" />
+          <p id="site-search-status" class="site-search-status" role="status"></p>
+          <ul class="site-search-results" id="site-search-results"></ul>
+          <button class="site-search-more" id="site-search-more" type="button" hidden>Mostrar mais</button>
+        </div>
+      </div>
+      <nav class="primary-nav" aria-label="Navegação principal">
         <a href="#inicio" data-i18n="navHome">Início</a>
         <a class="nav-downloads" href="/downloads/" aria-label="Downloads do WarSpawn" data-i18n-aria-label="navDownloads">Download</a>
         <a href="#bestiario" data-i18n="navBestiary">Bestiário</a>
         <a href="#dimensoes" data-i18n="navDimensions">Dimensões</a>
-        <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
-        <a href="#comidas" data-i18n="navFood">Comidas</a>
-        <a href="#itens-blocos" data-i18n="navAlmanac">Itens / Blocos</a>
-        <a href="#galeria" data-i18n="navGallery">Galeria</a>
-        <a href="#redes" data-i18n="navSocial">Redes sociais</a>
+        <div class="nav-general">
+          <button class="nav-general-toggle" id="general-toggle" type="button" data-i18n="navGeneral" aria-expanded="false" aria-controls="general-links">Geral</button>
+          <div class="nav-general-links" id="general-links" hidden>
+            <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
+            <a href="#itens-blocos" data-i18n="navAlmanac">Itens / Blocos</a>
+            <a href="#comidas" data-i18n="navFood">Comidas</a>
+            <a href="#galeria" data-i18n="navGallery">Galeria</a>
+          </div>
+        </div>
       </nav>
       <div class="header-controls">
         <div class="audio-control" id="audio-control">
@@ -469,27 +485,27 @@
           </div>
         </div>
         <div class="gallery">
-          <figure class="gallery-1">
+          <figure class="gallery-1" id="warspawn-gallery-1">
             <img src="assets/battle-dinosaurs.png" alt="T-Rex vs Allosaurus" loading="lazy" decoding="async" />
             <figcaption>T-Rex vs Allosaurus</figcaption>
           </figure>
-          <figure class="gallery-2">
+          <figure class="gallery-2" id="warspawn-gallery-2">
             <img src="assets/projectiles.png" alt="Projéteis 3D" loading="lazy" decoding="async" />
             <figcaption data-i18n="galleryProjectiles">Projéteis 3D</figcaption>
           </figure>
-          <figure class="gallery-3">
+          <figure class="gallery-3" id="warspawn-gallery-3">
             <img src="assets/destructive-weapons.png" alt="Armas destruidoras" loading="lazy" decoding="async" />
             <figcaption data-i18n="galleryWeapons">Armas destruidoras</figcaption>
           </figure>
-          <figure class="gallery-4">
+          <figure class="gallery-4" id="warspawn-gallery-4">
             <img src="assets/thunder-staff.png" alt="Cajado de Raios" loading="lazy" decoding="async" />
             <figcaption data-i18n="galleryStaff">Cajado de Raios</figcaption>
           </figure>
-          <figure class="gallery-5">
+          <figure class="gallery-5" id="warspawn-gallery-5">
             <img src="assets/legacy-new.png" alt="Antigo e novo" loading="lazy" decoding="async" />
             <figcaption data-i18n="galleryLegacy">Antigo e novo</figcaption>
           </figure>
-          <figure class="gallery-swords">
+          <figure class="gallery-swords" id="warspawn-gallery-swords">
             <img
               src="assets/swords.png"
               alt="Big Bertha, Slice e Royal Guardian Sword"
@@ -1049,9 +1065,9 @@
         Este site precisa de JavaScript para abrir os dossiês e trocar o idioma.
       </div>
     </noscript>
-    <script src="script.js?v=20261126-download-nav" defer></script>
+    <script src="script.js?v=20261127-site-nav" defer></script>
     <script src="dimension-data.js" defer></script>
-    <script src="dimension-system.js?v=20260820-overlay-history" defer></script>
+    <script src="dimension-system.js?v=20261127-site-nav" defer></script>
     <script src="food-assets.js?v=20260819-lettuce" defer></script>
     <script src="crafting-core.js?v=20260919-crafting-graph" defer></script>
     <script src="food-data.js" defer></script>
@@ -1059,8 +1075,9 @@
     <script src="crafting-data.js?v=20260919-items-blocks" defer></script>
     <script src="almanac-data.js?v=20260919-items-blocks" defer></script>
     <script src="food-system.js?v=20260919-items-blocks" defer></script>
-    <script src="armor-system.js?v=20260919-items-blocks" defer></script>
-    <script src="almanac-system.js?v=20260920-internal-history" defer></script>
+    <script src="armor-system.js?v=20261127-site-nav" defer></script>
+    <script src="almanac-system.js?v=20261127-site-nav" defer></script>
     <script src="ui-sound-system.js?v=20260820-armor-sync" defer></script>
+    <script src="site-navigation.js?v=20261127" defer></script>
   </body>
 </html>

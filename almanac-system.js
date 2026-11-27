@@ -258,9 +258,9 @@
     return `<section class="almanac-detail-section"><h3>${escapeHtml(t().related)}</h3><div class="almanac-related-grid">${entries.map((entry) => `<button type="button" data-almanac-open="${escapeHtml(entry.id)}"><img src="${escapeHtml(entry.image)}" alt="" loading="lazy" decoding="async"><span>${escapeHtml(local(entry.item.name))}</span></button>`).join("")}</div></section>`;
   }
 
-  function recipeSection(title, recipes) {
+  function recipeSection(title, recipes, id = "") {
     if (!recipes.length) return "";
-    return `<section class="almanac-detail-section"><h3>${escapeHtml(title)}</h3><div class="almanac-recipe-list">${recipes.map(recipeMarkup).join("")}</div></section>`;
+    return `<section ${id ? `id="${id}" tabindex="-1"` : ""} class="almanac-detail-section"><h3>${escapeHtml(title)}</h3><div class="almanac-recipe-list">${recipes.map(recipeMarkup).join("")}</div></section>`;
   }
 
   function propertiesMarkup(context) {
@@ -301,7 +301,7 @@
       </header>
       ${propertiesMarkup(context)}
       ${relatedMarkup(related)}
-      ${recipeSection(t().recipe, obtaining)}
+      ${recipeSection(t().recipe, obtaining, "almanac-obtaining-recipe")}
       ${recipeSection(t().usedIn, uses)}
     `;
     detail.hidden = false;
@@ -424,5 +424,17 @@
   renderGrid();
   renderShowcase();
   if (location.hash === "#itens-blocos") openExplorer({ pushHistory: false });
-  window.WarSpawnAlmanacUI = Object.freeze({ openItem, openExplorer, render: renderGrid });
+  window.WarSpawnAlmanacUI = Object.freeze({
+    openItem,
+    openExplorer,
+    render: renderGrid,
+    openRecipe(itemId) {
+      showAlmanacDetail(itemId);
+      requestAnimationFrame(() => {
+        const recipe = detailContent.querySelector("#almanac-obtaining-recipe");
+        recipe?.scrollIntoView({ block: "start" });
+        recipe?.focus({ preventScroll: true });
+      });
+    },
+  });
 })();
