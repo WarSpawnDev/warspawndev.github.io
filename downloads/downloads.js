@@ -40,12 +40,19 @@ function renderArchive(catalog, assets) {
   for (const phase of [...catalog.fases].reverse()) {
     const group = node("details", "", "phase");
     group.id = phase.id;
+    const alphaCompatibility = phase.id === "alpha-1-12-2";
     const summary = node("summary");
-    summary.append(node("span", phase.nome, "phase-title"), node("span", `${phase.versoes.length} arquivos · ${phase.loader}`, "phase-count"));
+    const label = node("span", "", "summary-label");
+    label.append(node("span", phase.nome, "phase-title"), node("span", `${phase.versoes.length} arquivos · ${phase.loader}`, "phase-count"));
+    summary.append(label);
+    if (alphaCompatibility) summary.append(compatibilityIcon());
+    const body = node("div", "", "phase-body");
+    if (alphaCompatibility) body.append(compatibilityNotice());
     const releases = node("ul", "", "releases");
 
     for (const entry of phase.versoes) {
       const row = node("li", "", "release-row");
+      row.id = `jar-${entry.arquivo}`;
       const info = node("div");
       const date = formatDate.format(new Date(`${entry.data}T00:00:00Z`));
       const size = formatNumber.format(Math.round(entry.bytes / 104857.6) / 10);
@@ -55,35 +62,71 @@ function renderArchive(catalog, assets) {
       releases.append(row);
     }
 
-    group.append(summary, releases);
+    body.append(releases);
+    group.append(summary, body);
     versions.append(group);
 
     const milestone = node("li");
     const link = node("a", `Ver arquivos · ${phase.nome}`);
     link.href = `#${phase.id}`;
-    link.addEventListener("click", () => { group.open = true; });
+    link.addEventListener("click", (event) => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      if (location.hash !== link.hash) history.pushState(null, "", link.hash);
+      revealArchiveTarget(phase.id);
+    });
     const firstVersion = phase.versoes.at(-1).versao;
     const lastVersion = phase.versoes[0].versao;
     const range = firstVersion === lastVersion ? `Versão ${firstVersion}` : `De ${firstVersion} a ${lastVersion}`;
-    milestone.append(
-      node("strong", `${phase.nome} · ${range}`, "phase-range"),
-      node("p", period(phase.inicio, phase.fim), "period"),
-      node("h3", phase.titulo),
-      node("p", phase.descricao)
-    );
-    if (phase.minecraft === "1.12.2") {
-      milestone.append(element("forge-warning-template").content.cloneNode(true));
+    const phaseHeading = node("strong", `${phase.nome} · ${range}`, "phase-range");
+    const content = node("div");
+    content.append(node("p", period(phase.inicio, phase.fim), "period"),
+      node("h3", phase.titulo), node("p", phase.descricao));
+    if (alphaCompatibility) {
+      const detail = node("details", "", "history-phase");
+      const heading = node("summary");
+      heading.append(phaseHeading, compatibilityIcon());
+      content.append(compatibilityNotice(), link);
+      detail.append(heading, content);
+      milestone.append(detail);
+    } else {
+      content.append(link);
+      milestone.append(phaseHeading, content);
     }
-    milestone.append(link);
     timeline.prepend(milestone);
   }
-
-  const target = document.getElementById(location.hash.slice(1));
-  if (target?.matches(".phase")) {
-    target.open = true;
-    target.scrollIntoView();
-  }
 }
+
+function compatibilityNotice() {
+  return element("forge-warning-template").content.cloneNode(true);
+}
+
+function compatibilityIcon() {
+  const icon = node("span", "!", "forge-icon");
+  icon.setAttribute("aria-label", "Aviso de compatibilidade");
+  icon.setAttribute("role", "img");
+  return icon;
+}
+
+function revealArchiveTarget(id = location.hash.slice(1)) {
+  const target = element(id);
+  const panel = target?.closest(".phase");
+  if (!panel) return;
+  panel.dataset.jump = "";
+  panel.open = true;
+  target.scrollIntoView({ block: "start", behavior: "instant" });
+  requestAnimationFrame(() => requestAnimationFrame(() => { delete panel.dataset.jump; }));
+}
+
+const topbar = document.querySelector(".topbar");
+function updateTopbar() {
+  const progress = Math.min(window.scrollY / 180, 1);
+  topbar.style.setProperty("--header-opacity", 0.94 - progress * 0.14);
+  topbar.style.setProperty("--header-fade", 0.82 - progress * 0.34);
+}
+window.addEventListener("scroll", updateTopbar, { passive: true });
+window.addEventListener("hashchange", () => revealArchiveTarget());
+updateTopbar();
 
 async function loadArchive() {
   const catalog = await readJson("catalogo.json?v=20261127-forge-1122");
@@ -128,6 +171,7 @@ async function loadArchive() {
   element("requirements").textContent = `Minecraft Java ${currentPhase.minecraft} · ${currentPhase.loader} ${catalog.atual.loaderMinimo} ou superior`;
   element("current-download").replaceChildren(downloadNode(assets.get(current.arquivo), "Baixar versão atual", `Baixar WarSpawn ${current.versao}`));
   renderArchive(catalog, assets);
+  revealArchiveTarget();
 }
 
 loadArchive().catch(() => {

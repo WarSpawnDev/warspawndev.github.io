@@ -15,12 +15,13 @@
   const more = document.querySelector("#site-search-more");
   const pageSize = 8;
   let index;
+  let downloadsRequest;
   let ranked = [];
   let rendered = 0;
 
   const copy = {
-    pt: { search: "Pesquisar no WarSpawn", placeholder: "Buscar itens, criaturas e seções…", empty: "Nenhum resultado.", count: (n) => `${n} ${n === 1 ? "resultado" : "resultados"}`, more: "Mostrar mais", restart: "Voltar ao início", section: "Seção", item: "Item", block: "Bloco", food: "Comida", weapon: "Arma", armor: "Armadura", recipe: "Receita", mob: "Criatura", dimension: "Dimensão", gallery: "Galeria", download: "Download", related: "Relacionado" },
-    en: { search: "Search WarSpawn", placeholder: "Find items, creatures and sections…", empty: "No results.", count: (n) => `${n} ${n === 1 ? "result" : "results"}`, more: "Show more", restart: "Back to first results", section: "Section", item: "Item", block: "Block", food: "Food", weapon: "Weapon", armor: "Armor", recipe: "Recipe", mob: "Creature", dimension: "Dimension", gallery: "Gallery", download: "Download", related: "Related" },
+    pt: { search: "Pesquisar no WarSpawn", placeholder: "Buscar itens, criaturas e seções…", loadingDownloads: "Consultando as versões…", empty: "Nenhum resultado.", count: (n) => `${n} ${n === 1 ? "resultado" : "resultados"}`, more: "Mostrar mais", restart: "Voltar ao início", section: "Seção", item: "Item", block: "Bloco", food: "Comida", weapon: "Arma", armor: "Armadura", recipe: "Receita", mob: "Criatura", dimension: "Dimensão", gallery: "Galeria", download: "Download", related: "Relacionado" },
+    en: { search: "Search WarSpawn", placeholder: "Find items, creatures and sections…", loadingDownloads: "Checking versions…", empty: "No results.", count: (n) => `${n} ${n === 1 ? "result" : "results"}`, more: "Show more", restart: "Back to first results", section: "Section", item: "Item", block: "Block", food: "Food", weapon: "Weapon", armor: "Armor", recipe: "Recipe", mob: "Creature", dimension: "Dimension", gallery: "Gallery", download: "Download", related: "Related" },
   };
   const language = () => document.documentElement.lang === "en" ? "en" : "pt";
   const label = (value) => typeof value === "string" ? value : value?.[language()] || value?.pt || value?.en || "";
@@ -139,7 +140,34 @@
         relate(key, `recipe:${item}`);
       }
     }
-    return { entries, graph };
+    return { entries, graph, add };
+  }
+
+  function indexDownloads() {
+    return downloadsRequest ??= fetch("/downloads/catalogo.json?v=20261127-forge-1122", { signal: AbortSignal.timeout(10000) })
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then((catalog) => {
+        for (const phase of catalog.fases) {
+          const channel = phase.nome.split(" ")[0];
+          index.add(`download:${phase.id}`, phase.nome, "download", { href: `/downloads/#${phase.id}` }, {
+            aliases: [channel, phase.minecraft, `Minecraft ${phase.minecraft}`, `Minecraft ${phase.minecraft} ${channel}`, `${channel} Minecraft ${phase.minecraft}`],
+          });
+          for (const entry of phase.versoes) {
+            index.add(`jar:${entry.arquivo}`, `WarSpawn ${entry.versao} · ${phase.nome}`, "download",
+              { href: `/downloads/#jar-${encodeURIComponent(entry.arquivo)}` }, {
+                aliases: [entry.arquivo, entry.versao, `WarSpawn ${entry.versao}`, `${channel} ${entry.versao}`],
+              });
+          }
+        }
+        if (!search.hidden && input.value.trim()) refresh();
+      })
+      .catch(() => {
+        downloadsRequest = undefined;
+        if (!search.hidden && !ranked.length && input.value.trim()) status.textContent = copy[language()].empty;
+      });
   }
 
   function textScore(query, value, alias) {
@@ -237,6 +265,10 @@
     rendered = 0;
     status.textContent = query && !ranked.length ? t.empty : "";
     showNextPage();
+    if (query && !downloadsRequest) {
+      if (!ranked.length) status.textContent = t.loadingDownloads;
+      indexDownloads();
+    }
   }
 
   function updateGeneral() {

@@ -5,6 +5,7 @@
   --gold: #d5ad62;
   --line: #443929;
   --panel: #111217;
+  --download-header-height: 76px;
   font-family: Arial, Helvetica, sans-serif;
   background: #07080b;
   color: var(--ink);
@@ -19,13 +20,20 @@ main a:focus-visible, .topbar a:focus-visible, summary:focus-visible { outline: 
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  min-height: 76px;
+  position: fixed;
+  z-index: 40;
+  inset: 0 0 auto;
+  height: var(--download-header-height);
+  --header-opacity: 0.94;
+  --header-fade: 0.82;
+  background: linear-gradient(180deg, rgb(4 5 8 / var(--header-opacity)), rgb(4 5 8 / var(--header-fade)));
+  backdrop-filter: blur(4px);
   padding: 0.6rem max(1rem, calc((100vw - 64rem) / 2));
   border-bottom: 1px solid var(--line);
 }
 .topbar .brand img { flex: none; transform: none; }
 .topbar > a:last-child { text-decoration: underline; text-underline-offset: 0.2em; }
-main { max-width: 64rem; margin: 0 auto; padding: clamp(2rem, 6vw, 4.5rem) 1rem 3.5rem; }
+main { max-width: 64rem; margin: 0 auto; padding: calc(var(--download-header-height) + clamp(2rem, 6vw, 4.5rem)) 1rem 3.5rem; }
 h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.15; }
 h1 { font-size: clamp(2.8rem, 7vw, 4.8rem); margin: 0 0 1.5rem; font-weight: 700; letter-spacing: normal; }
 h2 { font-size: clamp(1.65rem, 4vw, 2.35rem); margin: 0; }
@@ -65,9 +73,48 @@ p { line-height: 1.55; }
 #versions { margin-top: 1.15rem; }
 .phase, .history { background: var(--panel); border: 1px solid var(--line); border-radius: 0.5rem; }
 .phase + .phase { margin-top: 0.65rem; }
-summary { cursor: pointer; padding: 1rem; }
-summary::marker { color: var(--gold); }
-summary h2 { display: inline; }
+.phase, .release-row, .history { scroll-margin-top: calc(var(--download-header-height) + 12px); }
+summary {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  list-style: none;
+  cursor: pointer;
+  padding: 1rem;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: "";
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border: solid var(--gold);
+  border-width: 0 2px 2px 0;
+  transform: translateY(0) rotate(-45deg);
+  transition: transform 240ms cubic-bezier(.2,.75,.3,1);
+}
+details[open] > summary::before { transform: translateY(-2px) rotate(45deg); }
+.summary-label { min-width: 0; }
+summary .phase-title { margin-right: 0; }
+summary .phase-count { margin-inline-start: 0.55rem; }
+.history-phase > summary { padding: 0; }
+.history-phase > summary .phase-range { margin: 0; }
+.phase-body > .forge-warning { margin: 0 1rem 0.7rem; }
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+  details { interpolate-size: allow-keywords; }
+  details::details-content {
+    height: 0;
+    opacity: 0;
+    overflow: clip;
+    transition: height 240ms cubic-bezier(.2,.75,.3,1), opacity 240ms ease,
+      content-visibility 240ms allow-discrete;
+  }
+  details[open]::details-content { height: auto; opacity: 1; }
+  details[data-jump]::details-content { transition: none; }
+  @media (prefers-reduced-motion: reduce) {
+    details::details-content { transition: none; }
+  }
+}
 .phase-title { font-weight: 700; margin-right: 0.55rem; }
 .phase-count { color: var(--muted); font-size: 0.9rem; }
 .releases, #timeline { list-style: none; padding: 0; margin: 0; }
@@ -83,7 +130,7 @@ summary h2 { display: inline; }
 .period { font-size: 0.875rem; }
 .phase-range { display: block; margin-top: 0.5rem; font-size: 0.9rem; }
 @media (max-width: 38rem) {
-  .topbar { min-height: 68px; }
+  :root { --download-header-height: 68px; }
   .topbar .brand img { width: 48px; height: 48px; }
   .current { grid-template-columns: 1fr; }
   .counter { border-left: 0; border-top: 1px solid var(--line); padding: 0.9rem 0 0; }
@@ -99,9 +146,14 @@ summary h2 { display: inline; }
   background: #261e15;
   color: #f8dfa8;
 }
-.forge-warning > strong {
+.forge-icon {
   flex: none;
+  display: inline-grid;
+  place-items: center;
   width: 1.35em;
+  height: 1.35em;
+  font-weight: 900;
+  line-height: 1;
   border-radius: 50%;
   background: var(--gold);
   color: #17110b;
