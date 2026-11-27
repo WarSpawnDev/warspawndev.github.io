@@ -17,18 +17,10 @@
       "fim": "2021-02",
       "versoes": [
         {
-          "arquivo": "WarSpawn-alpha-1.12.2-0.2.6.jar",
-          "versao": "0.2.6",
-          "data": "2021-02-06",
-          "bytes": 1063431,
-          "nota": "O outro JAR 0.2.6 desta fase tem conteúdo idêntico."
-        },
-        {
           "arquivo": "WarSpawn-alpha-0.2.6-1.12.2-Forge-14.23.5.2768.jar",
           "versao": "0.2.6",
           "data": "2021-02-06",
-          "bytes": 1063431,
-          "nota": "O outro JAR 0.2.6 desta fase tem conteúdo idêntico."
+          "bytes": 1063431
         },
         {
           "arquivo": "WarSpawn-alpha-1.12.2-0.2.5.jar",
@@ -536,6 +528,12 @@
           "bytes": 19195017
         }
       ]
+    }
+  ],
+  "arquivosDuplicados": [
+    {
+      "arquivo": "WarSpawn-alpha-1.12.2-0.2.6.jar",
+      "bytes": 1063431
     }
   ]
 }

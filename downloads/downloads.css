@@ -89,3 +89,21 @@ summary h2 { display: inline; }
   .counter { border-left: 0; border-top: 1px solid var(--line); padding: 0.9rem 0 0; }
   .release-row { align-items: flex-start; }
 }
+
+.forge-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border-left: 3px solid var(--gold);
+  background: #261e15;
+  color: #f8dfa8;
+}
+.forge-warning > strong {
+  flex: none;
+  width: 1.35em;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #17110b;
+  text-align: center;
+}

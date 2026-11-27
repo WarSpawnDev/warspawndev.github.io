@@ -69,9 +69,12 @@ function renderArchive(catalog, assets) {
       node("strong", `${phase.nome} · ${range}`, "phase-range"),
       node("p", period(phase.inicio, phase.fim), "period"),
       node("h3", phase.titulo),
-      node("p", phase.descricao),
-      link
+      node("p", phase.descricao)
     );
+    if (phase.minecraft === "1.12.2") {
+      milestone.append(element("forge-warning-template").content.cloneNode(true));
+    }
+    milestone.append(link);
     timeline.prepend(milestone);
   }
 
@@ -83,9 +86,11 @@ function renderArchive(catalog, assets) {
 }
 
 async function loadArchive() {
-  const catalog = await readJson("catalogo.json?v=20261126-newest-first");
+  const catalog = await readJson("catalogo.json?v=20261127-forge-1122");
   const expected = new Map(catalog.fases.flatMap((phase) => phase.versoes.map((entry) => [entry.arquivo, entry])));
   const assets = new Map();
+  const archived = new Map(catalog.arquivosDuplicados.map((entry) => [entry.arquivo, entry]));
+  const counts = [];
   const archiveStatus = element("archive-status");
   const countStatus = element("count-status");
   const releasePage = `https://github.com/${catalog.repositorio}/releases/tag/${encodeURIComponent(catalog.release)}`;
@@ -94,14 +99,14 @@ async function loadArchive() {
     const release = await readJson(`https://api.github.com/repos/${catalog.repositorio}/releases/tags/${encodeURIComponent(catalog.release)}`);
     const releaseAssets = await readJson(`https://api.github.com/repos/${catalog.repositorio}/releases/${release.id}/assets?per_page=100`);
     for (const asset of releaseAssets) {
-      const entry = expected.get(asset.name);
+      const entry = expected.get(asset.name) ?? archived.get(asset.name);
       const url = `https://github.com/${catalog.repositorio}/releases/download/${encodeURIComponent(catalog.release)}/${encodeURIComponent(asset.name)}`;
       if (entry && asset.size === entry.bytes && asset.state === "uploaded" && asset.browser_download_url === url) {
-        assets.set(asset.name, asset);
+        counts.push(asset.download_count);
+        if (expected.has(asset.name)) assets.set(asset.name, asset);
       }
     }
 
-    const counts = Array.from(assets.values(), (asset) => asset.download_count);
     if (assets.size && counts.every((count) => Number.isSafeInteger(count) && count >= 0)) {
       element("total").textContent = formatNumber.format(counts.reduce((sum, count) => sum + count, 0));
       if (assets.size !== expected.size) countStatus.textContent = "Soma dos arquivos disponíveis no momento.";
