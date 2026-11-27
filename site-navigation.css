@@ -129,7 +129,7 @@
 .nav-general-links a::after { display: none; }
 #galeria figure[id] { scroll-margin-top: 100px; }
 
-@media (max-width: 960px) {
+@media (max-width: 1040px) {
   .site-header {
     --site-header-height: 112px;
     height: var(--site-header-height);
@@ -154,5 +154,5 @@
   .section, #galeria figure[id] { scroll-margin-top: 112px; }
 }
 @media (max-width: 390px) {
-  .site-header .primary-nav { letter-spacing: 0; }
+  .site-header .primary-nav { gap: 2px; margin-inline: -8px; letter-spacing: 0; }
 }
