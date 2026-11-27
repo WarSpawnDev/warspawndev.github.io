@@ -221,6 +221,7 @@
     const li = document.createElement("li");
     const control = document.createElement(entry.target.href ? "a" : "button");
     control.className = "site-search-result";
+    if (entry.image) control.dataset.uiSound = "item";
     if (entry.target.href) {
       control.href = entry.target.href;
       control.addEventListener("click", () => setSearch(false, true));
@@ -255,7 +256,9 @@
     rendered += next.length;
     status.textContent = next.length ? `${start}–${rendered} · ${copy[language()].count(ranked.length)}` : status.textContent;
     more.hidden = ranked.length <= pageSize;
-    more.textContent = copy[language()][rendered >= ranked.length ? "restart" : "more"];
+    const atEnd = rendered >= ranked.length;
+    more.dataset.uiSound = atEnd ? "back" : "navigation";
+    more.textContent = copy[language()][atEnd ? "restart" : "more"];
   }
 
   function refresh() {

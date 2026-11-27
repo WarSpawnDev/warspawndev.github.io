@@ -2356,17 +2356,7 @@
     const openControl = pieceControl || relatedControl;
     if (!openControl || !["Enter", " "].includes(event.key)) return;
     event.preventDefault();
-    if (pieceControl) {
-      showPieceDetail({
-        pushHistory: true,
-        pieceId: pieceControl.getAttribute("data-armor-piece-open"),
-      });
-    } else {
-      showRelatedItemDetail({
-        pushHistory: true,
-        itemId: relatedControl.getAttribute("data-armor-related-open"),
-      });
-    }
+    openControl.click();
   });
 
   explorer.addEventListener("keydown", (event) => {
@@ -2390,7 +2380,7 @@
       }
     } else if ((event.key === "Enter" || event.key === " ") && document.activeElement === carousel) {
       event.preventDefault();
-      showDetail({ pushHistory: true });
+      openDetailButton.click();
     }
   });
 

@@ -12,7 +12,7 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; }
-main a, .topbar > a:last-child { color: var(--gold); }
+main a, .download-header-controls > a { color: var(--gold); }
 main a { text-decoration: underline; }
 main a:focus-visible, .topbar a:focus-visible, summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
 .topbar {
@@ -32,7 +32,8 @@ main a:focus-visible, .topbar a:focus-visible, summary:focus-visible { outline: 
   border-bottom: 1px solid var(--line);
 }
 .topbar .brand img { flex: none; transform: none; }
-.topbar > a:last-child { text-decoration: underline; text-underline-offset: 0.2em; }
+.download-header-controls { display: flex; align-items: center; gap: 0.65rem; }
+.download-header-controls > a { text-decoration: underline; text-underline-offset: 0.2em; }
 main { max-width: 64rem; margin: 0 auto; padding: calc(var(--download-header-height) + clamp(2rem, 6vw, 4.5rem)) 1rem 3.5rem; }
 h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; line-height: 1.15; }
 h1 { font-size: clamp(2.8rem, 7vw, 4.8rem); margin: 0 0 1.5rem; font-weight: 700; letter-spacing: normal; }

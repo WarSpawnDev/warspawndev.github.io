@@ -14,7 +14,9 @@
     profileHint: document.querySelector("#sound-profile-hint"),
   };
 
-  if (Object.values(elements).some((element) => !element)) return;
+  const { audioControl, soundToggle, ...profileMenu } = elements;
+  if (!audioControl || !soundToggle) return;
+  const hasProfileMenu = Object.values(profileMenu).every(Boolean);
 
   const profileOrder = ["velvet", "orbit", "crystal", "neon", "pulse"];
   const soundProfiles = {
@@ -135,14 +137,43 @@
     },
   };
 
+  const itemSelector = [
+    ".catalog-item",
+    "button.craft-item",
+    ".mob-card",
+    "[data-almanac-id]",
+    "[data-almanac-open]",
+    "[data-almanac-related-id]",
+    "[data-food-id]",
+    "[data-armor-piece-open]",
+    "[data-armor-related-open]",
+    "[data-crafting-open]",
+  ].join(",");
+  const backSelector = [
+    '[data-ui-sound="back"]',
+    ".dimension-back",
+    ".dimension-explorer-close",
+    ".armor-back",
+    ".armor-explorer-close",
+    ".modal-close",
+    "#modal-close-button",
+    "[data-almanac-back]",
+    "[data-almanac-close]",
+    "[data-almanac-explorer-close]",
+    "[data-armor-piece-back]",
+    "[data-armor-item-back]",
+    "[data-armor-craft-back]",
+  ].join(",");
+  const backdropSelector = "#modal, #almanac-detail, #armor-explorer";
+  const searchFieldSelector = 'input[type="search"], #armor-search-input';
+
   const selectableSelector = [
     "[data-ui-sound]",
     "[data-audio-profile]",
     ".dimension-sector",
     ".dimension-showcase",
-    ".mob-card",
-    ".catalog-item",
-    "button.craft-item",
+    itemSelector,
+    "details > summary:first-of-type",
     ".recipe-order-badge",
     ".site-header nav a",
     ".brand",
@@ -167,6 +198,7 @@
     ".dimension-wheel-frame",
     ".food-catalog",
     ".bestiary-grid",
+    ".almanac-grid",
     ".gallery",
   ].join(",");
 
@@ -297,8 +329,6 @@
 
     elements.audioControl.style.setProperty("--sound-profile-accent", activeProfile.accent);
     elements.soundToggle.disabled = !supported;
-    elements.menuToggle.disabled = !supported;
-    elements.masterToggle.disabled = !supported;
     elements.soundToggle.dataset.soundState = state.enabled && supported ? "on" : "off";
     elements.soundToggle.dataset.soundProfile = state.profile;
     elements.soundToggle.setAttribute("aria-pressed", String(state.enabled && supported));
@@ -308,6 +338,9 @@
     );
     elements.soundToggle.title = elements.soundToggle.getAttribute("aria-label");
 
+    if (!hasProfileMenu) return;
+    elements.menuToggle.disabled = !supported;
+    elements.masterToggle.disabled = !supported;
     elements.menuToggle.setAttribute("aria-expanded", String(state.menuOpen));
     elements.menuToggle.setAttribute(
       "aria-label",
@@ -447,7 +480,10 @@
       element?.dataset?.dimension ||
       element?.dataset?.armorId ||
       element?.dataset?.foodId ||
+      element?.dataset?.almanacId ||
+      element?.dataset?.almanacOpen ||
       element?.dataset?.slug ||
+      element?.getAttribute("aria-label")?.trim() ||
       element?.textContent ||
       "warspawn";
     let total = 0;
@@ -532,7 +568,7 @@
       return declaredKind;
     }
     if (element.matches(".dimension-sector, .dimension-showcase")) return "dimension";
-    if (element.matches(".catalog-item, button.craft-item, .mob-card")) return "item";
+    if (element.matches(itemSelector)) return "item";
     if (element.matches(".gallery figure")) return "media";
     return "navigation";
   }
@@ -547,6 +583,14 @@
     const variation = pitchVariation(element);
     buildPattern(resolvedProfile, kind, variation).forEach((specification) => {
       voice(specification, soundProfiles[resolvedProfile].synth);
+    });
+  }
+
+  function playAction(kind, element) {
+    // Some browsers finish resuming Web Audio after the first activation.
+    if (state.context?.state === "running") playSound(kind, element, true);
+    else if (state.enabled) void unlockAudio().then((ready) => {
+      if (ready) playSound(kind, element, true);
     });
   }
 
@@ -640,15 +684,38 @@
       !elements.audioControl.contains(event.target)
     ) {
       setMenuOpen(false);
+      if (!closestSelectable(event.target) && !event.target.matches?.(searchFieldSelector)) {
+        playAction("back", elements.menuToggle);
+        return;
+      }
+    }
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.matches("#dimension-explorer:not([hidden])")) {
+      playAction("back", target);
+    } else if (!closestSelectable(target) && !target.matches(searchFieldSelector) && !target.matches(backdropSelector)) {
+      const search = document.querySelector("#site-search:not([hidden])");
+      const general = document.querySelector("#general-links:not([inert])");
+      if (search && !search.closest(".site-search-shell").contains(target)) playAction("back", search);
+      else if (general && !general.closest(".nav-general").contains(target)) playAction("back", general);
     }
   }, { capture: true, passive: true });
 
   document.addEventListener("keydown", (event) => {
     if (state.enabled) void unlockAudio();
-    if (event.key === "Escape" && state.menuOpen) {
+    if (event.key !== "Escape" || event.repeat) return;
+    if (state.menuOpen) {
       event.preventDefault();
+      playAction("back", elements.menuToggle);
       setMenuOpen(false, true);
+      return;
     }
+    const closing = document.querySelector("#site-search:not([hidden]), #general-links:not([inert])") ||
+      (event.target instanceof Element && event.target.closest(
+        "#almanac-detail:not([hidden]), #armor-explorer:not([hidden]), #dimension-explorer:not([hidden])",
+      )) ||
+      document.querySelector("#modal:not([hidden])");
+    if (closing) playAction("back", closing);
   }, { capture: true });
 
   document.addEventListener("pointerover", (event) => {
@@ -671,7 +738,8 @@
   });
 
   document.addEventListener("focusin", (event) => {
-    const element = closestSelectable(event.target);
+    const element = event.target.matches?.(searchFieldSelector)
+      ? event.target : closestSelectable(event.target);
     if (!element || element === state.hovered || isArmorMotionControl(element)) return;
 
     const previewProfile = element.dataset.audioProfile;
@@ -740,12 +808,16 @@
       state.suppressClickUntil = 0;
       state.suppressedElements = [];
     }
+    if (!element && event.target.matches?.(backdropSelector)) {
+      playAction("back", event.target);
+      return;
+    }
     if (
       !element ||
       element === elements.soundToggle ||
       element === elements.menuToggle ||
       element === elements.masterToggle ||
-      element.matches("[data-audio-profile]")
+      element.matches("[data-audio-profile], select")
     ) return;
 
     if (
@@ -753,17 +825,17 @@
       !element.matches('.armor-option[data-armor-offset="0"]')
     ) return;
 
-    const isBackAction = element.matches(
-      ".dimension-back, .dimension-explorer-close, .armor-back, .armor-explorer-close, .modal-close, #modal-close-button",
-    );
-    playSound(isBackAction ? "back" : "confirm", element, true);
+    const isBackAction = element.matches(backSelector) ||
+      (element.matches("summary") && element.parentElement.open) ||
+      element.matches('#site-search-toggle[aria-expanded="true"]');
+    playAction(isBackAction ? "back" : "confirm", element);
   }, true);
 
   document.addEventListener("change", (event) => {
-    if (event.target instanceof HTMLSelectElement) playSound("confirm", event.target, true);
+    if (event.target instanceof HTMLSelectElement) playAction("confirm", event.target);
   });
 
-  elements.profileList.addEventListener("keydown", (event) => {
+  elements.profileList?.addEventListener("keydown", (event) => {
     if (!["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft"].includes(event.key)) return;
     const buttons = [...elements.profileList.querySelectorAll("button:not([disabled])")];
     if (!buttons.length) return;
@@ -774,10 +846,10 @@
   });
 
   elements.soundToggle.addEventListener("click", () => void toggleSound());
-  elements.masterToggle.addEventListener("click", () => void toggleSound());
-  elements.menuToggle.addEventListener("click", () => {
+  elements.masterToggle?.addEventListener("click", () => void toggleSound());
+  elements.menuToggle?.addEventListener("click", () => {
+    playAction(state.menuOpen ? "back" : "navigation", elements.menuToggle);
     setMenuOpen(!state.menuOpen);
-    playSound("navigation", elements.menuToggle, true);
   });
 
   document.addEventListener("warspawn:armorchange", async (event) => {
@@ -789,10 +861,17 @@
 
   document.addEventListener("warspawn:languagechange", (event) => {
     state.language = event.detail?.language === "en" ? "en" : "pt";
-    renderProfiles();
+    if (hasProfileMenu) renderProfiles();
     updateUi();
   });
 
-  renderProfiles();
+  window.addEventListener("storage", (event) => {
+    if (!["warspawn-ui-sound", "warspawn-ui-sound-profile", null].includes(event.key)) return;
+    state.enabled = readSoundPreference();
+    state.profile = readProfilePreference();
+    updateUi();
+  });
+
+  if (hasProfileMenu) renderProfiles();
   updateUi();
 })();
