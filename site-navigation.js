@@ -5,6 +5,10 @@
   const generalToggle = document.querySelector("#general-toggle");
   const search = document.querySelector("#site-search");
   const general = document.querySelector("#general-links");
+  const generalShell = general.closest(".nav-general");
+  const searchShell = search.closest(".site-search-shell");
+  let generalPinned = false;
+  let generalHovered = false;
   const input = document.querySelector("#site-search-input");
   const results = document.querySelector("#site-search-results");
   const status = document.querySelector("#site-search-status");
@@ -228,8 +232,6 @@
 
   function refresh() {
     const t = copy[language()];
-    input.placeholder = t.placeholder;
-    input.setAttribute("aria-label", t.search);
     const query = normalize(input.value);
     ranked = query ? match(query) : [];
     rendered = 0;
@@ -237,37 +239,53 @@
     showNextPage();
   }
 
-  function setGeneral(open) {
-    general.hidden = !open;
+  function updateGeneral() {
+    const open = generalPinned || generalHovered;
+    if (!open && general.contains(document.activeElement)) generalToggle.focus({ preventScroll: true });
     generalToggle.setAttribute("aria-expanded", String(open));
+    general.inert = !open;
+  }
+
+  function closeGeneral() {
+    generalPinned = false;
+    generalHovered = false;
+    updateGeneral();
   }
 
   function setSearch(open, restoreFocus = false) {
     search.hidden = !open;
     searchToggle.setAttribute("aria-expanded", String(open));
-    if (open) {
-      refresh();
-      input.focus();
-    } else if (restoreFocus) {
-      searchToggle.focus({ preventScroll: true });
-    }
+    if (open) refresh();
+    if (restoreFocus) (open ? input : searchToggle).focus({ preventScroll: true });
   }
 
   searchToggle.addEventListener("click", () => {
-    setGeneral(false);
+    closeGeneral();
     setSearch(search.hidden, true);
   });
   generalToggle.addEventListener("click", () => {
     setSearch(false);
-    setGeneral(general.hidden);
+    generalPinned = true;
+    updateGeneral();
+  });
+  generalShell.addEventListener("pointerenter", (event) => {
+    if (event.pointerType !== "mouse") return;
+    generalHovered = true;
+    updateGeneral();
+  });
+  generalShell.addEventListener("pointerleave", (event) => {
+    if (event.pointerType !== "mouse") return;
+    generalHovered = false;
+    updateGeneral();
   });
   general.addEventListener("click", (event) => {
-    if (event.target.closest("a")) {
-      setGeneral(false);
-      generalToggle.focus({ preventScroll: true });
-    }
+    if (event.target.closest("a")) closeGeneral();
   });
-  input.addEventListener("input", refresh);
+  input.addEventListener("focus", () => {
+    closeGeneral();
+    if (input.value.trim()) setSearch(true);
+  });
+  input.addEventListener("input", () => setSearch(Boolean(input.value.trim())));
   more.addEventListener("click", () => {
     if (rendered >= ranked.length) rendered = 0;
     showNextPage();
@@ -275,20 +293,21 @@
   });
 
   document.addEventListener("pointerdown", (event) => {
-    if (!search.hidden && !event.target.closest("#site-search, #site-search-toggle")) setSearch(false);
-    if (!general.hidden && !event.target.closest(".nav-general")) setGeneral(false);
+    if (!search.hidden && !searchShell.contains(event.target)) setSearch(false);
+    if (!generalShell.contains(event.target)) closeGeneral();
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || (search.hidden && general.hidden)) return;
+    if (event.key !== "Escape" || (search.hidden && general.inert)) return;
     event.preventDefault();
     event.stopPropagation();
     if (!search.hidden) setSearch(false, true);
-    if (!general.hidden) {
-      setGeneral(false);
+    if (!general.inert) {
+      closeGeneral();
       generalToggle.focus({ preventScroll: true });
     }
   }, true);
-  search.addEventListener("keydown", (event) => {
+  searchShell.addEventListener("keydown", (event) => {
+    if (search.hidden) return;
     const controls = [input, ...results.querySelectorAll("a, button"), ...(!more.hidden ? [more] : [])];
     const current = controls.indexOf(document.activeElement);
     if (event.target === input && event.key === "Enter" && ranked.length) {

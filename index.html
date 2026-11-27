@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="armor-system.css?v=20260919-vanilla-nodes" />
     <link rel="stylesheet" href="almanac-system.css?v=20260920-home-showcase" />
     <link rel="stylesheet" href="ui-sound-system.css?v=20260819-arsenal-polish" />
-    <link rel="stylesheet" href="site-navigation.css?v=20261127">
+    <link rel="stylesheet" href="site-navigation.css?v=20261127-inline">
     <title>WarSpawn — Bestiário Oficial</title>
   </head>
   <body>
@@ -45,12 +45,12 @@
         <img src="assets/emblem-white.png" alt="" width="56" height="56" />
         <span>WARSPAWN</span>
       </a>
-      <div class="site-search-shell">
+      <div class="site-search-shell" role="search">
         <button class="site-search-toggle" id="site-search-toggle" type="button" aria-label="Pesquisar no WarSpawn" data-i18n-aria-label="navSearch" aria-expanded="false" aria-controls="site-search">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>
         </button>
-        <div class="site-search-panel" id="site-search" role="search" hidden>
-          <input id="site-search-input" type="search" maxlength="80" autocomplete="off" aria-label="Pesquisar no WarSpawn" />
+        <input id="site-search-input" type="search" maxlength="80" autocomplete="off" aria-label="Pesquisar no WarSpawn" data-i18n-aria-label="navSearch" aria-controls="site-search" />
+        <div class="site-search-panel" id="site-search" hidden>
           <p id="site-search-status" class="site-search-status" role="status"></p>
           <ul class="site-search-results" id="site-search-results"></ul>
           <button class="site-search-more" id="site-search-more" type="button" hidden>Mostrar mais</button>
@@ -63,7 +63,7 @@
         <a href="#dimensoes" data-i18n="navDimensions">Dimensões</a>
         <div class="nav-general">
           <button class="nav-general-toggle" id="general-toggle" type="button" data-i18n="navGeneral" aria-expanded="false" aria-controls="general-links">Geral</button>
-          <div class="nav-general-links" id="general-links" hidden>
+          <div class="nav-general-links" id="general-links" inert>
             <a href="#arsenal" data-i18n="navArsenal">Arsenal</a>
             <a href="#itens-blocos" data-i18n="navAlmanac">Itens / Blocos</a>
             <a href="#comidas" data-i18n="navFood">Comidas</a>
@@ -1078,6 +1078,6 @@
     <script src="armor-system.js?v=20261127-site-nav" defer></script>
     <script src="almanac-system.js?v=20261127-site-nav" defer></script>
     <script src="ui-sound-system.js?v=20260820-armor-sync" defer></script>
-    <script src="site-navigation.js?v=20261127-2" defer></script>
+    <script src="site-navigation.js?v=20261127-inline" defer></script>
   </body>
 </html>
