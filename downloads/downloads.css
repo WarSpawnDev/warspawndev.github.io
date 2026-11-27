@@ -97,8 +97,6 @@ details[open] > summary::before { transform: translateY(-2px) rotate(45deg); }
 .summary-label { min-width: 0; }
 summary .phase-title { margin-right: 0; }
 summary .phase-count { margin-inline-start: 0.55rem; }
-.history-phase > summary { padding: 0; }
-.history-phase > summary .phase-range { margin: 0; }
 .phase-body > .forge-warning { margin: 0 1rem 0.7rem; }
 @supports (interpolate-size: allow-keywords) and selector(::details-content) {
   details { interpolate-size: allow-keywords; }

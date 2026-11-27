@@ -82,17 +82,9 @@ function renderArchive(catalog, assets) {
     const content = node("div");
     content.append(node("p", period(phase.inicio, phase.fim), "period"),
       node("h3", phase.titulo), node("p", phase.descricao));
-    if (alphaCompatibility) {
-      const detail = node("details", "", "history-phase");
-      const heading = node("summary");
-      heading.append(phaseHeading, compatibilityIcon());
-      content.append(compatibilityNotice(), link);
-      detail.append(heading, content);
-      milestone.append(detail);
-    } else {
-      content.append(link);
-      milestone.append(phaseHeading, content);
-    }
+    if (alphaCompatibility) content.append(compatibilityNotice());
+    content.append(link);
+    milestone.append(phaseHeading, content);
     timeline.prepend(milestone);
   }
 }
